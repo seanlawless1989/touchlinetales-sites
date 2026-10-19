@@ -6,7 +6,7 @@
 // link in it and every sign-up after that arrives as a normal email.
 // FormSubmit's activation email also gives a random code that can replace the
 // address below, so the address isn't visible in the page source.
-const SIGNUP_EMAIL = "hello@touchlinetales.club";
+const SIGNUP_EMAIL = "sean.nayfc@outlook.com";
 const FORM_ENDPOINT = `https://formsubmit.co/ajax/${SIGNUP_EMAIL}`;
 
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -66,6 +66,6 @@ form.addEventListener("submit", async e => {
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
     button.disabled = false;
-    say(`Sorry, that didn't send. Please try again, or email us at ${SIGNUP_EMAIL}.`, "err");
+    say("Sorry, that didn't send. Please try again in a minute.", "err");
   }
 });
