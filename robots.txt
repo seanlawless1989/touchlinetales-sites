@@ -1,0 +1,31 @@
+# touchlinetales.club
+# The home page is public and welcome in search results.
+# Team sites (in their own folders) carry a "noindex" tag so search engines
+# drop them; they stay crawlable so that tag can be read. Pictures on team
+# sites are blocked so they never show up in image search.
+User-agent: *
+Allow: /$
+Allow: /index.html
+Allow: /assets/
+Disallow: /*/badges/
+Disallow: /*.png$
+Disallow: /*.jpg$
+Disallow: /*.jpeg$
+Disallow: /*.webp$
+
+# AI crawlers: the home page only, never the team sites.
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Bytespider
+User-agent: Applebot-Extended
+Allow: /$
+Allow: /index.html
+Allow: /assets/
+Disallow: /
+
+Sitemap: https://touchlinetales.club/sitemap.xml
