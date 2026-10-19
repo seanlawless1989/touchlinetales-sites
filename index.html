@@ -3,22 +3,310 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Touchline Tales</title>
-<meta name="description" content="Team websites for grassroots football clubs.">
-<meta name="robots" content="noindex">
+<title>Touchline Tales | Team websites for grassroots football</title>
+<meta name="description" content="Touchline Tales gives grassroots football teams their own website: live matchday on every parent's phone, fair playing time, match reports and an end-of-season sticker book. Every match. Every milestone.">
+<meta name="theme-color" content="#0E2A1D">
+<link rel="canonical" href="https://touchlinetales.club/">
+<meta property="og:title" content="Touchline Tales">
+<meta property="og:description" content="Every match. Every milestone. Team websites for grassroots football, built for parents on the touchline.">
+<meta property="og:url" content="https://touchlinetales.club/">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Rubik:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0E2A1D;color:#F6F3EA;font:17px/1.5 Rubik,system-ui,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
-  h1{font:700 clamp(36px,8vw,64px)/1 Oswald,Impact,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:0 0 12px}
-  h1 span{color:#F2C230}
-  p{margin:0 auto;max-width:32em;color:#cfd8d2}
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/home.css">
 </head>
 <body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#" aria-label="Touchline Tales home">
+      <img src="assets/mark.svg" alt="" width="40" height="40">
+      <span class="word">Touchline <b>Tales</b></span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#features">What you get</a>
+      <a href="#safety">Safety</a>
+      <a href="#price">Price</a>
+      <a class="btn btn-sm" href="#signup">Sign up</a>
+    </nav>
+  </div>
+</header>
+
 <main>
-  <h1>Touchline <span>Tales</span></h1>
-  <p>Team websites for grassroots football clubs. Fixtures, results and match day, all in one place for coaches and parents.</p>
+
+<!-- Hero -->
+<section class="hero dark stripes">
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow">Team websites for grassroots football</p>
+      <h1>Every match.<br>Every milestone.</h1>
+      <p class="lede">Your team's own website, in your crest and colours. Goals, line-ups and full time land on every parent's phone, and the whole season is kept, child by child, for everyone to look back on.</p>
+      <div class="cta-row">
+        <a class="btn" href="#signup">Join as a founding team</a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
+      </div>
+      <p class="small">Free for our first five founding teams until the end of the 2026-27 season.</p>
+    </div>
+
+    <div class="hero-phone" aria-label="Example of live match mode for the made-up Sample Town Under 12s">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="alert"><span class="alert-dot"></span><div><b>GOAL! Sample Town 2-1</b><br>Ava scores, assisted by Isla. 34'</div></div>
+          <div class="scorebar">
+            <span class="live">LIVE</span>
+            <div class="teams"><span>Sample Town U12s</span><strong>2 - 1</strong><span>Westgate Wanderers</span></div>
+            <div class="clock">2nd half · 34'</div>
+          </div>
+          <ol class="timeline">
+            <li><span>34'</span>⚽ Goal: <b>Ava</b> (assist Isla)</li>
+            <li><span>30'</span>🔁 Poppy on for Ruby</li>
+            <li><span>HT</span>Half time 1-1</li>
+            <li><span>18'</span>⚽ Goal: <b>Mia</b> (assist Grace)</li>
+            <li><span>11'</span>Westgate score</li>
+            <li><span>KO</span>Kick-off, line-up shared</li>
+          </ol>
+          <div class="mini-pitch" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <p class="caption">Sample Town Under 12s is a made-up team. We never use real children in our examples.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="band">
+  <div class="wrap narrow">
+    <p class="eyebrow">Sound familiar?</p>
+    <h2>Matchday lives in forty WhatsApp messages. Then it's gone.</h2>
+    <p>Parents who can't make it spend the game refreshing the group chat. Coaches retype line-ups and results every Sunday night. And a child's first goal, their tenth game, their best season, all get buried under "who's bringing the oranges?"</p>
+    <p>Touchline Tales puts it all in one place, made for the side of a pitch on a cold Sunday morning.</p>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="band alt">
+  <div class="wrap">
+    <p class="eyebrow">What your team gets</p>
+    <h2>Everything from kick-off to the end-of-season do</h2>
+    <div class="grid cards">
+      <article class="card edge">
+        <h3>Live match mode</h3>
+        <p>The coach taps goals, assists and subs from the touchline. Parents get phone alerts for the line-up, kick-off, goals, half time and full time, with a live score, pitch view and commentary.</p>
+      </article>
+      <article class="card">
+        <h3>Stats and fair playing time</h3>
+        <p>Appearances, halves played, goals, assists and clean sheets, with a page for every player. Milestones like a first goal or ten games are spotted automatically.</p>
+      </article>
+      <article class="card">
+        <h3>Results and match reports</h3>
+        <p>Every game has its line-up, timeline, awards and the coach's report. Filter by league, cup, friendly or tournament, and keep an honours board.</p>
+      </article>
+      <article class="card">
+        <h3>Matchday graphics</h3>
+        <p>Squad announcements, full time, player of the match and the month's fixtures, ready for Facebook and Instagram in your colours, with a caption to copy.</p>
+      </article>
+      <article class="card">
+        <h3>End-of-season sticker book</h3>
+        <p>A cover, the season in numbers, results, honours and a page for every player. Print it or save it as a PDF. Photos stay on the coach's phone.</p>
+      </article>
+      <article class="card">
+        <h3>Availability and calendars</h3>
+        <p>Parents say who's available, coaches pick the squad, and fixtures sync to iPhone, Google and Outlook calendars.</p>
+      </article>
+      <article class="card">
+        <h3>Help and changes, built in</h3>
+        <p>Coaches send fixes and requests from inside the site. Small fixes are usually done the same day.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how" class="band">
+  <div class="wrap">
+    <p class="eyebrow">Getting started</p>
+    <h2>Live within a week</h2>
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <h3>See it working</h3>
+        <p>A 15-minute demo on your own phone, using our made-up demo team.</p>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <h3>Send us the basics</h3>
+        <p>Your crest, colours, players' first names and fixtures. Your club welfare officer signs off how children's information is handled.</p>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <h3>Share the link</h3>
+        <p>We set everything up and load the season. You drop the link in the parents' group and you're away.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- Safety -->
+<section id="safety" class="band dark stripes">
+  <div class="wrap">
+    <p class="eyebrow">Safe for children by default</p>
+    <h2>Built by a grassroots coach, with children first</h2>
+    <ul class="checks">
+      <li><b>First names only.</b> No surnames, ages, birthdays, schools or addresses, ever.</li>
+      <li><b>Kept out of Google.</b> Your site isn't listed in search results. Parents get the link from the club.</li>
+      <li><b>Only your coaches can edit.</b> They sign in with an email link, so there are no passwords to share.</li>
+      <li><b>Your club decides on scores.</b> Follow the FA's rule for Under 7s to Under 11s and hide scores from visitors, or show them. Your welfare officer chooses.</li>
+      <li><b>Your own database, in London.</b> Each team's information is kept separately in the UK.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Price -->
+<section id="price" class="band alt">
+  <div class="wrap">
+    <p class="eyebrow">Price</p>
+    <h2>Simple, honest pricing</h2>
+    <div class="grid prices">
+      <div class="card price-card">
+        <h3>Team plan</h3>
+        <p class="amount">£60 <small>per team, per season</small></p>
+        <p>July to June, about £5 a month. Everything on this page included.</p>
+      </div>
+      <div class="card price-card">
+        <h3>Setup</h3>
+        <p class="amount">£35 <small>once</small></p>
+        <p>We load your crest, colours, squad, fixtures and last season's results.</p>
+      </div>
+      <div class="card price-card feature">
+        <h3>Founding teams</h3>
+        <p class="amount">Free <small>until June 2027</small></p>
+        <p>Our first five teams pay nothing for the 2026-27 season, in return for honest feedback.</p>
+      </div>
+    </div>
+    <p class="note">Running three or more teams? Every team from your third gets 10% off. Ask us about a club price.</p>
+    <p class="note">Not included: subs or payments, club membership, or custom features for one team.</p>
+  </div>
+</section>
+
+<!-- Sign up -->
+<section id="signup" class="band">
+  <div class="wrap signup">
+    <div class="signup-copy">
+      <p class="eyebrow">Sign up</p>
+      <h2>Get your team on Touchline Tales</h2>
+      <p>Tell us a little about your team and we'll be in touch to book a 15-minute demo. There's no commitment, and nothing to pay as a founding team.</p>
+      <p>Please don't send any children's details here. We'll ask for first names later, once your welfare officer has signed off.</p>
+    </div>
+
+    <form id="signup-form" class="card form" novalidate>
+      <div class="field">
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="f-email">Your email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="f-phone">Mobile <span class="opt">(optional)</span></label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="f-club">Club</label>
+        <input id="f-club" name="club" required>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-team">Team</label>
+          <input id="f-team" name="team" placeholder="e.g. Under 10s Blues" required>
+        </div>
+        <div class="field">
+          <label for="f-role">Your role</label>
+          <select id="f-role" name="role" required>
+            <option value="">Choose…</option>
+            <option>Coach or manager</option>
+            <option>Club secretary or chair</option>
+            <option>Welfare officer</option>
+            <option>Parent</option>
+            <option>Something else</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-age">Age group</label>
+          <select id="f-age" name="age_group" required>
+            <option value="">Choose…</option>
+            <option>Under 6</option><option>Under 7</option><option>Under 8</option><option>Under 9</option>
+            <option>Under 10</option><option>Under 11</option><option>Under 12</option><option>Under 13</option>
+            <option>Under 14</option><option>Under 15</option><option>Under 16</option><option>Under 17</option>
+            <option>Under 18</option><option>Open age</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-format">Format</label>
+          <select id="f-format" name="format">
+            <option value="">Choose…</option>
+            <option>5v5</option><option>7v7</option><option>9v9</option><option>11v11</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-msg">Anything else? <span class="opt">(optional)</span></label>
+        <textarea id="f-msg" name="message" rows="3" placeholder="When's best to chat, how many teams your club has, questions…"></textarea>
+      </div>
+      <!-- Spam trap: real people never see or fill this -->
+      <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="tick">
+        <input type="checkbox" name="consent" required>
+        <span>It's fine to contact me about Touchline Tales. We'll only use your details to reply.</span>
+      </label>
+      <button class="btn" type="submit">Send</button>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="band alt">
+  <div class="wrap narrow">
+    <p class="eyebrow">Questions</p>
+    <h2>Good to know</h2>
+    <details>
+      <summary>Do parents need to download an app?</summary>
+      <p>No. It's a website that works on any phone. Parents can save it to their home screen so it opens like an app. On iPhones, that's also what turns on goal alerts.</p>
+    </details>
+    <details>
+      <summary>How much work is it for the coach on matchday?</summary>
+      <p>A few taps: the line-up before kick-off, then goals, assists and subs as they happen. Stats, playing time and the results page all update themselves.</p>
+    </details>
+    <details>
+      <summary>Does it replace our club's main website?</summary>
+      <p>No, it sits alongside it. Touchline Tales is one site per team, wearing your club's crest, colours and sponsors.</p>
+    </details>
+    <details>
+      <summary>What happens at the end of the season?</summary>
+      <p>Your season stays on the site, the sticker book is ready to print, and the next season picks up where you left off.</p>
+    </details>
+  </div>
+</section>
+
 </main>
+
+<footer class="foot dark">
+  <div class="wrap foot-in">
+    <a class="brand" href="#" aria-label="Touchline Tales home">
+      <img src="assets/mark.svg" alt="" width="36" height="36">
+      <span class="word">Touchline <b>Tales</b></span>
+    </a>
+    <p>Every match. Every milestone.</p>
+    <p class="small">&copy; <span id="year">2026</span> Touchline Tales. Team websites for grassroots football.</p>
+  </div>
+</footer>
+
+<script src="assets/home.js" defer></script>
 </body>
 </html>
