@@ -1,11 +1,13 @@
 // Touchline Tales home page: sign-up form.
 //
-// FORM_ENDPOINT: paste a form service's endpoint here (for example a Formspree
-// "https://formspree.io/f/xxxx" URL) and sign-ups are sent there in the background.
-// Left empty, the form opens the visitor's email app with everything filled in,
-// addressed to SIGNUP_EMAIL.
-const FORM_ENDPOINT = "";
+// Sign-ups are emailed to SIGNUP_EMAIL by FormSubmit (formsubmit.co), a free
+// form-to-email service, so the site needs no server of its own. The very first
+// sign-up triggers a one-off "activate this form" email to SIGNUP_EMAIL; click the
+// link in it and every sign-up after that arrives as a normal email.
+// FormSubmit's activation email also gives a random code that can replace the
+// address below, so the address isn't visible in the page source.
 const SIGNUP_EMAIL = "hello@touchlinetales.club";
+const FORM_ENDPOINT = `https://formsubmit.co/ajax/${SIGNUP_EMAIL}`;
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -43,13 +45,11 @@ form.addEventListener("submit", async e => {
     .map(k => [LABELS[k], (data.get(k) || "").toString().trim()])
     .filter(([, v]) => v);
 
-  if (!FORM_ENDPOINT) {
-    const subject = `Touchline Tales sign up: ${data.get("club")} ${data.get("team")}`;
-    const body = fields.map(([k, v]) => `${k}: ${v}`).join("\n");
-    window.location.href = `mailto:${SIGNUP_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    say(`Your email app should open with everything filled in. Just press send. If it doesn't, email us at ${SIGNUP_EMAIL}.`, "ok");
-    return;
-  }
+  const payload = Object.fromEntries(fields);
+  payload._subject = `Touchline Tales sign up: ${data.get("club")} ${data.get("team")}`;
+  payload._replyto = data.get("email");
+  payload._template = "table";
+  payload._captcha = "false";
 
   const button = form.querySelector("button");
   button.disabled = true;
@@ -57,10 +57,11 @@ form.addEventListener("submit", async e => {
   try {
     const res = await fetch(FORM_ENDPOINT, {
       method: "POST",
-      headers: { "Accept": "application/json" },
-      body: data
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error(res.status);
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
     form.classList.add("sent");
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
