@@ -1,13 +1,11 @@
 // Touchline Tales home page: sign-up form.
 //
-// Sign-ups are emailed to SIGNUP_EMAIL by FormSubmit (formsubmit.co), a free
-// form-to-email service, so the site needs no server of its own. The very first
-// sign-up triggers a one-off "activate this form" email to SIGNUP_EMAIL; click the
-// link in it and every sign-up after that arrives as a normal email.
-// FormSubmit's activation email also gives a random code that can replace the
-// address below, so the address isn't visible in the page source.
-const SIGNUP_EMAIL = "sean.nayfc@outlook.com";
-const FORM_ENDPOINT = `https://formsubmit.co/ajax/${SIGNUP_EMAIL}`;
+// Sign-ups are emailed to Sean by FormSubmit (formsubmit.co), a free form-to-email
+// service, so the site needs no server of its own. FORM_ID is FormSubmit's code for
+// the activated form; it stands in for the email address so the address isn't
+// visible in the page source.
+const FORM_ID = "5f26f2b94f7b8df49f80d9aced927305";
+const FORM_ENDPOINT = `https://formsubmit.co/ajax/${FORM_ID}`;
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
