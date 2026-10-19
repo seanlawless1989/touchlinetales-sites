@@ -1,13 +1,14 @@
 // Touchline Tales home page: sign-up form.
 //
-// Sign-ups are emailed to SIGNUP_EMAIL by FormSubmit (formsubmit.co), a free
-// form-to-email service, so the site needs no server of its own. The very first
-// sign-up triggers a one-off "activate this form" email to SIGNUP_EMAIL; click the
-// link in it and every sign-up after that arrives as a normal email.
-// FormSubmit's activation email also gives a random code that can replace the
-// address below, so the address isn't visible in the page source.
+// Each sign-up is saved to the tt_signups table in Supabase (insert-only for
+// visitors; nobody can read it back from the site). That's the record that counts.
+// It is also emailed to SIGNUP_EMAIL by FormSubmit (formsubmit.co) as a heads-up,
+// but only on a best-effort basis: FormSubmit needs a one-off activation link
+// clicking and its emails often land in junk, so a failed email never fails the form.
 const SIGNUP_EMAIL = "sean.nayfc@outlook.com";
 const FORM_ENDPOINT = `https://formsubmit.co/ajax/${SIGNUP_EMAIL}`;
+const DB_URL = "https://elqwksyqwezhkekdqivn.supabase.co/rest/v1/tt_signups";
+const DB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscXdrc3lxd2V6aGtla2RxaXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NDA4MzAsImV4cCI6MjEwNzMxNjgzMH0.7HFhSDvpQS5WHDgu4x5ABat-8hl5ZIpmeFlp2pV9wts";
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -54,14 +55,20 @@ form.addEventListener("submit", async e => {
   const button = form.querySelector("button");
   button.disabled = true;
   say("Sending…");
+  const row = {};
+  Object.keys(LABELS).forEach(k => { row[k] = (data.get(k) || "").toString().trim(); });
   try {
-    const res = await fetch(FORM_ENDPOINT, {
+    const res = await fetch(DB_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: DB_KEY, Authorization: `Bearer ${DB_KEY}`, Prefer: "return=minimal" },
+      body: JSON.stringify(row)
+    });
+    if (!res.ok) throw new Error(res.status);
+    fetch(FORM_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload)
-    });
-    const out = await res.json().catch(() => ({}));
-    if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
+    }).catch(() => {});
     form.classList.add("sent");
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
