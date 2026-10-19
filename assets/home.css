@@ -155,3 +155,13 @@ details p{padding:0 22px 18px;margin:0}
 .foot{padding:44px 0}
 .foot-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
 .foot p{margin:0}
+
+/* Full feature list */
+.intro{max-width:40em}
+.feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:36px 40px;margin-top:36px}
+.feature-list h3{font-size:20px;padding-bottom:10px;border-bottom:3px solid var(--green);margin-bottom:14px}
+.feature-list ul{list-style:none;margin:0;padding:0}
+.feature-list li{position:relative;padding:0 0 10px 22px;font-size:16px;line-height:1.5}
+.feature-list li::before{content:"";position:absolute;left:2px;top:.55em;width:9px;height:9px;border-radius:50%;background:var(--green)}
+@media (max-width:900px){.feature-list{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.feature-list{grid-template-columns:1fr;gap:28px}}
