@@ -11,7 +11,7 @@ self.TEAM = {
   tagline: "The Vikings · Under 14s",
   appName: "Darlington United U14s",
   siteUrl: "https://touchlinetales.club/darlington-united-u14s",
-  supportName: "Sean",
+  supportName: "Touchline Tales",
 
   league: "League",
   assistsFrom: "2026-27",
