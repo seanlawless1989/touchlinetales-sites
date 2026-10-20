@@ -165,3 +165,30 @@ details p{padding:0 22px 18px;margin:0}
 .feature-list li::before{content:"";position:absolute;left:2px;top:.55em;width:9px;height:9px;border-radius:50%;background:var(--green)}
 @media (max-width:900px){.feature-list{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:600px){.feature-list{grid-template-columns:1fr;gap:28px}}
+
+/* Footer links (guides) */
+.foot-links a{color:var(--mist);text-decoration:underline;text-underline-offset:3px}
+.foot-links a:hover{color:var(--chalk)}
+
+/* Guides */
+.guide-hero{padding:64px 0 56px}
+.guide-hero h1{font-size:clamp(36px,6vw,60px);max-width:14em}
+.guide-hero .lede{margin-bottom:18px}
+.byline{font-size:14px;color:var(--mist);opacity:.9;margin:0}
+.guide{padding-top:56px}
+.guide p,.guide li{max-width:40em}
+.guide h2{font-size:clamp(26px,3.6vw,34px);margin:1.6em 0 .5em}
+.guide ul,.guide ol{padding-left:1.3em;margin:0 0 1.2em}
+.guide li{margin-bottom:.5em}
+.guide li::marker{color:var(--green)}
+.guide b{color:var(--night);font-weight:500}
+.tip{background:var(--white);border-left:5px solid var(--gold);border-radius:var(--r);padding:18px 22px;margin:8px 0 1.2em;box-shadow:0 1px 0 var(--line)}
+.tip p{margin:0}
+.routine li{padding-left:4px}
+.guide-cta{margin-top:56px;background:var(--night);color:var(--mist);box-shadow:inset 0 5px 0 var(--gold);padding:30px 28px 26px}
+.guide-cta h2{color:var(--chalk);margin-top:0}
+.guide-cta .eyebrow{color:var(--gold)}
+.guide-cta .btn{margin-top:6px}
+.guide-cta .btn:focus-visible{outline-color:var(--gold)}
+@media (max-width:720px){.guide-hero{padding:44px 0 40px}.guide{padding-top:40px}.guide-cta{padding:24px 20px 22px}}
+.foot-in > p.small:last-child{flex-basis:100%;opacity:.85}
