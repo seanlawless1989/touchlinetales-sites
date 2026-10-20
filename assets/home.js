@@ -1,6 +1,6 @@
 // Touchline Tales home page: sign-up form.
 //
-// Sign-ups are emailed to Sean by FormSubmit (formsubmit.co), a free form-to-email
+// Sign-ups are emailed to the team inbox by FormSubmit (formsubmit.co), a free form-to-email
 // service, so the site needs no server of its own. FORM_ID is FormSubmit's code for
 // the activated form; it stands in for the email address so the address isn't
 // visible in the page source.
@@ -14,8 +14,13 @@ const msg = form.querySelector(".form-msg");
 
 const LABELS = {
   name: "Name", email: "Email", phone: "Mobile", club: "Club", team: "Team",
-  role: "Role", age_group: "Age group", format: "Format", message: "Message"
+  role: "Role", age_group: "Age group", format: "Format", heard: "Heard about us",
+  ref: "Link used", message: "Message"
 };
+
+// Links in posts carry ?ref=<channel> so we can see which ones bring sign-ups.
+const ref = new URLSearchParams(location.search).get("ref");
+if (ref) form.querySelector("[name=ref]").value = ref.slice(0, 40);
 
 function say(text, kind) {
   msg.textContent = text;
