@@ -193,3 +193,16 @@ details p{padding:0 22px 18px;margin:0}
 .guide-cta .btn:focus-visible{outline-color:var(--gold)}
 @media (max-width:720px){.guide-hero{padding:44px 0 40px}.guide{padding-top:40px}.guide-cta{padding:24px 20px 22px}}
 .foot-in > p.small:last-child{flex-basis:100%;opacity:.85}
+
+/* How it works video */
+.how-in{display:grid;grid-template-columns:1fr minmax(0,420px);gap:56px;align-items:center}
+.how-copy p{max-width:34em}
+.how-list{margin:22px 0 0;padding:0 0 0 1.3em}
+.how-list li{margin:0 0 12px;padding-left:4px}
+.how-list li::marker{color:var(--gold);font-weight:700}
+.how-list b{color:var(--chalk)}
+.how-video{margin:0}
+.how-video video{display:block;width:100%;height:auto;aspect-ratio:4/5;border-radius:22px;background:var(--night);box-shadow:0 0 0 2px rgba(201,220,207,.25),0 24px 60px rgba(0,0,0,.45)}
+.how-video figcaption{font-size:13px;color:var(--mist);text-align:center;margin-top:12px;opacity:.9}
+/* on phones the video sits straight under the intro, before the steps */
+@media (max-width:880px){.how-in{grid-template-columns:1fr;gap:0}.how-copy{display:contents}.how-video{order:1;max-width:440px;margin:10px auto 8px;width:100%}.how-list{order:2}}
