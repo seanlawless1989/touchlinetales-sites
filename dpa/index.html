@@ -56,8 +56,8 @@
     <h2>3. What the processing is</h2>
     <ul>
       <li><b>Purpose:</b> running the team's website: fixtures, results, stats, match alerts, availability, player profile pictures, graphics and the sticker book.</li>
-      <li><b>Whose data:</b> players (children), the coaches, and visitors who turn on alerts or vote.</li>
-      <li><b>What data:</b> players' first names, shirt numbers, match and training records, awards, availability, coach notes and reports, and player profile pictures the club has parents' consent for; coaches' email addresses, sign-in records and change requests; alert addresses and vote codes from visitors' phones.</li>
+      <li><b>Whose data:</b> players (children), the coaches, parents who sign in with a family code, and visitors who turn on alerts or vote.</li>
+      <li><b>What data:</b> players' first names, shirt numbers, match and training records, awards, availability, coach notes and reports, and player profile pictures the club has parents' consent for; coaches' email addresses, sign-in records and change requests; each player's family code, and for each parent's phone that signs in with it a random sign-in id, which player it's linked to and when (no parent names or email addresses); alert addresses and vote codes from visitors' phones.</li>
       <li><b>Never:</b> surnames, dates of birth, ages, schools, addresses or health information.</li>
       <li><b>How long:</b> while the club uses the site, then 30 days (section 9).</li>
     </ul>
@@ -66,7 +66,7 @@
     <p>Only the owner of Touchline Tales has access to the club's data. Anyone we bring in later will be bound by confidentiality.</p>
 
     <h2>5. Security</h2>
-    <p>Each team has its own separate database in London. Coaches sign in with an email link, and the database only lets signed-in coaches change anything. Private records (availability, attendance, change requests and alert addresses) are locked so visitors can't read them. Team sites are kept out of search engines, and connections are encrypted.</p>
+    <p>Each team has its own separate database in London. Coaches sign in with an email link, and the database only lets signed-in coaches change anything. Parents sign in with a family code, which only lets them answer availability for their own child and vote; wrong codes are limited to five an hour per phone, and a coach can replace a code at any time. Private records (availability, attendance, family codes, parent sign-ins, change requests and alert addresses) are locked so visitors can't read them. Team sites are kept out of search engines, and connections are encrypted.</p>
 
     <h2>6. Sub-processors</h2>
     <p>The club agrees to us using Supabase (database and sign-in, with data stored in London), GitHub (web hosting), Google Fonts and jsDelivr (lettering and code), the Apple, Google and Mozilla push services (match alerts), and Anthropic (Claude, which helps us handle coaches' change requests). We'll email the club at least 30 days before adding or changing one, and the club can object and leave. Each is bound by data protection terms at least as strong as these. Transfers outside the UK rely on UK adequacy regulations or the UK's approved contract clauses.</p>
