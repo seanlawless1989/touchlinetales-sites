@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/home.css?v=6">
+<link rel="stylesheet" href="assets/home.css?v=7">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
       <span class="word">Touchline <b>Tales</b></span>
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="demo/">Demo</a>
+      <a href="demo/" data-demo-gate>Demo</a>
       <a href="#all-features">Features</a>
       <a href="#safety">Safety</a>
       <a href="#price">Price</a>
@@ -47,7 +47,7 @@
       <p class="lede">Your team's own website, in your crest and colours. Goals, line-ups and full time land on every parent's phone, and the whole season is kept, child by child, for everyone to look back on.</p>
       <div class="cta-row">
         <a class="btn" href="#signup">Join as a founding team</a>
-        <a class="btn btn-ghost" href="demo/">Try the demo site</a>
+        <a class="btn btn-ghost" href="demo/" data-demo-gate>Try the demo site</a>
       </div>
       <p class="small">Free for our first five founding teams until the end of the 2026-27 season.</p>
     </div>
@@ -101,7 +101,7 @@
         <li><b>After the game.</b> Full time and player of the match graphics are ready to post, and the match report is kept.</li>
         <li><b>All season.</b> Every child's games, goals and milestones are counted, ending in a sticker book.</li>
       </ol>
-      <p><a class="btn" href="demo/">Click around the demo site</a></p>
+      <p><a class="btn" href="demo/" data-demo-gate>Click around the demo site</a></p>
       <p class="small">Fixtures, results, players, a live game and the coach's view. Nothing you change is saved.</p>
     </div>
     <figure class="how-video">
@@ -420,6 +420,48 @@
   </div>
 </footer>
 
-<script src="assets/home.js?v=5" defer></script>
+<!-- Demo: a short "who are you?" before the demo site, so we can follow up. Skippable. -->
+<dialog id="demo-gate" class="gate" aria-labelledby="gate-title">
+  <form id="demo-form" class="form" method="dialog" novalidate>
+    <button class="gate-x" type="button" data-close aria-label="Close">×</button>
+    <p class="eyebrow">Try the demo</p>
+    <h2 id="gate-title">Have a click around</h2>
+    <p>It's a full team site for our made-up Sample Town Under 12s. Tell us who you are and we'll check in afterwards to answer any questions.</p>
+    <div class="field">
+      <label for="d-name">Your name</label>
+      <input id="d-name" name="name" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="d-email">Your email</label>
+      <input id="d-email" name="email" type="email" autocomplete="email" required>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="d-club">Club and team</label>
+        <input id="d-club" name="club" placeholder="e.g. Sample Town U10s" required>
+      </div>
+      <div class="field">
+        <label for="d-role">Your role</label>
+        <select id="d-role" name="role" required>
+          <option value="">Choose…</option>
+          <option>Coach or manager</option>
+          <option>Club secretary or chair</option>
+          <option>Welfare officer</option>
+          <option>Parent</option>
+          <option>Something else</option>
+        </select>
+      </div>
+    </div>
+    <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <label class="tick">
+      <input type="checkbox" name="consent" required>
+      <span>It's fine to contact me about Touchline Tales. We'll only use your details to follow up (<a href="privacy/">privacy</a>).</span>
+    </label>
+    <button class="btn" type="submit">Open the demo</button>
+    <p class="form-msg" role="status" aria-live="polite"></p>
+    <p class="small gate-skip"><a href="demo/" data-skip>Skip this and go straight to the demo</a></p>
+  </form>
+</dialog>
+<script src="assets/home.js?v=6" defer></script>
 </body>
 </html>

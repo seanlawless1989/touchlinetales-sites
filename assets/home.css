@@ -206,3 +206,10 @@ details p{padding:0 22px 18px;margin:0}
 .how-video figcaption{font-size:13px;color:var(--mist);text-align:center;margin-top:12px;opacity:.9}
 /* on phones the video sits straight under the intro, before the steps */
 @media (max-width:880px){.how-in{grid-template-columns:1fr;gap:0}.how-copy{display:contents}.how-video{order:1;max-width:440px;margin:10px auto 8px;width:100%}.how-list{order:2}}
+/* Demo gate */
+.gate{border:0;padding:0;border-radius:var(--r);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 32px);background:var(--white);color:var(--turf)}
+.gate::backdrop{background:rgba(14,42,29,.7)}
+.gate .form{position:relative;border-top:5px solid var(--gold)}
+.gate h2{margin-top:0}
+.gate-x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:28px;line-height:1;color:var(--turf);cursor:pointer;padding:6px}
+.gate-skip{text-align:center;margin:12px 0 0}
