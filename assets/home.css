@@ -167,6 +167,7 @@ details p{padding:0 22px 18px;margin:0}
 @media (max-width:600px){.feature-list{grid-template-columns:1fr;gap:28px}}
 
 /* Footer links (guides) */
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
 .foot-links a{color:var(--mist);text-decoration:underline;text-underline-offset:3px}
 .foot-links a:hover{color:var(--chalk)}
 
