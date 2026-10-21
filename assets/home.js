@@ -22,6 +22,9 @@ const LABELS = {
 const ref = new URLSearchParams(location.search).get("ref");
 if (ref) form.querySelector("[name=ref]").value = ref.slice(0, 40);
 
+// Visitor stats (assets/stats.js): sign-ups and demo visits are counted as events, nothing about the person.
+const count = (name, title) => window.ttCount && window.ttCount(name, title);
+
 function say(text, kind) {
   msg.textContent = text;
   msg.className = "form-msg" + (kind ? " " + kind : "");
@@ -66,6 +69,7 @@ form.addEventListener("submit", async e => {
     const out = await res.json().catch(() => ({}));
     if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
     form.classList.add("sent");
+    count("signup-sent", "Sign-up form sent");
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
     button.disabled = false;
@@ -85,12 +89,13 @@ const remember = v => { try { localStorage.setItem(LEAD_KEY, v); } catch {} };
 const known = () => { try { return !!localStorage.getItem(LEAD_KEY); } catch { return false; } };
 
 document.querySelectorAll("[data-demo-gate]").forEach(a => a.addEventListener("click", e => {
+  count("demo-click", "Demo link clicked");
   if (known() || typeof gate.showModal !== "function") { a.href = demoUrl(); return; }
   e.preventDefault();
   gate.showModal();
 }));
 gate.querySelector("[data-close]").addEventListener("click", () => gate.close());
-gate.querySelector("[data-skip]").addEventListener("click", e => { e.preventDefault(); remember("skipped"); location.href = demoUrl(); });
+gate.querySelector("[data-skip]").addEventListener("click", e => { e.preventDefault(); count("demo-gate-skipped", "Demo form skipped"); remember("skipped"); location.href = demoUrl(); });
 gate.addEventListener("click", e => { if (e.target === gate) gate.close(); });
 demoForm.addEventListener("input", e => e.target.classList.remove("invalid"));
 
@@ -122,6 +127,7 @@ demoForm.addEventListener("submit", async e => {
       body: JSON.stringify(payload), keepalive: true }).catch(() => {}),
     new Promise(r => setTimeout(r, 4000))
   ]);
+  count("demo-gate-sent", "Demo form sent");
   remember("sent");
   location.href = demoUrl();
 });
