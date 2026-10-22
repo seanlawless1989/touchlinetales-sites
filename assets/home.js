@@ -84,11 +84,14 @@ const LEAD_KEY = "tt-lead";
 const gate = document.getElementById("demo-gate");
 const demoForm = document.getElementById("demo-form");
 const demoMsg = demoForm.querySelector(".form-msg");
-const demoUrl = () => "demo/" + (ref ? "?ref=" + encodeURIComponent(ref.slice(0, 40)) : "");
+// each demo link says which demo it opens (football, rugby union or rugby league); the gate remembers the one clicked
+let demoPath = "demo/";
+const demoUrl = () => demoPath + (ref ? "?ref=" + encodeURIComponent(ref.slice(0, 40)) : "");
 const remember = v => { try { localStorage.setItem(LEAD_KEY, v); } catch {} };
 const known = () => { try { return !!localStorage.getItem(LEAD_KEY); } catch { return false; } };
 
 document.querySelectorAll("[data-demo-gate]").forEach(a => a.addEventListener("click", e => {
+  demoPath = (a.getAttribute("href") || "demo/").split("?")[0];
   count("demo-click", "Demo link clicked");
   if (known() || typeof gate.showModal !== "function") { a.href = demoUrl(); return; }
   e.preventDefault();
@@ -114,7 +117,7 @@ demoForm.addEventListener("submit", async e => {
   }
   const payload = {
     "Name": data.get("name").trim(), "Email": data.get("email").trim(), "Club and team": data.get("club").trim(),
-    "Role": data.get("role"), "Where": "Before opening the demo (home page)", "Link used": ref || "",
+    "Role": data.get("role"), "Where": `Before opening the ${demoPath.replace(/\/$/, "")} demo (home page)`, "Link used": ref || "",
     _subject: `Touchline Tales demo: ${data.get("club").trim()}`, _replyto: data.get("email").trim(),
     _template: "table", _captcha: "false"
   };
