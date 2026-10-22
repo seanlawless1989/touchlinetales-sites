@@ -148,6 +148,9 @@ h3{font:800 12px var(--body);text-transform:uppercase;letter-spacing:.09em;color
 .pitch{position:relative;width:100%;max-width:420px;aspect-ratio:3/4;margin:6px auto;border-radius:12px;background:repeating-linear-gradient(0deg,#2E8B3E 0 12.5%,#33963F 12.5% 25%);border:3px solid #fff;overflow:hidden}
 .pitch:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.8)}
 .pitch:after{content:"";position:absolute;left:30%;right:30%;bottom:0;height:16%;border:2px solid rgba(255,255,255,.8);border-bottom:0}
+/* rugby: our half, attacking up the page: halfway near the top, then our 22 and our try line */
+.pitch.rugby:before{top:12%}
+.pitch.rugby:after{left:0;right:0;top:62%;bottom:auto;height:30%;border:0;border-top:2px solid rgba(255,255,255,.8);border-bottom:2px solid rgba(255,255,255,.8)}
 .spot{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:1}
 .spot b{width:40px;height:40px;border-radius:50%;background:var(--gold);color:#111;display:grid;place-items:center;font:400 18px var(--display);border:2px solid #111}
 .spot.gk b{background:#1AA8A0;color:#fff}
@@ -428,9 +431,9 @@ h2.sect{font-size:26px;text-transform:uppercase;letter-spacing:.02em;margin-top:
 /* tactics board (coaches only) */
 .tb .seg{flex-wrap:wrap}
 .tbwrap{display:flex;justify-content:center}
-.tbpitch{display:block;width:100%;max-width:560px;max-height:calc(100vh - 120px);max-height:calc(100svh - 120px);border-radius:12px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.18);touch-action:none;user-select:none;-webkit-user-select:none}
+.tbpitch{display:block;width:100%;max-width:560px;max-height:calc(100vh - 190px);max-height:calc(100svh - 190px);border-radius:12px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.18);touch-action:none;user-select:none;-webkit-user-select:none}
 .tbpitch .tbt{cursor:grab}.tbpitch [data-tbarrow]{cursor:pointer}
-.tbmodes{position:sticky;top:0;z-index:5;align-self:stretch;justify-content:center}.tbmodes button{flex:1;min-height:44px;font-weight:800;padding-inline:8px}
+.tbmodes{align-self:stretch;justify-content:center;scroll-margin-top:72px}.tbmodes button{flex:1;min-height:44px;font-weight:800;padding-inline:8px}
 .tb .chips{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
 .tb .chips button{min-height:36px;padding:0 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--field);font:700 14px var(--body);color:var(--ink);cursor:pointer}
 .tb .tbsaved{display:inline-flex}.tb .tbsaved button:first-child{border-radius:999px 0 0 999px}.tb .tbsaved button:last-child{border-radius:0 999px 999px 0;border-left:0;padding:0 10px}
