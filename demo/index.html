@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<script>if(location.protocol==="http:"&&!/^(localhost|127\.)/.test(location.hostname))location.replace("https://"+location.host+location.pathname+location.search+location.hash)</script>
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Sample Town Junior Football Club Under 12s results and stats">
+<meta name="robots" content="noindex,nofollow,noimageindex,noarchive,nosnippet">
+<link rel="icon" href="crest.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<style>body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<script src="team.js"></script>
+<script src="config.js"></script>
+<script>
+// Team setup (supabase/7_team_setup.sql): a coach's answers on the Team setup page are laid over team.js.
+// The last copy is kept on the phone so the page draws in the right colours at once. On a phone's first visit the page
+// draws straight away from team.js and asks the database alongside the results (suRefresh), so poor signal never holds it up.
+(function(){const T=window.TEAM=window.TEAM||{},K=(T.storageKey||"team")+".setup";let row=null;
+  try{row=JSON.parse(localStorage.getItem(K)||"null")}catch(e){}
+  window.TEAM_SETUP=row;window.SETUP_WAIT=!row;if(row&&row.settings)Object.assign(T,row.settings)})();
+</script>
+<script src="demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<title>Sample Town Under 12s</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Luckiest+Guy&family=Oswald:wght@700&family=Archivo:wght@400;500;600;800&display=swap">
+<link rel="stylesheet" href="app.css">
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#13804A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sample Town U12s">
+<script src="/assets/stats.js" async></script>
+</head>
+<body>
+<header class="mast">
+  <div class="in">
+    <button class="homebtn" data-view="home" aria-label="Home"><img class="crest" src="crest.png" alt="Club badge"></button>
+    <div>
+      <h1 id="teamTitle">Sample Town <em>Under 12s</em></h1>
+      <p id="teamTagline">Junior Football Club · Girls</p>
+    </div>
+    <div class="auth" id="auth"></div>
+    <div class="season"><label class="f" style="color:inherit" for="season">Season<select id="season"></select></label></div>
+  </div>
+</header>
+<div id="ticker" class="ticker" hidden></div>
+<nav class="tabs" aria-label="Sections">
+  <button data-view="home" aria-current="page">Home</button>
+  <button data-view="fixtures">Fixtures</button>
+  <button data-view="results">Results</button>
+  <button data-view="players">Players</button>
+  <button data-view="opps">Opponents</button>
+  <button data-view="honours">Honours</button>
+  <button data-view="gallery">Photos</button>
+  <button data-view="review">Review</button>
+  <button data-view="book" class="edit-only">Sticker book</button>
+  <button data-view="squad">Squad</button>
+  <button data-view="training">Training</button>
+  <button data-view="tactics" class="edit-only">Tactics</button>
+  <button data-view="gfx" class="edit-only">Graphics</button>
+  <button data-view="new" class="add edit-only">+ Add a match</button>
+  <button data-view="tnew" class="edit-only">+ Tournament</button>
+</nav>
+<main id="main"><div class="empty">Loading the season…</div></main>
+<main id="gfxView" hidden>
+<nav class="gtabs" role="tablist">
+    <button role="tab" id="tab-squad" aria-selected="true" data-mode="squad">Squad announcement</button>
+    <button role="tab" id="tab-ft" aria-selected="false" data-mode="ft">Full time</button>
+    <button role="tab" id="tab-potm" aria-selected="false" data-mode="potm">Player of the match</button>
+    <button role="tab" id="tab-month" aria-selected="false" data-mode="month">Fixtures this month</button>
+    <button role="tab" id="tab-ms" aria-selected="false" data-mode="ms">Milestone</button>
+    <button role="tab" id="tab-setup" aria-selected="false" data-mode="setup">Logos</button>
+  </nav>
+
+  <div class="ggrid">
+    <div class="col" style="display:flex;flex-direction:column;gap:16px;min-width:0">
+
+      <section class="panel" id="matchPanel">
+        <h2>The match</h2>
+        <div class="grow">
+          <label class="f" style="grid-column:1/-1">Opponent<input type="text" id="opp"></label>
+          <label class="f">Date<input type="date" id="date"></label>
+          <label class="f">Kick-off<input type="time" id="ko"></label>
+          <label class="f">Venue<input type="text" id="venue" placeholder="e.g. New Ferens Park"></label>
+          <label class="f">Competition<select id="comp"><option>League</option><option>Cup</option><option>Friendly</option><option>Tournament</option></select></label>
+        </div>
+        <div class="btns">
+          <div class="seg" role="group" aria-label="Home or away">
+            <button id="ha-H" aria-pressed="true" data-gha="H">Home</button><button id="ha-A" aria-pressed="false" data-gha="A">Away</button>
+          </div>
+          <div class="file"><span class="thumb" id="oppCrestThumb"></span><label class="f">Opponent badge (saved for the whole site)<input type="file" id="oppCrest" accept="image/*"></label></div>
+        </div>
+      </section>
+
+      <section class="panel" data-for="squad">
+        <h2>Squad</h2>
+        <div class="gplayers" id="squadPick"></div>
+        <p class="hint" id="squadCount"></p>
+        <div class="btns">
+          <span class="hint">Kit</span>
+          <div class="seg" role="group" aria-label="Kit colour" id="kitSeg">
+          </div>
+        </div>
+        <label class="f">Captain (wears the armband)<select id="captain"></select></label>
+        <div class="file"><span class="thumb" id="squadPhotoThumb"></span><label class="f">Player photo for the left side (a cut-out works best)<input type="file" id="squadPhoto" accept="image/*"></label></div>
+      </section>
+
+      <section class="panel" data-for="ft" hidden>
+        <h2>Score</h2>
+        <div class="grow">
+          <label class="f">Our goals<input type="number" id="usScore" min="0" max="40"></label>
+          <label class="f">Their goals<input type="number" id="themScore" min="0" max="40"></label>
+        </div>
+        <h2>Scorers</h2>
+        <div class="goals" id="goalPick"></div>
+        <p class="hint">Tap + for each goal. Our score fills in from the scorers; change it if there was an own goal.</p>
+        <h2>Assists</h2>
+        <div class="goals" id="astPick"></div>
+        <label class="f"><span data-potm>Player of the match</span><select id="ftPotm"></select></label>
+        <div class="file"><span class="thumb" id="ftPhotoThumb"></span><label class="f">Team photo<input type="file" id="ftPhoto" accept="image/*"></label></div>
+      </section>
+
+      <section class="panel" data-for="month" hidden>
+        <h2>Fixtures this month</h2>
+        <label class="f">Month<input type="month" id="gMonth"></label>
+        <p class="hint" id="monthHint">Fixtures come from the Fixtures page.</p>
+      </section>
+      <section class="panel" data-for="ms" hidden>
+        <h2>Milestone</h2>
+        <label class="f">Player<select id="msPlayer"></select></label>
+        <label class="f">Milestone<input type="text" id="msLabel" placeholder="e.g. 10 games"></label>
+        <p class="hint">Milestones are listed on the Review page and each player's page, with a Make graphic button.</p>
+      </section>
+      <section class="panel" data-for="potm" hidden>
+        <h2 data-potm>Player of the match</h2>
+        <label class="f">Player<select id="potmPlayer"></select></label>
+        <div class="btns">
+          <span class="hint">Shirt</span>
+          <div class="seg" role="group" aria-label="Shirt colour" id="pkitSeg">
+          </div>
+        </div>
+        <div class="file"><span class="thumb" id="potmPhotoThumb"></span><label class="f"><span id="potmPhotoLabel">Her photo with the award</span><input type="file" id="potmPhoto" accept="image/*"></label></div>
+      </section>
+
+      <section class="panel" data-for="setup" hidden>
+        <h2>Badges and logos</h2>
+        <p class="hint" id="logoHint">The club badge and sponsor logos are built in. Upload a replacement here only if one changes; it's kept in this browser.</p>
+        <div class="file" id="octopusRow"><span class="thumb" id="octopusThumb"></span><label class="f"><span id="octopusLabel">Octopus Energy logo (shown on the purple kit; a white logo works best)</span><input type="file" id="octopusUp" accept="image/*"></label></div>
+        <div class="file"><span class="thumb" id="crestThumb"></span><label class="f">Club badge<input type="file" id="crestUp" accept="image/*"></label></div>
+        <div class="file"><span class="thumb" id="sponsorThumb"></span><label class="f">Sponsor logo<input type="file" id="sponsorUp" accept="image/*"></label></div>
+        <div class="file" id="coffeyRow"><span class="thumb" id="coffeyThumb"></span><label class="f">Player of the match badge (replaces the whole badge)<input type="file" id="coffeyUp" accept="image/*"></label></div>
+        <label class="f">Sponsor name (for captions)<input type="text" id="sponsorName"></label>
+        <div class="btns"><button class="btn ghost" id="clearLogos">Go back to the standard logos</button></div>
+        <p class="hint">Players and shirt numbers come from the Squad page.</p>
+      </section>
+    </div>
+
+    <div class="preview" style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <canvas id="cv" width="1080" height="1080" aria-label="Post preview"></canvas>
+      <div class="btns">
+        <button class="btn" id="saveBtn">Save image</button>
+        <span class="hint" id="saveHint">On a phone you can also press and hold the image to save it.</span>
+      </div>
+      <div class="gtoast" id="gtoast" role="status"></div>
+      <section class="panel">
+        <h2>Facebook caption</h2>
+        <textarea id="caption" aria-label="Caption"></textarea>
+        <div class="btns"><button class="btn ghost" id="copyCap">Copy caption</button></div>
+      </section>
+    </div>
+  </div>
+
+</main>
+<footer class="sitefoot" id="siteFoot" hidden></footer>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="app.js"></script>
+
+</body>
+</html>

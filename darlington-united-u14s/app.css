@@ -34,6 +34,10 @@ nav.tabs button{font:600 14px var(--body);padding:9px 14px;border-radius:999px;b
 nav.tabs button[aria-current="page"]{background:var(--club);border-color:var(--club);color:var(--clubInk)}
 nav.tabs .add{background:var(--gold);border-color:var(--gold);color:var(--goldInk)}
 main{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:16px 60px}
+/* Footer credit: small and muted so the club's own branding stays in front */
+.sitefoot{max-width:1100px;margin:-28px auto 0;padding:0 16px calc(24px + env(safe-area-inset-bottom));text-align:center;font-size:12px}
+.sitefoot a{color:var(--muted);text-decoration:none;opacity:.85}
+.sitefoot a:hover{text-decoration:underline;opacity:1}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 10px;letter-spacing:.01em}
 h3{font:800 12px var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
@@ -127,7 +131,7 @@ h3{font:800 12px var(--body);text-transform:uppercase;letter-spacing:.09em;color
 @media print{
   @page{size:A4;margin:0}
   body{background:#fff}
-  .mast,nav.tabs,.bookbar,.bookctl,#toast,#gfxView{display:none!important}
+  .mast,nav.tabs,.bookbar,.bookctl,#toast,#gfxView,.sitefoot{display:none!important}
   main#main{padding:0!important;margin:0!important;max-width:none!important}
   #book{gap:0}
   .bp{box-shadow:none;break-after:page;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -144,6 +148,9 @@ h3{font:800 12px var(--body);text-transform:uppercase;letter-spacing:.09em;color
 .pitch{position:relative;width:100%;max-width:420px;aspect-ratio:3/4;margin:6px auto;border-radius:12px;background:repeating-linear-gradient(0deg,#2E8B3E 0 12.5%,#33963F 12.5% 25%);border:3px solid #fff;overflow:hidden}
 .pitch:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.8)}
 .pitch:after{content:"";position:absolute;left:30%;right:30%;bottom:0;height:16%;border:2px solid rgba(255,255,255,.8);border-bottom:0}
+/* rugby: our half, attacking up the page: halfway near the top, then our 22 and our try line */
+.pitch.rugby:before{top:12%}
+.pitch.rugby:after{left:0;right:0;top:62%;bottom:auto;height:30%;border:0;border-top:2px solid rgba(255,255,255,.8);border-bottom:2px solid rgba(255,255,255,.8)}
 .spot{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:1}
 .spot b{width:40px;height:40px;border-radius:50%;background:var(--gold);color:#111;display:grid;place-items:center;font:400 18px var(--display);border:2px solid #111}
 .spot.gk b{background:#1AA8A0;color:#fff}
@@ -416,3 +423,50 @@ h2.sect{font-size:26px;text-transform:uppercase;letter-spacing:.02em;margin-top:
 .hero .btns{position:relative;justify-content:center;margin-top:12px}
 .hero .btn.ghost{color:#fff;border-color:rgba(255,255,255,.45)}
 .clublink{display:inline-block;margin-top:4px;color:inherit;opacity:.85;font:700 12px var(--body);letter-spacing:.04em}
+/* sub plan: the due-change banner is pinned to the bottom of the screen so it can't be missed */
+.plandue{position:fixed;inset:auto 0 0 0;z-index:49;border-radius:0;background:var(--card);color:var(--ink);border-top:3px solid var(--gold);font-size:15px;padding:14px;box-shadow:0 -8px 30px rgba(0,0,0,.25)}.plandue ul{margin:6px 0 8px 18px;padding:0}.plandue li{margin:2px 0}
+.tl li.bad{opacity:.7}
+/* get the app: numbered install steps */
+.steps{margin:0;padding-left:22px;display:grid;gap:8px;font-size:15px}
+/* tactics board (coaches only) */
+.tb .seg{flex-wrap:wrap}
+.tbwrap{display:flex;justify-content:center}
+.tbpitch{display:block;width:100%;max-width:560px;max-height:calc(100vh - 190px);max-height:calc(100svh - 190px);aspect-ratio:2/3;width:min(100%,560px,(100svh - 190px)*2/3);border-radius:12px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.18);touch-action:none;user-select:none;-webkit-user-select:none}
+.tbpitch .tbt{cursor:grab}.tbpitch [data-tbarrow]{cursor:pointer}
+.tbmodes{align-self:stretch;justify-content:center;scroll-margin-top:72px}.tbmodes button{flex:1;min-height:44px;font-weight:800;padding-inline:8px}
+.tb .chips{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
+.tb .chips button{min-height:36px;padding:0 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--field);font:700 14px var(--body);color:var(--ink);cursor:pointer}
+.tb .tbsaved{display:inline-flex}.tb .tbsaved button:first-child{border-radius:999px 0 0 999px}.tb .tbsaved button:last-child{border-radius:0 999px 999px 0;border-left:0;padding:0 10px}
+.tb .sw{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.35);margin-right:6px;vertical-align:-1px}
+.tbhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.tbhead h2{margin:0}
+/* full screen board: covers the page (and the browser's own full screen where there is one) for showing the team at a game */
+body.tbfs-on{overflow:hidden;overscroll-behavior:none}
+body.tbfs-on .mast,body.tbfs-on nav.tabs,body.tbfs-on .sitefoot,body.tbfs-on #ticker{display:none}
+body.tbfs-on .toast{z-index:1001}
+.tbfs{position:fixed;inset:0;z-index:900;background:#0E1A12;color:#fff;display:grid;gap:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));-webkit-user-select:none;user-select:none}
+.tbfs.port{grid-template-rows:auto minmax(0,1fr)}
+.tbfs.land{grid-template-columns:auto minmax(0,1fr)}
+.tbfsbar{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.tbfs.land .tbfsbar{flex-direction:column;flex-wrap:nowrap;width:140px;overflow-y:auto}
+.tbfsmodes{display:flex;gap:8px;flex:1 1 360px}.tbfs.land .tbfsmodes{flex:none;flex-direction:column}
+.tbfsmodes button{flex:1}
+.tbfsbar button{min-height:56px;min-width:56px;border-radius:14px;border:2px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;font:800 17px var(--body);padding:0 14px;touch-action:manipulation;cursor:pointer;white-space:nowrap}
+.tbfsbar button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#14182E}
+.tbfsbar button:disabled{opacity:.35;cursor:default}
+.tbfsbar .tbfsx{background:#fff;border-color:#fff;color:#14182E}
+.tbfspitch{position:relative;min-width:0;min-height:0;display:grid;place-items:center;container-type:size}
+.tbfs .tbpitch{max-width:100%;max-height:100%;border-width:4px;border-radius:16px}
+.tbfs.land .tbpitch{aspect-ratio:3/2;width:min(100cqw,150cqh);height:auto}
+.tbfs.port .tbpitch{aspect-ratio:2/3;width:min(100cqw,66.66cqh);height:auto}
+.tbfssel{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:max-content;max-width:min(620px,calc(100% - 20px));background:var(--card);color:var(--ink);border-radius:16px;padding:4px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
+.tbfssel.top{bottom:auto;top:10px}
+.tbfssel .note{margin:0;font-size:17px}
+.tbfssel .chips button,.tbfssel .mini{min-height:48px;font-size:16px;padding:0 16px}
+@media (max-height:520px){.tbfsbar button{min-height:44px;font-size:15px}.tbfs.land .tbfsbar{width:118px}.tbfssel .note{font-size:15px}.tbfssel .chips button,.tbfssel .mini{min-height:40px;font-size:14px;padding:0 12px}}
+/* supporter cheers: the card on match pages and the live page, and the pop-up that slides in at the bottom */
+.cheers .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.cheers .chips button{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--field);font:700 14.5px var(--body);color:var(--ink);cursor:pointer}
+.cheers .chips button:active{background:var(--gold);color:var(--goldInk)}.cheers .chips button:disabled{opacity:.5}
+.cwall{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}.cwall li{padding:8px 10px;border-radius:10px;background:var(--field);font-size:14px;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.cheerpop{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);transform:translateX(-50%);z-index:9000;max-width:calc(100% - 32px);padding:12px 18px;border-radius:999px;background:var(--gold);color:var(--goldInk);font:700 16px var(--body);box-shadow:0 8px 24px rgb(var(--shadowRGB) / .35);cursor:pointer;animation:cpop .4s ease-out}
+@keyframes cpop{from{transform:translate(-50%,40px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+@media (prefers-reduced-motion:reduce){.cheerpop{animation:none}}

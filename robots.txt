@@ -8,6 +8,8 @@ Allow: /$
 Allow: /index.html
 Allow: /assets/
 Allow: /guides/
+Allow: /privacy/
+Allow: /dpa/
 Disallow: /*/badges/
 Disallow: /*.png$
 Disallow: /*.jpg$
@@ -28,6 +30,8 @@ Allow: /$
 Allow: /index.html
 Allow: /assets/
 Allow: /guides/
+Allow: /privacy/
+Allow: /dpa/
 Disallow: /
 
 Sitemap: https://touchlinetales.club/sitemap.xml

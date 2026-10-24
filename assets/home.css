@@ -167,6 +167,7 @@ details p{padding:0 22px 18px;margin:0}
 @media (max-width:600px){.feature-list{grid-template-columns:1fr;gap:28px}}
 
 /* Footer links (guides) */
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
 .foot-links a{color:var(--mist);text-decoration:underline;text-underline-offset:3px}
 .foot-links a:hover{color:var(--chalk)}
 
@@ -192,3 +193,40 @@ details p{padding:0 22px 18px;margin:0}
 .guide-cta .btn:focus-visible{outline-color:var(--gold)}
 @media (max-width:720px){.guide-hero{padding:44px 0 40px}.guide{padding-top:40px}.guide-cta{padding:24px 20px 22px}}
 .foot-in > p.small:last-child{flex-basis:100%;opacity:.85}
+
+/* How it works video */
+.how-in{display:grid;grid-template-columns:1fr minmax(0,420px);gap:56px;align-items:center}
+.how-copy p{max-width:34em}
+.how-list{margin:22px 0 0;padding:0 0 0 1.3em}
+.how-list li{margin:0 0 12px;padding-left:4px}
+.how-list li::marker{color:var(--gold);font-weight:700}
+.how-list b{color:var(--chalk)}
+.how-video{margin:0}
+.how-video video{display:block;width:100%;height:auto;aspect-ratio:4/5;border-radius:22px;background:var(--night);box-shadow:0 0 0 2px rgba(201,220,207,.25),0 24px 60px rgba(0,0,0,.45)}
+.how-video figcaption{font-size:13px;color:var(--mist);text-align:center;margin-top:12px;opacity:.9}
+/* on phones the video sits straight under the intro, before the steps */
+@media (max-width:880px){.how-in{grid-template-columns:1fr;gap:0}.how-copy{display:contents}.how-video{order:1;max-width:440px;margin:10px auto 8px;width:100%}.how-list{order:2}}
+/* Demo gate */
+.gate{border:0;padding:0;border-radius:var(--r);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 32px);background:var(--white);color:var(--turf)}
+.gate::backdrop{background:rgba(14,42,29,.7)}
+.gate .form{position:relative;border-top:5px solid var(--gold)}
+.gate h2{margin-top:0}
+.gate-x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:28px;line-height:1;color:var(--turf);cursor:pointer;padding:6px}
+.gate-skip{text-align:center;margin:12px 0 0}
+
+/* Sports */
+.sports{display:grid;gap:28px;margin-top:36px}
+.sport{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:40px;align-items:center;background:var(--white);border-radius:var(--r);padding:28px 32px;box-shadow:0 1px 0 var(--line),0 8px 24px rgba(14,42,29,.06);border-left:5px solid var(--green)}
+.sport:nth-child(even){grid-template-columns:1fr minmax(0,260px)}
+.sport:nth-child(even) .sport-shot{order:2}
+.sport-shot{background:#071710;border-radius:30px;padding:10px;box-shadow:0 16px 40px rgba(14,42,29,.28),inset 0 0 0 2px #24402f}
+.sport-shot img{width:100%;height:auto;border-radius:22px}
+.sport-tag{font:500 13px/1.2 var(--body);text-transform:uppercase;letter-spacing:.18em;color:var(--green);margin:0 0 10px}
+.sport h3{font-size:28px}
+.ticks{list-style:none;margin:0 0 18px;padding:0}
+.ticks li{position:relative;padding:0 0 10px 30px;font-size:16px;line-height:1.5}
+.ticks li::before{content:"";position:absolute;left:0;top:3px;width:20px;height:20px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23F6F3EA' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.sport-link{font-weight:700;text-underline-offset:3px}
+.sport-link::after{content:" →"}
+.sport-note{margin-top:24px;max-width:46em}
+@media (max-width:760px){.sport,.sport:nth-child(even){grid-template-columns:1fr;gap:22px;padding:22px 20px}.sport:nth-child(even) .sport-shot{order:0}.sport-shot{max-width:260px;margin:0 auto;width:100%}}

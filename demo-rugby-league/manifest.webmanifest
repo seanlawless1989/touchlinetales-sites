@@ -1,0 +1,29 @@
+{
+  "name": "Sample Town Under 13s",
+  "short_name": "Sample Town U13s",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#B5121B",
+  "theme_color": "#B5121B",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
