@@ -108,6 +108,16 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3}
 .zoom button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:18px}
 .mapgrid{display:grid;gap:14px}
+.pin.ghost .head{background:var(--card);border-style:dashed;color:var(--ink);backdrop-filter:blur(2px)}
+.pin.ghost .tail{opacity:.4}
+.pin.ghost{opacity:.85}
+.tag.drive{background:transparent;border:1.5px dashed var(--muted);color:var(--muted)}
+.drivenote{background:var(--pitch-2);border:1.5px dashed var(--pitch);border-radius:12px;padding:10px 12px;font-size:13px}
+.modebox{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modebox button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;color:inherit}
+.modebox button small{color:var(--muted);font-size:12px}
+.modebox button[aria-checked="true"]{border-color:var(--pitch);background:var(--pitch-2);box-shadow:inset 0 0 0 1px var(--pitch)}
+.modebox #m-drive[aria-checked="true"]{border-style:dashed}
 @media (min-width:1100px){.mapgrid{grid-template-columns:minmax(0,1fr) 300px}.facts{max-height:clamp(420px,68vh,760px);overflow:auto}}
 .facts{display:flex;flex-direction:column;gap:8px}
 .facthead{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#15211b,#1d6b45);color:#fff;border-radius:14px;padding:12px 14px}
@@ -323,6 +333,7 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
       <div class="sportbar" id="sportBar" role="group" aria-label="Sport"></div>
       <button class="chip" id="fTodo" aria-pressed="true" type="button">Show grounds still to do</button>
       <button class="chip" id="fMine" aria-pressed="false" type="button">Only my grounds</button>
+      <button class="chip" id="fDrive" aria-pressed="true" type="button">Show drive-bys</button>
       <button class="chip" id="fUK" type="button">UK &amp; Ireland</button>
       <button class="chip" id="fEU" type="button">Europe</button>
       <button class="chip" id="fAM" type="button">Americas</button>
@@ -333,7 +344,7 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
       <svg id="land" preserveAspectRatio="none"></svg>
       <div class="pins" id="pins"></div>
       <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
-      <div class="legend"><span><i style="background:var(--amber)"></i>Visited by the group</span><span><i style="background:var(--pitch)"></i>You've been</span><span><i style="background:var(--card);border-color:var(--pin-todo)"></i>Still to do</span></div>
+      <div class="legend"><span><i style="background:var(--amber)"></i>Visited by the group</span><span><i style="background:var(--pitch)"></i>You've been</span><span><i style="background:var(--card);border-color:var(--pin-todo)"></i>Still to do</span><span><i style="background:transparent;border-style:dashed"></i>Drive-by</span></div>
       <div class="pickbanner" id="pickBanner" hidden>Tap the map where the ground is <button type="button" id="pickCancel">Cancel</button></div>
     </div>
     <aside class="facts" id="facts" aria-label="Fact file"></aside>
@@ -900,6 +911,7 @@ function nameOf(uid) {
   if (p && p.name) return p.name;
   return uid === S.me ? "You" : "Someone";
 }
+const isReal = c => !c.driveby;
 const groundKey = c => c.groundId || ("custom:" + slug(c.ground || "ground") + ":" + (+c.lat).toFixed(3) + "," + (+c.lng).toFixed(3));
 const isMine = c => c.by === S.me && !c.who || (c.who && S.me && norm(c.who) === norm(S.players.get(S.me)?.nick || "\u0000"));
 const canModify = c => !S.readOnly && (c.by === S.me || S.isOwner);
@@ -976,6 +988,8 @@ $("#fWD").onclick = () => fitBounds(-50, -170, 70, 175);
   for (const [k, label] of [["all", "All sports"], ...Object.entries(SPORTS)]) bar.append(h("button", { type: "button", "aria-pressed": String(S.sport === k), onclick: () => { S.sport = k; drawSports(); renderPins(); }, text: label }));
 })();
 $("#fTodo").onclick = e => { S.showTodo = !S.showTodo; e.currentTarget.setAttribute("aria-pressed", S.showTodo); renderPins(); };
+S.showDrive = true;
+$("#fDrive").onclick = e => { S.showDrive = !S.showDrive; e.currentTarget.setAttribute("aria-pressed", S.showDrive); renderPins(); };
 $("#fMine").onclick = e => { S.onlyMine = !S.onlyMine; e.currentTarget.setAttribute("aria-pressed", S.onlyMine); renderPins(); };
 new ResizeObserver(() => applyView()).observe(stage);
 function startPick(cb) { pickMode = cb; $("#pickBanner").hidden = false; stage.style.cursor = "crosshair"; switchTab("map"); }
@@ -997,12 +1011,13 @@ function groundIndex() {
   }
   for (const g of idx.values()) {
     g.list.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-    const sc = g.list.map(overall).filter(v => v != null);
+    g.real = g.list.filter(isReal); g.drives = g.list.length - g.real.length; g.ghost = !g.real.length;
+    const sc = g.real.map(overall).filter(v => v != null);
     g.avg = sc.length ? sc.reduce((a, b) => a + b, 0) / sc.length : null;
     g.crit = {};
-    for (const [k] of CRITERIA) { const v = g.list.map(c => c.ratings?.[k]).filter(v => v > 0); g.crit[k] = v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; }
-    g.mine = g.list.some(isMine);
-    g.people = new Set(g.list.map(playerKey)).size;
+    for (const [k] of CRITERIA) { const v = g.real.map(c => c.ratings?.[k]).filter(v => v > 0); g.crit[k] = v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; }
+    g.mine = g.real.some(isMine); g.mineDrive = g.list.some(c => c.driveby && isMine(c));
+    g.people = new Set(g.real.map(playerKey)).size;
   }
   return idx;
 }
@@ -1017,10 +1032,12 @@ function renderPins() {
     const b = h("button", { class: "dot", type: "button", title: `${g.ground} · ${g.club}`, "aria-label": `${g.ground}, ${g.club}, not visited yet`, onclick: () => openGround({ key: g.id, base: g, ground: g.ground, club: g.club, lat: g.lat, lng: g.lng, group: g.group, list: [], crit: {} }) });
     pinsEl.append(b); pinRefs.push({ el: b, lat: g.lat, lng: g.lng, dot: true });
   }
-  const visited = [...idx.values()].filter(g => (!S.onlyMine || g.mine) && (S.sport === "all" || g.list.some(c => sportOf(c) === S.sport))).sort((a, b) => b.lat - a.lat);
+  const visited = [...idx.values()].filter(g => (S.showDrive || !g.ghost) && (!S.onlyMine || g.mine || g.mineDrive) && (S.sport === "all" || g.list.some(c => sportOf(c) === S.sport))).sort((a, b) => b.lat - a.lat);
   for (const g of visited) {
-    const b = h("button", { class: "pin" + (g.mine ? " mine" : ""), type: "button", "aria-label": `${g.ground}, ${g.list.length} check-ins`, onclick: () => openGround(g) },
-      h("span", { class: "head", text: g.list.length }), h("span", { class: "tail" }));
+    const head = h("span", { class: "head", text: g.ghost ? "" : g.real.length });
+    if (g.ghost) head.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>`;
+    const b = h("button", { class: "pin" + (g.ghost ? " ghost" : g.mine ? " mine" : ""), type: "button", "aria-label": g.ghost ? `${g.ground}, drive-by only` : `${g.ground}, ${g.real.length} check-ins`, onclick: () => openGround(g) },
+      head, h("span", { class: "tail" }));
     pinsEl.append(b); pinRefs.push({ el: b, lat: g.lat, lng: g.lng, name: g.ground });
   }
   positionPins();
@@ -1077,29 +1094,33 @@ function openGround(g) {
     h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeSheet, text: "×" }));
   const sheet = h("aside", { class: "sheet", role: "dialog", "aria-label": g.ground }, head, body);
   if (g.list.length) {
-    body.append(h("div", { class: "row", style: "display:flex;gap:12px;align-items:center" },
+    const dtxt = g.drives ? `${g.drives} drive-by${g.drives > 1 ? "s" : ""}` : "";
+    if (g.ghost) body.append(h("div", { class: "drivenote" }, h("b", { text: "Seen it, not been in" }), h("div", { text: `${dtxt} so far. Get through the turnstile to tick it off properly.` })));
+    else body.append(h("div", { class: "row", style: "display:flex;gap:12px;align-items:center" },
       h("span", { class: "score big", text: f1(g.avg) }),
-      h("div", {}, h("b", { text: `${g.list.length} check-in${g.list.length > 1 ? "s" : ""}` }), h("div", { style: "color:var(--muted);font-size:13px", text: `by ${g.people} ${g.people > 1 ? "people" : "person"}` }))));
+      h("div", {}, h("b", { text: `${g.real.length} check-in${g.real.length > 1 ? "s" : ""}` }), h("div", { style: "color:var(--muted);font-size:13px", text: `by ${g.people} ${g.people > 1 ? "people" : "person"}${dtxt ? " · plus " + dtxt : ""}` }))));
     const crit = h("div", { style: "display:flex;flex-direction:column;gap:7px" });
     for (const [k, label] of CRITERIA) {
       const v = g.crit[k];
       crit.append(h("div", { class: "crit" }, h("span", { text: label }), h("span", { class: "track" }, h("i", { style: `width:${v ? v / 5 * 100 : 0}%` })), h("b", { text: f1(v) })));
     }
-    body.append(crit);
+    if (!g.ghost) body.append(crit);
     const list = h("div", {});
     for (const c of g.list) {
       const th = h("div", { class: "thumb" }); if (c.hasPhoto) loadPhoto(c.id).then(src => src && th.append(h("img", { src, alt: "" })));
       list.append(h("div", { class: "minirow" }, th, h("div", { class: "txt" },
         h("b", { text: playerName(c) }), " · ", fmtDate(c.date), c.match ? h("div", { text: c.match }) : null,
         c.note ? h("div", { style: "color:var(--muted)", text: c.note }) : null,
-        h("div", { class: "row", style: "display:flex;gap:10px;margin-top:4px;align-items:center" }, h("span", { class: "score", text: f1(overall(c)) }),
+        h("div", { class: "row", style: "display:flex;gap:10px;margin-top:4px;align-items:center" }, c.driveby ? h("span", { class: "tag drive", text: "Drive-by" }) : h("span", { class: "score", text: f1(overall(c)) }),
           canModify(c) ? h("button", { class: "linkbtn", type: "button", onclick: () => openForm(c), text: "Edit" }) : null))));
     }
     body.append(list);
   } else {
     body.append(h("p", { class: "sub", style: "margin:0", text: "Nobody in the group has ticked this one off yet." }));
   }
-  if (!S.readOnly) body.append(h("button", { class: "btn btn-amber", type: "button", onclick: () => openForm(null, g.base || { custom: true, ground: g.ground, club: g.club, lat: g.lat, lng: g.lng }), text: "+ Check in here" }));
+  if (!S.readOnly) { const pre = g.base || { custom: true, ground: g.ground, club: g.club, lat: g.lat, lng: g.lng };
+    body.append(h("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, h("button", { class: "btn btn-amber", type: "button", onclick: () => openForm(null, pre), text: "+ Check in here" }),
+      h("button", { class: "btn btn-ghost", type: "button", onclick: () => openForm(null, pre, true), text: "Log a drive-by" }))); }
   host.append(sheet);
 }
 document.addEventListener("keydown", e => { if (e.key === "Escape") { if ($("#modalHost").firstChild) closeModal(); else closeSheet(); } });
@@ -1117,13 +1138,13 @@ function searchGrounds(q, n = 10) {
   }
   return scored.sort((a, b) => b[0] - a[0]).slice(0, n).map(x => x[1]);
 }
-function openForm(existing, preset) {
+function openForm(existing, preset, driveby) {
   if (S.readOnly) { toast("Join the group with the group code to check in."); return; }
   closeSheet();
   const st = {
     ground: existing ? (existing.groundId ? GBYID.get(existing.groundId) : { custom: true, ground: existing.ground, club: existing.club, lat: existing.lat, lng: existing.lng }) : (preset || null),
     date: existing ? (existing.date || "") : todayISO(), historic: existing ? !!(existing.historic || !existing.date || existing.date.length === 4) : false,
-    sport: existing?.sport || "", match: existing?.match || "", note: existing?.note || "",
+    driveby: existing ? !!existing.driveby : !!driveby, sport: existing?.sport || "", match: existing?.match || "", note: existing?.note || "",
     ratings: { ...(existing?.ratings || {}) }, photo: undefined, hadPhoto: !!existing?.hasPhoto,
   };
   const id = existing?.id || ("c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
@@ -1198,6 +1219,17 @@ function openForm(existing, preset) {
   } });
 
   const saveBtn = h("button", { class: "btn btn-amber", type: "submit", text: existing ? "Save changes" : "Check in" });
+  const modeBox = h("div", { class: "modebox", role: "radiogroup", "aria-label": "Type of visit" });
+  const scoreBox = h("div", { class: "f", style: "display:flex;flex-direction:column;gap:8px" }, h("b", { style: "font-size:13px", text: "Your scores (tap again to clear)" }), rate);
+  const matchBox = h("label", { class: "f" }, "Match (optional)", h("input", { id: "f-match", value: st.match, placeholder: "Stockport 2–1 Barnsley", oninput: e => st.match = e.target.value }));
+  const driveHint = h("p", { class: "drivenote", style: "margin:0" }, h("b", { text: "Drive-by: " }), "seen it from the motorway, the train or the car park, but not been in. It goes on the map and the Drive-bys table, and doesn't count for points, the 92 or badges.");
+  function drawMode() {
+    modeBox.innerHTML = "";
+    for (const [v, label, sub] of [[false, "Been in", "Through the turnstile"], [true, "Drive-by", "Seen it, not been in"]])
+      modeBox.append(h("button", { type: "button", role: "radio", id: v ? "m-drive" : "m-in", "aria-checked": String(st.driveby === v), onclick: () => { st.driveby = v; drawMode(); } }, h("b", { text: label }), h("small", { text: sub })));
+    scoreBox.hidden = matchBox.hidden = st.driveby; driveHint.hidden = !st.driveby;
+    if (!existing) saveBtn.textContent = st.driveby ? "Log drive-by" : "Check in";
+  }
   const form = h("form", { onsubmit: async e => {
     e.preventDefault(); err.textContent = "";
     const g = st.ground;
@@ -1205,25 +1237,25 @@ function openForm(existing, preset) {
     if (g.custom && (!g.ground || g.lat == null)) { err.textContent = "Give the ground a name and drop a pin for it."; return; }
     const doc = {
       by: existing?.by || S.me, groundId: g.custom ? null : g.id, ground: g.ground, club: g.club || "",
-      lat: +(+g.lat).toFixed(5), lng: +(+g.lng).toFixed(5), date: st.historic || !st.date ? (st.date.length === 4 ? st.date : "") : st.date, historic: st.historic || !st.date, sport: st.sport || "FB", match: st.match.trim(), note: st.note.trim(),
-      ratings: Object.fromEntries(Object.entries(st.ratings).filter(([, v]) => v > 0)),
+      lat: +(+g.lat).toFixed(5), lng: +(+g.lng).toFixed(5), date: st.historic || !st.date ? (st.date.length === 4 ? st.date : "") : st.date, historic: st.historic || !st.date, sport: st.sport || "FB", match: st.driveby ? "" : st.match.trim(), note: st.note.trim(),
+      ratings: st.driveby ? {} : Object.fromEntries(Object.entries(st.ratings).filter(([, v]) => v > 0)),
       hasPhoto: st.photo ? true : st.hadPhoto, source: existing?.source || "app", createdAt: existing?.createdAt || Date.now(),
     };
     if (existing?.who) doc.who = existing.who;
+    if (st.driveby) doc.driveby = true;
     if (!doc.by) { err.textContent = "Join the group first."; return; }
     saveBtn.disabled = true; saveBtn.textContent = "Saving…";
     try {
       if (st.photo) { await S.db.doc("photos/" + id).set({ data: st.photo, by: S.me }); photoCache.set(id, Promise.resolve(st.photo)); }
       await S.db.doc("checkins/" + id).set(doc);
-      closeModal(); toast(existing ? "Saved" : `Checked in at ${g.ground}`);
+      closeModal(); toast(existing ? "Saved" : st.driveby ? `Drive-by logged: ${g.ground}` : `Checked in at ${g.ground}`);
       const k = groundKey(doc); const gi = groundIndex().get(k); if (gi) { switchTab("map"); const [x, y] = proj(gi.lat, gi.lng); if (vb.w > 30) { vb.w = 20; } vb.x = x - vb.w / 2; vb.y = y - vb.w * stageSize().H / stageSize().W / 2; applyView(); }
     } catch (ex) { saveBtn.disabled = false; saveBtn.textContent = existing ? "Save changes" : "Check in"; err.textContent = dbErr(ex); }
   } },
+    modeBox, driveHint,
     h("label", { class: "f" }, "Ground", gBox), sportBox,
-    h("div", { class: "grid2" },
-      dateBox,
-      h("label", { class: "f" }, "Match (optional)", h("input", { id: "f-match", value: st.match, placeholder: "Stockport 2–1 Barnsley", oninput: e => st.match = e.target.value }))),
-    h("div", { class: "f", style: "display:flex;flex-direction:column;gap:8px" }, h("b", { style: "font-size:13px", text: "Your scores (tap again to clear)" }), rate),
+    h("div", { class: "grid2" }, dateBox, matchBox),
+    scoreBox,
     h("div", { class: "photo-drop" }, h("div", { style: "flex:1;min-width:180px;font-size:13px" }, h("b", { text: "Photo" }), h("div", { style: "color:var(--muted)", text: "One snap from the day. It gets shrunk to save space." }), fileIn), prev),
     h("label", { class: "f" }, "Notes (optional)", h("textarea", { id: "f-note", rows: 2, placeholder: "Steak pie was elite. Away end roof leaks.", oninput: e => st.note = e.target.value }, st.note)),
     err,
@@ -1236,6 +1268,7 @@ function openForm(existing, preset) {
       h("button", { class: "btn btn-ghost", type: "button", onclick: closeModal, text: "Cancel" }), saveBtn));
   const modal = h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": "Check in" },
     h("header", {}, h("h3", { text: existing ? "Edit check-in" : "Check in" }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeModal, text: "×" })), form);
+  drawMode();
   const bg = h("div", { class: "modal-bg", onclick: e => { if (e.target === bg) closeModal(); } }, modal);
   // when picking a pin the whole overlay hides so the map is usable
   new MutationObserver(() => { bg.hidden = modal.hidden; }).observe(modal, { attributes: true, attributeFilter: ["hidden"] });
@@ -1412,7 +1445,7 @@ ${starSvg}
 }
 function leagueRows() {
   const rows = new Map();
-  const list = [...S.checkins.entries()].map(([id, c]) => ({ id, ...c })).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  const list = [...S.checkins.entries()].map(([id, c]) => ({ id, ...c })).filter(isReal).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
   for (const c of list) {
     const k = playerKey(c);
     let r = rows.get(k);
@@ -1477,15 +1510,16 @@ S.leagueTab = "points";
 async function renderLeague() {
   const el = $("#league"); el.innerHTML = "";
   const rows = leagueRows();
-  const subs = [["points", "Points"], ["the92", "The 92"], ["globe", "Globetrotter"], ["badges", "Badges"]];
+  const subs = [["points", "Points"], ["the92", "The 92"], ["globe", "Globetrotter"], ["badges", "Badges"], ["drive", "Drive-bys"]];
   el.append(h("div", { class: "subtabs", role: "tablist", "aria-label": "League tables" }, subs.map(([id, label]) =>
     h("button", { type: "button", role: "tab", "aria-selected": String(S.leagueTab === id), onclick: () => { S.leagueTab = id; renderLeague(); }, text: label }))));
   const intro = { points: "Three points for every new ground, one for a return visit. Ties go to whoever has seen more grounds.",
     the92: "The Premier League and EFL grounds for the 2025–26 season. Tap a name to see which grounds are still to do.",
     globe: "Who has been the furthest. Countries come from where each ground is on the map, with England, Scotland, Wales and Northern Ireland counted separately.",
+    drive: "Grounds you've seen but not been inside: from the motorway, the train window or the car park. They don't count for points, the 92 or badges.",
     badges: "Badges are earned automatically as check-ins come in. Open anyone's trophy cabinet to see what they've collected and what's still to earn. Tap a badge for details." }[S.leagueTab];
   el.append(h("p", { class: "sub", text: intro }));
-  if (!rows.length && S.leagueTab !== "badges") { el.append(emptyState("No one's on the table yet", "Check in at a ground, or import a spreadsheet, and you'll go top.")); return; }
+  if (!rows.length && S.leagueTab !== "badges" && S.leagueTab !== "drive") { el.append(emptyState("No one's on the table yet", "Check in at a ground, or import a spreadsheet, and you'll go top.")); return; }
   if (S.leagueTab === "points") {
     const tb = h("tbody");
     rows.forEach((r, i) => tb.append(h("tr", { class: i === 0 ? "top" : "" },
@@ -1509,6 +1543,27 @@ async function renderLeague() {
         h("td", {}, h("div", { class: "p92" }, h("div", { class: "bar92" }, h("i", { style: `width:${r.n92 / 92 * 100}%` })), h("b", { text: `${r.n92}/92` })))), left);
     });
     el.append(...table([["#"], ["Hopper"], ["Prem", 1], ["Champ", 1], ["Lg 1", 1], ["Lg 2", 1], ["The 92"]], tb));
+  } else if (S.leagueTab === "drive") {
+    const real = new Map();
+    for (const c of S.checkins.values()) if (isReal(c)) { const k = playerKey(c); if (!real.has(k)) real.set(k, new Set()); real.get(k).add(groundKey(c)); }
+    const dr = new Map();
+    for (const [id, c] of S.checkins) if (c.driveby) {
+      const k = playerKey(c);
+      if (!dr.has(k)) dr.set(k, { name: playerName(c), uid: c.who ? null : c.by, key: k, n: 0, grounds: new Map(), last: null });
+      const r = dr.get(k); r.n++; const gk = groundKey(c);
+      r.grounds.set(gk, c.groundId && GBYID.get(c.groundId)?.ground || c.ground);
+      if (!r.last || (c.date || "") > (r.last.date || "")) r.last = c;
+    }
+    if (!dr.size) { el.append(emptyState("No drive-bys yet", "Seen a ground from the motorway? Hit + Check in and pick Drive-by.")); return; }
+    const tb = h("tbody");
+    [...dr.values()].sort((a, b) => b.grounds.size - a.grounds.size || b.n - a.n).forEach((r, i) => {
+      const mine = real.get(r.key) || new Set();
+      const tease = [...r.grounds.entries()].filter(([k]) => !mine.has(k)).map(([, n]) => n);
+      tb.append(h("tr", { class: i === 0 ? "top" : "" }, h("td", { class: "pos", text: i + 1 }), h("td", {}, playerCell(r)),
+        h("td", { class: "num", text: r.grounds.size }), h("td", { class: "num", text: tease.length }),
+        h("td", { class: "wrapcell", text: tease.length ? tease.slice(0, 8).join(" · ") + (tease.length > 8 ? ` +${tease.length - 8}` : "") : "Been in every one. Respect." })));
+    });
+    el.append(...table([["#"], ["Hopper"], ["Spotted", 1], ["Not been in", 1], ["Still just a view from the road"]], tb, "Spotted = different grounds seen on drive-bys · Not been in = spotted but never checked in properly"));
   } else if (S.leagueTab === "globe") {
     const tb = h("tbody");
     [...rows].sort((a, b) => b.countries.size - a.countries.size || b.abroad - a.abroad || b.g - a.g).forEach((r, i) => {
@@ -1599,7 +1654,7 @@ function emptyState(t, s) { return h("div", { class: "empty" }, h("b", { text: t
 // ---------- ground ratings ----------
 function renderGroundsTable() {
   const el = $("#groundsTable"); el.innerHTML = "";
-  const gs = [...groundIndex().values()].sort((a, b) => (b.avg ?? -1) - (a.avg ?? -1) || b.list.length - a.list.length);
+  const gs = [...groundIndex().values()].filter(g => !g.ghost).sort((a, b) => (b.avg ?? -1) - (a.avg ?? -1) || b.list.length - a.list.length);
   if (!gs.length) { el.append(emptyState("No grounds rated yet", "Scores from every check-in end up here, best ground first.")); return; }
   const tb = h("tbody");
   gs.forEach((g, i) => tb.append(h("tr", {},
@@ -1627,7 +1682,7 @@ function renderFeed() {
       h("div", { class: "gname", text: c.ground }),
       h("div", { class: "row" }, c.club ? h("span", { style: "color:var(--muted)", text: c.club }) : null, c.match ? h("span", { text: "· " + c.match }) : null),
       c.note ? h("div", { class: "note", text: c.note }) : null,
-      h("div", { class: "row" }, h("span", { class: "score", text: f1(o) }), c.source === "import" ? h("span", { class: "tag", text: "imported" }) : null,
+      h("div", { class: "row" }, c.driveby ? h("span", { class: "tag drive", text: "Drive-by" }) : h("span", { class: "score", text: f1(o) }), c.source === "import" ? h("span", { class: "tag", text: "imported" }) : null,
         canModify(c) ? h("button", { class: "linkbtn", type: "button", style: "margin-left:auto", onclick: () => openForm(c), text: "Edit" }) : null))));
   }
   el.append(grid);
@@ -1800,24 +1855,32 @@ async function runImport(btn, prog) {
 // ---------- header stats ----------
 function renderStats() {
   const idx = groundIndex();
-  const g92 = new Set([...idx.values()].filter(g => g.base && IN92.has(g.base.group)).map(g => g.base.id)).size;
-  $("#sCheckins").textContent = S.checkins.size;
-  $("#sGrounds").textContent = idx.size;
+  const g92 = new Set([...idx.values()].filter(g => !g.ghost && g.base && IN92.has(g.base.group)).map(g => g.base.id)).size;
+  $("#sCheckins").textContent = [...S.checkins.values()].filter(isReal).length;
+  $("#sGrounds").textContent = [...idx.values()].filter(g => !g.ghost).length;
   $("#s92").textContent = `${g92}/92`;
   $("#b92").style.width = (g92 / 92 * 100) + "%";
-  $("#sHoppers").textContent = new Set([...S.checkins.values()].map(playerKey)).size;
+  $("#sHoppers").textContent = new Set([...S.checkins.values()].filter(isReal).map(playerKey)).size;
 }
 // ---------- fact file ----------
 const miles = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 3959 * 2 * Math.asin(Math.sqrt(x)); };
 const nfmt = n => Math.round(n).toLocaleString("en-GB");
 S.factSeed = 0;
 function buildFacts() {
-  const list = [...S.checkins.values()].map(c => {
+  const drives = [...S.checkins.values()].filter(c => c.driveby);
+  const list = [...S.checkins.values()].filter(isReal).map(c => {
     const base = c.groundId && GBYID.get(c.groundId);
     return { c, who: playerName(c), pk: playerKey(c), gk: groundKey(c), name: base ? base.ground : c.ground || "a ground", lat: base ? base.lat : +c.lat, lng: base ? base.lng : +c.lng };
   }).filter(x => isFinite(x.lat) && isFinite(x.lng));
-  if (!list.length) return [];
   const F = [];
+  if (drives.length) {
+    const dg = new Map(); for (const c of drives) { const k = groundKey(c); dg.set(k, { n: (dg.get(k)?.n || 0) + 1, name: c.groundId && GBYID.get(c.groundId)?.ground || c.ground }); }
+    const top = [...dg.values()].sort((a, b) => b.n - a.n)[0];
+    const realKeys = new Set(list.map(x => x.gk));
+    const tease = [...dg.keys()].filter(k => !realKeys.has(k)).length;
+    F.push({ icon: "plane", k: "So near, so far", v: `${tease} ground${tease === 1 ? "" : "s"}`, s: `Spotted on a drive-by but nobody has been in yet. Most waved at: ${top.name}.` });
+  }
+  if (!list.length) return F;
   const byGround = new Map(), byPerson = new Map();
   for (const x of list) {
     if (!byGround.has(x.gk)) byGround.set(x.gk, { name: x.name, lat: x.lat, lng: x.lng, n: 0, people: new Set(), grub: [], atmos: [], all: [] });
