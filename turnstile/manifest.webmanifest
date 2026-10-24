@@ -1,0 +1,17 @@
+{
+  "name": "Turnstile",
+  "short_name": "Turnstile",
+  "description": "Click in. Pin it. Rate the pie. Groundhopping with your mates.",
+  "id": "/turnstile/",
+  "start_url": "/turnstile/",
+  "scope": "/turnstile/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#15211b",
+  "theme_color": "#1d6b45",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
