@@ -107,6 +107,20 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .maplabel{position:absolute;transform:translate(-50%,6px);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
 .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3}
 .zoom button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:18px}
+.mapgrid{display:grid;gap:14px}
+@media (min-width:1100px){.mapgrid{grid-template-columns:minmax(0,1fr) 300px}.facts{max-height:clamp(420px,68vh,760px);overflow:auto}}
+.facts{display:flex;flex-direction:column;gap:8px}
+.facthead{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#15211b,#1d6b45);color:#fff;border-radius:14px;padding:12px 14px}
+.facthead h3{margin:0;font:900 22px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.facthead button{background:var(--amber);color:var(--amber-ink);border:0;border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px}
+.factlist{display:grid;gap:8px}
+@media (min-width:600px) and (max-width:1099px){.factlist{grid-template-columns:1fr 1fr}}
+.fact{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:12px;padding:10px 12px}
+.fact .fi{flex:none;width:30px;height:30px;border-radius:50%;background:var(--pitch);display:grid;place-items:center}
+.fact .fi svg{width:18px;height:18px}
+.fact small{display:block;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fact b{display:block;font:900 22px/1.05 var(--display);margin:2px 0}
+.fact p{margin:0;font-size:13px;color:var(--muted)}
 .legend{position:absolute;left:10px;bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;display:flex;gap:12px;flex-wrap:wrap;z-index:3;max-width:calc(100% - 20px)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
@@ -314,12 +328,15 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
       <button class="chip" id="fAM" type="button">Americas</button>
       <button class="chip" id="fWD" type="button">Whole world</button>
     </div>
+    <div class="mapgrid">
     <div class="stage" id="stage">
       <svg id="land" preserveAspectRatio="none"></svg>
       <div class="pins" id="pins"></div>
       <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
       <div class="legend"><span><i style="background:var(--amber)"></i>Visited by the group</span><span><i style="background:var(--pitch)"></i>You've been</span><span><i style="background:var(--card);border-color:var(--pin-todo)"></i>Still to do</span></div>
       <div class="pickbanner" id="pickBanner" hidden>Tap the map where the ground is <button type="button" id="pickCancel">Cancel</button></div>
+    </div>
+    <aside class="facts" id="facts" aria-label="Fact file"></aside>
     </div>
   </section>
 
@@ -1790,10 +1807,97 @@ function renderStats() {
   $("#b92").style.width = (g92 / 92 * 100) + "%";
   $("#sHoppers").textContent = new Set([...S.checkins.values()].map(playerKey)).size;
 }
+// ---------- fact file ----------
+const miles = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 3959 * 2 * Math.asin(Math.sqrt(x)); };
+const nfmt = n => Math.round(n).toLocaleString("en-GB");
+S.factSeed = 0;
+function buildFacts() {
+  const list = [...S.checkins.values()].map(c => {
+    const base = c.groundId && GBYID.get(c.groundId);
+    return { c, who: playerName(c), pk: playerKey(c), gk: groundKey(c), name: base ? base.ground : c.ground || "a ground", lat: base ? base.lat : +c.lat, lng: base ? base.lng : +c.lng };
+  }).filter(x => isFinite(x.lat) && isFinite(x.lng));
+  if (!list.length) return [];
+  const F = [];
+  const byGround = new Map(), byPerson = new Map();
+  for (const x of list) {
+    if (!byGround.has(x.gk)) byGround.set(x.gk, { name: x.name, lat: x.lat, lng: x.lng, n: 0, people: new Set(), grub: [], atmos: [], all: [] });
+    const g = byGround.get(x.gk); g.n++; g.people.add(x.who);
+    const r = x.c.ratings || {};
+    if (r.grub > 0) g.grub.push(r.grub); if (r.atmos > 0) g.atmos.push(r.atmos);
+    const o = overall(x.c); if (o != null) g.all.push(o);
+    if (!byPerson.has(x.pk)) byPerson.set(x.pk, { who: x.who, items: [], same: new Map() });
+    const p = byPerson.get(x.pk); p.items.push(x); p.same.set(x.gk, (p.same.get(x.gk) || 0) + 1);
+  }
+  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const gs = [...byGround.values()];
+  // furthest trip from each person's usual ground
+  let far = null;
+  for (const p of byPerson.values()) {
+    const homeK = [...p.same.entries()].sort((a, b) => b[1] - a[1])[0][0], home = byGround.get(homeK);
+    for (const x of p.items) { const d = miles(home.lat, home.lng, x.lat, x.lng); if (!far || d > far.d) far = { d, x, home }; }
+  }
+  if (far && far.d > 20) F.push({ icon: "plane", k: "Furthest trip", v: `${nfmt(far.d)} miles`, s: `${far.x.who} went from ${far.home.name} to ${far.x.name}.` });
+  // most visited
+  const top = gs.sort((a, b) => b.n - a.n)[0];
+  if (top.n > 1) F.push({ icon: "ticket", k: "Most visited", v: top.name, s: `${top.n} check-ins from ${top.people.size} ${top.people.size === 1 ? "person" : "people"}.` });
+  // pies
+  const pies = gs.filter(g => g.grub.length).map(g => ({ g, a: avg(g.grub) }));
+  if (pies.length) { const best = pies.sort((a, b) => b.a - a.a || b.g.grub.length - a.g.grub.length)[0]; F.push({ icon: "pie", k: "Best pie & pint", v: best.g.name, s: `Rated ${best.a.toFixed(1)} out of 5. Worth the queue.` }); }
+  if (pies.length > 2) { const worst = pies.sort((a, b) => a.a - b.a)[0]; if (worst.a < 3) F.push({ icon: "pie", k: "Bring sandwiches", v: worst.g.name, s: `The pie scored ${worst.a.toFixed(1)}. You've been warned.` }); }
+  const atm = gs.filter(g => g.atmos.length).map(g => ({ g, a: avg(g.atmos) }));
+  if (atm.length) { const loud = atm.sort((a, b) => b.a - a.a)[0]; F.push({ icon: "whistle", k: "Loudest ground", v: loud.g.name, s: `Atmosphere rated ${loud.a.toFixed(1)}.` }); }
+  if (atm.length > 2) { const lib = atm.sort((a, b) => a.a - b.a)[0]; if (lib.a <= 2.5) F.push({ icon: "whistle", k: "The library award", v: lib.g.name, s: `Atmosphere ${lib.a.toFixed(1)}. Bring a book.` }); }
+  // hidden gem: one visit, top overall
+  const gems = gs.filter(g => g.n === 1 && g.all.length && avg(g.all) >= 4).sort((a, b) => avg(b.all) - avg(a.all));
+  if (gems.length) F.push({ icon: "star", k: "Hidden gem", v: gems[0].name, s: `Only one visit so far, scored ${avg(gems[0].all).toFixed(1)}. Someone go back.` });
+  // oldest memory
+  const dated = list.filter(x => x.c.date).sort((a, b) => a.c.date.localeCompare(b.c.date));
+  if (dated.length) { const o = dated[0]; const y = o.c.date.slice(0, 4); const ago = new Date().getFullYear() - +y; F.push({ icon: "calendar", k: "Oldest memory", v: y, s: `${o.who} at ${o.name}${ago > 1 ? `, ${ago} years ago` : ""}.` }); }
+  const undated = list.filter(x => !x.c.date).length;
+  if (undated) F.push({ icon: "stone", k: "Lost in the mists", v: `${undated} visit${undated > 1 ? "s" : ""}`, s: "Historic check-ins with no date at all. Proper old-school." });
+  // extremes
+  const north = gs.reduce((a, b) => b.lat > a.lat ? b : a), south = gs.reduce((a, b) => b.lat < a.lat ? b : a);
+  F.push({ icon: "flag", k: "Furthest north", v: north.name, s: `${Math.abs(north.lat).toFixed(1)}° ${north.lat >= 0 ? "N" : "S"}. Pack a coat.` });
+  if (south !== north) F.push({ icon: "globe", k: "Furthest south", v: south.name, s: `${Math.abs(south.lat).toFixed(1)}° ${south.lat >= 0 ? "N" : "S"}.` });
+  // loyalty
+  let loyal = null;
+  for (const p of byPerson.values()) for (const [gk, n] of p.same) if (!loyal || n > loyal.n) loyal = { who: p.who, n, g: byGround.get(gk) };
+  if (loyal && loyal.n >= 3) F.push({ icon: "ticket", k: "Most loyal", v: loyal.who, s: `${loyal.n} visits to ${loyal.g.name}. Basically lives there.` });
+  // busiest day
+  const days = new Map();
+  for (const x of list) if (x.c.date && x.c.date.length === 10) days.set(x.c.date, (days.get(x.c.date) || 0) + 1);
+  const bd = [...days.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (bd && bd[1] > 1) F.push({ icon: "calendar", k: "Busiest day", v: fmtDate(bd[0]), s: `${bd[1]} check-ins across the group in one day.` });
+  // in-form
+  const cut = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+  const form = new Map();
+  for (const x of list) if (x.c.date && x.c.date.length === 10 && x.c.date >= cut) form.set(x.who, (form.get(x.who) || 0) + 1);
+  const fm = [...form.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (fm) F.push({ icon: "medal", k: "In form", v: fm[0], s: `${fm[1]} check-in${fm[1] > 1 ? "s" : ""} in the last 30 days.` });
+  // coverage
+  const builtIn = new Set(list.map(x => x.c.groundId).filter(id => id && GBYID.has(id))).size;
+  F.push({ icon: "pin", k: "Ticked off", v: `${(builtIn / GROUNDS.length * 100).toFixed(1)}%`, s: `${builtIn} of the ${GROUNDS.length} grounds built into Turnstile. Long way to go.` });
+  return F;
+}
+function renderFacts() {
+  const el = $("#facts"); if (!el) return; el.innerHTML = "";
+  const F = buildFacts();
+  const shuffle = F.length > 6 ? h("button", { type: "button", onclick: () => { S.factSeed++; renderFacts(); }, text: "Shuffle" }) : null;
+  el.append(h("div", { class: "facthead" }, h("h3", { text: "Fact file" }), shuffle));
+  if (!F.length) { el.append(h("div", { class: "fact" }, h("div", {}, h("small", { text: "Nothing yet" }), h("p", { text: "Check in somewhere and the quirky stats start appearing here: furthest trip, best pie, loudest ground and more." })))); return; }
+  // rotate which facts show, keeping 6 at a time
+  const n = Math.min(6, F.length), start = (S.factSeed * n) % F.length;
+  const pick = Array.from({ length: n }, (_, i) => F[(start + i) % F.length]);
+  el.append(h("div", { class: "factlist" }, pick.map(f => {
+    const fi = h("span", { class: "fi", "aria-hidden": "true" });
+    fi.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[f.icon] || ICONS.star}</svg>`;
+    return h("div", { class: "fact" }, fi, h("div", { style: "min-width:0" }, h("small", { text: f.k }), h("b", { text: f.v }), h("p", { text: f.s })));
+  })));
+}
 function renderCurrent() {
   renderStats();
   checkNewBadges(leagueRows());
-  if (S.tab === "map") renderPins();
+  if (S.tab === "map") { renderPins(); renderFacts(); }
   else if (S.tab === "league") renderLeague();
   else if (S.tab === "grounds") renderGroundsTable();
   else if (S.tab === "feed") renderFeed();
