@@ -356,8 +356,8 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
 // [club, ground, lat, lng, group, aliases]
 const GROUNDS_RAW = [
 // Premier League 2025-26
-["Arsenal","Emirates Stadium",51.5549,-0.1084,"PL","ashburton grove|gunners"],
-["Aston Villa","Villa Park",52.5092,-1.8847,"PL","villa"],
+["Arsenal","Emirates Stadium",51.5549,-0.1084,"PL","ashburton grove|gunners|arsenal women","FB,WF"],
+["Aston Villa","Villa Park",52.5092,-1.8847,"PL","villa|aston villa women|villa women|wsl","FB,WF"],
 ["AFC Bournemouth","Vitality Stadium",50.7352,-1.8384,"PL","dean court|bournemouth|cherries"],
 ["Brentford","Gtech Community Stadium",51.4908,-0.2888,"PL","brentford community stadium|bees"],
 ["Brighton & Hove Albion","American Express Stadium",50.8616,-0.0837,"PL","amex|falmer|brighton|seagulls"],
@@ -379,13 +379,13 @@ const GROUNDS_RAW = [
 // Championship
 ["Birmingham City","St Andrew's",52.4757,-1.8682,"CH","st andrews|st andrews knighthead park|blues"],
 ["Blackburn Rovers","Ewood Park",53.7286,-2.4892,"CH","blackburn|rovers"],
-["Bristol City / Bristol Bears","Ashton Gate",51.4400,-2.6203,"CH","robins|bristol bears","FB,RU"],
-["Charlton Athletic","The Valley",51.4865,0.0364,"CH","charlton|addicks"],
+["Bristol City / Bristol Bears","Ashton Gate",51.44,-2.6203,"CH","robins|bristol bears|bristol city women|wsl 2","FB,RU,WF"],
+["Charlton Athletic","The Valley",51.4865,0.0364,"CH","charlton|addicks|charlton women|wsl 2","FB,WF"],
 ["Coventry City","Coventry Building Society Arena",52.4481,-1.4956,"CH","ricoh arena|cbs arena|coventry|sky blues"],
 ["Derby County","Pride Park",52.9150,-1.4473,"CH","pride park stadium|derby|rams"],
 ["Hull City / Hull FC","MKM Stadium",53.7462,-0.3677,"CH","kc stadium|kcom stadium|hull|tigers|hull fc","FB,RL"],
-["Ipswich Town","Portman Road",52.0545,1.1447,"CH","ipswich|tractor boys"],
-["Leicester City","King Power Stadium",52.6204,-1.1422,"CH","walkers stadium|leicester|foxes"],
+["Ipswich Town","Portman Road",52.0545,1.1447,"CH","ipswich|tractor boys|ipswich town women|ipswich women|wsl 2","FB,WF"],
+["Leicester City","King Power Stadium",52.6204,-1.1422,"CH","walkers stadium|leicester|foxes|leicester women|leicester city women|wsl","FB,WF"],
 ["Middlesbrough","Riverside Stadium",54.5782,-1.2170,"CH","boro|the riverside"],
 ["Millwall","The Den",51.4859,-0.0509,"CH","new den|lions"],
 ["Norwich City","Carrow Road",52.6222,1.3092,"CH","norwich|canaries"],
@@ -393,9 +393,9 @@ const GROUNDS_RAW = [
 ["Portsmouth","Fratton Park",50.7964,-1.0639,"CH","pompey"],
 ["Preston North End","Deepdale",53.7722,-2.6881,"CH","preston|pne"],
 ["Queens Park Rangers","Loftus Road",51.5093,-0.2322,"CH","qpr|kiyan prince foundation stadium|mattioli woods"],
-["Sheffield United","Bramall Lane",53.3703,-1.4709,"CH","sheff utd|sheffield utd|blades"],
+["Sheffield United","Bramall Lane",53.3703,-1.4709,"CH","sheff utd|sheffield utd|blades|sheffield united women|wsl 2","FB,WF"],
 ["Sheffield Wednesday","Hillsborough",53.4114,-1.5006,"CH","sheff wed|wednesday|owls"],
-["Southampton","St Mary's Stadium",50.9058,-1.3910,"CH","st marys|saints"],
+["Southampton","St Mary's Stadium",50.9058,-1.391,"CH","st marys|saints|southampton women|saints women|wsl 2","FB,WF"],
 ["Stoke City","bet365 Stadium",52.9884,-2.1755,"CH","britannia stadium|stoke|potters"],
 ["Swansea City","Swansea.com Stadium",51.6428,-3.9351,"CH","liberty stadium|swansea|swans"],
 ["Watford","Vicarage Road",51.6498,-0.4015,"CH","hornets"],
@@ -412,7 +412,7 @@ const GROUNDS_RAW = [
 ["Doncaster Rovers","Eco-Power Stadium",53.5098,-1.1139,"L1","keepmoat stadium|doncaster|donny"],
 ["Exeter City","St James Park",50.7307,-3.5211,"L1","exeter|grecians"],
 ["Huddersfield Town / Giants","John Smith's Stadium",53.6543,-1.7684,"L1","accu stadium|galpharm|mcalpine|huddersfield|terriers|huddersfield giants","FB,RL"],
-["Leyton Orient","Brisbane Road",51.5601,-0.0127,"L1","gaughan group stadium|breyer group stadium|matchroom stadium|orient|os"],
+["Leyton Orient","Brisbane Road",51.5601,-0.0127,"L1","gaughan group stadium|breyer group stadium|matchroom stadium|orient|os|tottenham women|spurs women|tottenham hotspur women|wsl","FB,WF"],
 ["Lincoln City","LNER Stadium",53.2183,-0.5408,"L1","sincil bank|lincoln|imps"],
 ["Luton Town","Kenilworth Road",51.8843,-0.4316,"L1","luton|hatters"],
 ["Mansfield Town","Field Mill",53.1381,-1.2005,"L1","one call stadium|mansfield|stags"],
@@ -431,12 +431,12 @@ const GROUNDS_RAW = [
 ["Barnet","The Hive",51.6027,-0.2944,"L2","hive london|bees barnet"],
 ["Barrow","Holker Street",54.1243,-3.2370,"L2","surety arena|barrow afc|bluebirds barrow"],
 ["Bristol Rovers","Memorial Stadium",51.4862,-2.5832,"L2","the mem|bristol rovers|gas"],
-["Bromley","Hayes Lane",51.3903,0.0203,"L2","bromley"],
+["Bromley","Hayes Lane",51.3903,0.0203,"L2","bromley|london city lionesses|lcl|wsl","FB,WF"],
 ["Cambridge United","Abbey Stadium",52.2121,0.1542,"L2","cledara abbey stadium|cambridge|the abbey|us"],
 ["Cheltenham Town","Whaddon Road",51.9061,-2.0602,"L2","completely suzuki stadium|jonny-rocks stadium|cheltenham|robins cheltenham"],
 ["Chesterfield","SMH Group Stadium",53.2537,-1.4249,"L2","proact stadium|b2net stadium|technique stadium|spireites"],
 ["Colchester United","JobServe Community Stadium",51.9233,0.8978,"L2","colchester community stadium|weston homes community stadium|colchester|us colchester"],
-["Crawley Town","Broadfield Stadium",51.0999,-0.1947,"L2","broadfield|crawley"],
+["Crawley Town","Broadfield Stadium",51.0999,-0.1947,"L2","broadfield|crawley|brighton women|brighton and hove albion women|wsl","FB,WF"],
 ["Crewe Alexandra","Gresty Road",53.0874,-2.4357,"L2","mornflake stadium|alexandra stadium|crewe|railwaymen"],
 ["Fleetwood Town","Highbury Stadium",53.9166,-3.0249,"L2","fleetwood|cod army"],
 ["Gillingham","Priestfield Stadium",51.3843,0.5607,"L2","priestfield|mems priestfield|gills"],
@@ -444,7 +444,7 @@ const GROUNDS_RAW = [
 ["Harrogate Town","Wetherby Road",53.9926,-1.5175,"L2","envirovent stadium|harrogate"],
 ["Milton Keynes Dons","Stadium MK",52.0096,-0.7333,"L2","mk dons|stadiummk"],
 ["Newport County / Dragons","Rodney Parade",51.5885,-2.9877,"L2","newport|exiles|dragons rfc|dragons","FB,RU"],
-["Notts County","Meadow Lane",52.9425,-1.1373,"L2","notts county|magpies notts"],
+["Notts County","Meadow Lane",52.9425,-1.1373,"L2","notts county|magpies notts|nottingham forest women|forest women|wsl 2","FB,WF"],
 ["Oldham Athletic","Boundary Park",53.5553,-2.1288,"L2","oldham|latics oldham"],
 ["Salford City","Peninsula Stadium",53.5133,-2.2768,"L2","moor lane|salford"],
 ["Shrewsbury Town","Croud Meadow",52.6886,-2.7491,"L2","new meadow|montgomery waters meadow|greenhous meadow|shrewsbury|shrews"],
@@ -453,15 +453,15 @@ const GROUNDS_RAW = [
 ["Walsall","Bescot Stadium",52.5655,-1.9908,"L2","poundland bescot|banks's stadium|bescot|saddlers"],
 // Non-league and national
 ["Wembley","Wembley Stadium",51.5560,-0.2796,"OT","national stadium|nfl london|challenge cup final","FB,RL,NFL"],
-["Morecambe","Mazuma Mobile Stadium",54.0614,-2.8689,"OT","globe arena|morecambe|shrimps"],
-["Sutton United","Gander Green Lane",51.3654,-0.1953,"OT","vbs community stadium|sutton"],
-["Forest Green Rovers","The New Lawn",51.6990,-2.2380,"OT","new lawn|forest green|fgr"],
-["York City / York Knights","LNER Community Stadium",53.9844,-1.0526,"OT","york community stadium|york|york knights","FB,RL"],
-["Hartlepool United","Victoria Park",54.6890,-1.2123,"OT","suit direct stadium|prestige group stadium|hartlepool|pools"],
-["Southend United","Roots Hall",51.5490,0.7016,"OT","southend|shrimpers"],
-["Carlisle United","Brunton Park",54.8957,-2.9135,"OT","carlisle|cumbrians"],
-["Scunthorpe United","Glanford Park",53.5867,-0.6946,"OT","sands venue stadium|scunthorpe|iron"],
-["Wealdstone","Grosvenor Vale",51.5839,-0.4017,"OT","wealdstone"],
+["Morecambe","Mazuma Mobile Stadium",54.0614,-2.8689,"NL","globe arena|morecambe|shrimps"],
+["Sutton United","Gander Green Lane",51.3654,-0.1953,"NL","vbs community stadium|sutton|crystal palace women|palace women|wsl 2","FB,WF"],
+["Forest Green Rovers","The New Lawn",51.699,-2.238,"NL","new lawn|forest green|fgr"],
+["York City / York Knights","LNER Community Stadium",53.9844,-1.0526,"NL","york community stadium|york|york knights","FB,RL"],
+["Hartlepool United","Victoria Park",54.689,-1.2123,"NL","suit direct stadium|prestige group stadium|hartlepool|pools"],
+["Southend United","Roots Hall",51.549,0.7016,"NL","southend|shrimpers"],
+["Carlisle United","Brunton Park",54.8957,-2.9135,"NL","carlisle|cumbrians"],
+["Scunthorpe United","Glanford Park",53.5867,-0.6946,"NL","sands venue stadium|scunthorpe|iron"],
+["Wealdstone","Grosvenor Vale",51.5839,-0.4017,"NL","wealdstone"],
 // Scotland
 ["Celtic","Celtic Park",55.8497,-4.2055,"SC","parkhead|paradise"],
 ["Rangers","Ibrox Stadium",55.8530,-4.3092,"SC","ibrox|gers"],
@@ -486,7 +486,7 @@ const GROUNDS_RAW = [
 ["Northern Ireland","Windsor Park",54.5826,-5.9549,"OT","national football stadium at windsor park|linfield"],
 ["Shamrock Rovers","Tallaght Stadium",53.2859,-6.3735,"OT","tallaght"],
 // Historic grounds
-["Everton (former)","Goodison Park",53.4388,-2.9663,"HI","goodison|grand old lady"],
+["Everton (former)","Goodison Park",53.4388,-2.9663,"WSL","goodison|grand old lady|everton women|wsl","FB,WF"],
 ["Arsenal (former)","Highbury",51.5577,-0.1027,"HI","arsenal stadium highbury"],
 ["West Ham (former)","Boleyn Ground",51.5321,0.0393,"HI","upton park|boleyn"],
 ["Manchester City (former)","Maine Road",53.4453,-2.2450,"HI","maine road"],
@@ -614,6 +614,100 @@ const GROUNDS_RAW = [
 ["Urawa Red Diamonds","Saitama Stadium 2002",35.9031,139.7172,"WD","saitama|urawa"],
 ["South Africa","FNB Stadium",-26.2347,27.9825,"WD","soccer city|johannesburg"],
 ["Qatar","Lusail Stadium",25.4206,51.4900,"WD","lusail|iconic stadium"],
+// Women's Super League and WSL 2 (other clubs share grounds listed above)
+["Chelsea Women","Kingsmeadow",51.4053,-0.2817,"WSL","chelsea women|chelsea fc women|wsl","WF"],
+["Manchester City Women","Joie Stadium",53.4847,-2.1945,"WSL","academy stadium|man city women|manchester city women|wsl","WF"],
+["West Ham Women / Dagenham & Redbridge","Chigwell Construction Stadium",51.5479,0.1599,"WSL","victoria road|west ham women|dagenham|daggers|wsl","WF,FB"],
+["Arsenal Women / Boreham Wood","Meadow Park",51.6577,-0.2731,"WSL","arsenal women|boreham wood|borehamwood|wsl","WF,FB"],
+["Birmingham City Women / Solihull Moors","Damson Park",52.4162,-1.7491,"W2","birmingham city women|blues women|solihull moors|sportnation bet stadium|armco arena|wsl 2","WF,FB"],
+["Durham Women","Maiden Castle",54.7642,-1.5617,"W2","durham women|durham university|wsl 2","WF"],
+["Sunderland Women","Eppleton CW",54.8224,-1.4492,"W2","eppleton colliery welfare|hetton|sunderland women|wsl 2","WF"],
+["Portsmouth Women / Havant & Waterlooville","Westleigh Park",50.8616,-0.9946,"W2","portsmouth women|pompey women|havant|hawks|wsl 2","WF,FB"],
+// National League
+["Aldershot Town","Recreation Ground",51.2482,-0.7548,"NL","ebb stadium|aldershot|shots"],
+["Altrincham","Moss Lane",53.3809,-2.3486,"NL","j davidson stadium|altrincham|alty|robins alty"],
+["Boston United","Jakemans Community Stadium",52.9614,-0.0223,"NL","boston|pilgrims"],
+["Braintree Town","Cressing Road",51.8728,0.539,"NL","braintree|iron braintree"],
+["Brackley Town","St James Park",52.0303,-1.1547,"NL","brackley|saints brackley"],
+["Eastleigh","Silverlake Stadium",50.959,-1.3684,"NL","ten acres|eastleigh|spitfires"],
+["FC Halifax Town","The Shay",53.7135,-1.8528,"NL","shay|halifax|shaymen"],
+["Gateshead","Gateshead International Stadium",54.9605,-1.5765,"NL","gateshead|heed|tynesiders"],
+["Rochdale","Spotland",53.6208,-2.1801,"NL","crown oil arena|rochdale|dale"],
+["Tamworth","The Lamb Ground",52.6316,-1.695,"NL","lamb ground|tamworth|lambs"],
+["Woking","Kingfield Stadium",51.3089,-0.5605,"NL","laithwaite community stadium|kingfield|woking|cards"],
+["Yeovil Town","Huish Park",50.9505,-2.674,"NL","yeovil|glovers"],
+// National League North and South, and more non-league
+["Darlington","Blackwell Meadows",54.5047,-1.5592,"NL","darlington|darlo|quakers"],
+["South Shields","Mariners Park",54.9773,-1.4546,"NL","1st cloud arena|filtrona park|south shields|mariners"],
+["Spennymoor Town","Brewery Field",54.699,-1.6015,"NL","spennymoor|moors"],
+["Scarborough Athletic","Flamingo Land Stadium",54.2668,-0.4223,"NL","scarborough|boro scarborough|seadogs"],
+["Chester","Deva Stadium",53.1878,-2.9119,"NL","swansway chester stadium|chester fc|blues chester"],
+["Kidderminster Harriers","Aggborough",52.3821,-2.2381,"NL","kidderminster|harriers"],
+["Hereford","Edgar Street",52.0603,-2.7174,"NL","hereford|bulls"],
+["King's Lynn Town","The Walks",52.7517,0.4024,"NL","kings lynn|linnets"],
+["Chorley","Victory Park",53.6436,-2.637,"NL","chorley|magpies chorley"],
+["Buxton","Silverlands",53.2588,-1.914,"NL","buxton|bucks"],
+["Macclesfield","Moss Rose",53.2425,-2.1269,"NL","leasing com stadium|macclesfield|silkmen"],
+["AFC Fylde","Mill Farm",53.7826,-2.8742,"NL","fylde|coasters"],
+["Southport","Haig Avenue",53.6394,-2.9867,"NL","merseyrail community stadium|southport|sandgrounders"],
+["Marine","Rossett Park",53.4889,-3.0302,"NL","marine travel arena|crosby|mariners crosby"],
+["FC United of Manchester","Broadhurst Park",53.5197,-2.1789,"NL","fc united|fcum"],
+["Torquay United","Plainmoor",50.4762,-3.5235,"NL","torquay|gulls"],
+["Bath City","Twerton Park",51.3799,-2.394,"NL","bath city|romans"],
+["Maidstone United","Gallagher Stadium",51.2781,0.5232,"NL","maidstone|stones"],
+["Dorking Wanderers","Meadowbank",51.2327,-0.3331,"NL","dorking|wanderers"],
+["Ebbsfleet United","Stonebridge Road",51.444,0.3297,"NL","kuflink stadium|ebbsfleet|gravesend|fleet"],
+["Dartford","Princes Park",51.4361,0.2364,"NL","dartford|darts"],
+["Welling United","Park View Road",51.4637,0.1212,"NL","welling|wings"],
+["Chelmsford City","Melbourne Park",51.7486,0.4504,"NL","chelmsford|clarets chelmsford"],
+["Dulwich Hamlet","Champion Hill",51.4625,-0.0828,"NL","dulwich|hamlet"],
+["Blyth Spartans","Croft Park",55.126,-1.5135,"NL","blyth|spartans"],
+["Whitby Town","Turnbull Ground",54.4887,-0.6239,"NL","whitby|seasiders whitby"],
+["Bishop Auckland","Heritage Park",54.6553,-1.6604,"NL","bishop auckland|bishops|two blues"],
+["Shildon","Dean Street",54.6305,-1.6416,"NL","shildon|railwaymen"],
+["North Shields","Daren Persson Stadium",55.02,-1.4719,"NL","ralph gardner park|north shields|robins north shields"],
+["Morpeth Town","Craik Park",55.1752,-1.6844,"NL","morpeth|highwaymen"],
+["Hebburn Town","Hebburn Sports Ground",54.9691,-1.5163,"NL","hebburn|hornets"],
+["Consett","Belle View Stadium",54.8494,-1.8401,"NL","consett|steelmen"],
+["Stockton Town","Bishopton Road West",54.5826,-1.3423,"NL","stockton|anchors"],
+["Marske United","Mount Pleasant",54.5895,-1.0187,"NL","marske|seasiders marske"],
+// League of Ireland and Irish League
+["Bohemians","Dalymount Park",53.3613,-6.2768,"OT","dalymount|bohs|bohemian fc"],
+["Shelbourne","Tolka Park",53.3667,-6.2547,"OT","tolka|shels|shelbourne fc"],
+["St Patrick's Athletic","Richmond Park",53.3398,-6.3139,"OT","st pats|inchicore|richmond park dublin"],
+["Derry City","Brandywell Stadium",54.9913,-7.333,"OT","brandywell|derry|candystripes"],
+["Dundalk","Oriel Park",54.0003,-6.4126,"OT","oriel|dundalk|lilywhites"],
+["Sligo Rovers","The Showgrounds",54.2786,-8.4656,"OT","sligo|bit o red"],
+["Galway United","Eamonn Deacy Park",53.2789,-9.0614,"OT","terryland park|galway united|tribesmen"],
+["Waterford","Regional Sports Centre",52.2556,-7.0968,"OT","rsc|waterford fc|blues waterford"],
+["Drogheda United","Weavers Park",53.713,-6.3317,"OT","united park|head in the game park|drogheda|drogs"],
+["Cork City","Turner's Cross",51.8885,-8.4703,"OT","turners cross|cork city|rebel army"],
+["Glentoran","The Oval",54.6033,-5.9019,"OT","the oval belfast|glentoran|glens"],
+["Cliftonville","Solitude",54.6185,-5.9378,"OT","solitude|cliftonville|reds belfast"],
+["Crusaders","Seaview",54.6227,-5.923,"OT","seaview|crusaders|crues"],
+["Coleraine","The Showgrounds (Coleraine)",55.1337,-6.6656,"OT","coleraine|bannsiders"],
+["Larne","Inver Park",54.8497,-5.8197,"OT","larne|invermen"],
+// Gaelic games
+["GAA","Croke Park",53.3607,-6.2512,"GA","croker|hq|headquarters|gaa|all ireland final|dublin gaa"],
+["Tipperary GAA","Semple Stadium",52.6792,-7.8125,"GA","thurles|semple|fbd semple stadium|tipperary"],
+["Cork GAA","Páirc Uí Chaoimh",51.9002,-8.4381,"GA","pairc ui chaoimh|sse airtricity pairc|the pairc|cork gaa"],
+["Galway GAA","Pearse Stadium",53.258,-9.0839,"GA","salthill|galway gaa"],
+["Kerry GAA","Fitzgerald Stadium",52.0544,-9.5068,"GA","killarney|kerry"],
+["Kerry GAA","Austin Stack Park",52.2705,-9.6995,"GA","tralee|kerry tralee"],
+["Limerick GAA","TUS Gaelic Grounds",52.66,-8.646,"GA","gaelic grounds|limerick gaa"],
+["Kilkenny GAA","UPMC Nowlan Park",52.6593,-7.2463,"GA","nowlan park|kilkenny|cats"],
+["Mayo GAA","MacHale Park",53.853,-9.3009,"GA","castlebar|mayo"],
+["Monaghan GAA","St Tiernach's Park",54.1795,-7.2349,"GA","clones|st tiernachs park|monaghan"],
+["Tyrone GAA","Healy Park",54.5964,-7.298,"GA","omagh|o neills healy park|tyrone"],
+["Armagh GAA","Athletic Grounds",54.3465,-6.6702,"GA","box it athletic grounds|armagh"],
+["Derry GAA","Celtic Park (Derry)",54.9894,-7.3346,"GA","celtic park derry|derry gaa"],
+["Antrim GAA","Casement Park",54.5754,-5.98,"GA","casement|antrim|andersonstown"],
+["Cavan GAA","Kingspan Breffni",53.9884,-7.3587,"GA","breffni park|cavan"],
+["Roscommon GAA","Dr Hyde Park",53.6255,-8.1932,"GA","hyde park roscommon|roscommon"],
+["Wexford GAA","Chadwicks Wexford Park",52.3409,-6.4721,"GA","wexford park|wexford"],
+["Waterford GAA","Walsh Park",52.2525,-7.118,"GA","walsh park|waterford gaa|deise"],
+["Clare GAA","Cusack Park",52.8434,-8.9906,"GA","ennis|clare|banner"],
+["Laois GAA","O'Moore Park",53.0328,-7.291,"GA","omoore park|portlaoise|laois"],
 // Cricket
 ["MCC / Middlesex","Lord's",51.5294,-0.1727,"CR","lords|home of cricket|middlesex"],
 ["Surrey","The Oval",51.4837,-0.1150,"CR","kia oval|kennington oval|surrey"],
@@ -648,14 +742,14 @@ const GROUNDS_RAW = [
 ["Sri Lanka","Galle International Stadium",6.0284,80.2167,"CR","galle"],
 // Rugby league
 ["Leeds Rhinos","Headingley Stadium",53.8175,-1.5806,"RL","headingley rugby|leeds rhinos|rhinos|amt headingley"],
-["St Helens","Totally Wicked Stadium",53.4400,-2.7206,"RL","langtree park|saints rugby|st helens"],
+["St Helens","Totally Wicked Stadium",53.44,-2.7206,"RL","langtree park|saints rugby|st helens|liverpool women|liverpool fc women|wsl","FB,WF"],
 ["Warrington Wolves","Halliwell Jones Stadium",53.3950,-2.5966,"RL","warrington|wolves rugby"],
 ["Hull Kingston Rovers","Sewell Group Craven Park",53.7537,-0.2970,"RL","craven park|hull kr|robins rugby"],
 ["Catalans Dragons","Stade Gilbert Brutus",42.7158,2.8817,"RL","catalans|perpignan|gilbert brutus"],
 ["Castleford Tigers","Wheldon Road",53.7244,-1.3404,"RL","the jungle|mend a hose jungle|castleford"],
 ["Wakefield Trinity","Belle Vue",53.6726,-1.4919,"RL","diy kitchens stadium|wakefield"],
 ["Salford Red Devils / Sale Sharks","Salford Community Stadium",53.4693,-2.3770,"RL","salford red devils|sale sharks|aj bell stadium|ajbell","RL,RU"],
-["Leigh Leopards","Leigh Sports Village",53.4870,-2.5185,"RL","leigh|leopards"],
+["Leigh Leopards","Leigh Sports Village",53.487,-2.5185,"RL","leigh|leopards|manchester united women|man utd women|man united women|wsl","FB,WF"],
 ["Bradford Bulls","Odsal Stadium",53.7639,-1.7489,"RL","odsal|bradford bulls"],
 ["Featherstone Rovers","Post Office Road",53.6797,-1.3594,"RL","featherstone|millennium stadium featherstone"],
 ["Widnes Vikings","DCBL Stadium",53.3537,-2.7372,"RL","halton stadium|widnes"],
@@ -670,7 +764,7 @@ const GROUNDS_RAW = [
 ["Gloucester Rugby","Kingsholm",51.8716,-2.2427,"RU","kingsholm stadium|gloucester"],
 ["Harlequins","Twickenham Stoop",51.4502,-0.3436,"RU","the stoop|quins"],
 ["Leicester Tigers","Mattioli Woods Welford Road",52.6243,-1.1338,"RU","welford road|tigers"],
-["Newcastle Red Bulls","Kingston Park",55.0237,-1.6728,"RU","newcastle falcons|kingston park"],
+["Newcastle Red Bulls","Kingston Park",55.0237,-1.6728,"RU","newcastle falcons|kingston park|newcastle united women|newcastle women|wsl 2","FB,WF"],
 ["Northampton Saints","cinch Stadium at Franklin's Gardens",52.2408,-0.9174,"RU","franklins gardens|saints rugby northampton"],
 ["Saracens","StoneX Stadium",51.6008,-0.2337,"RU","allianz park|copthall|sarries"],
 ["Munster","Thomond Park",52.6745,-8.6425,"RU","limerick|munster"],
@@ -717,7 +811,7 @@ const CRITERIA = [
   ["charm", "Character", "Old-school charm or architecture"],
   ["day", "Day out", "Pubs, town, getting there"],
 ];
-const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
+const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", NL: "Non-league", WSL: "Women's Super League", W2: "WSL 2", GA: "Gaelic games", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
 const IN92 = new Set(["PL", "CH", "L1", "L2"]);
 
 const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
@@ -725,8 +819,8 @@ const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
   .replace(/\b(fc|afc|the|stadium|football club|ground|arena)\b/g, " ").replace(/\s+/g, " ").trim();
 const slug = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 
-const SPORTS = { FB: "Football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
-const SPORT_OF_GROUP = { CR: "CR", RL: "RL", RU: "RU", NFL: "NFL" };
+const SPORTS = { FB: "Football", WF: "Women's football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL", GA: "Gaelic games" };
+const SPORT_OF_GROUP = { CR: "CR", RL: "RL", RU: "RU", NFL: "NFL", GA: "GA", WSL: "WF", W2: "WF" };
 const GROUNDS = GROUNDS_RAW.map(([club, ground, lat, lng, group, aliases, sports]) => ({
   id: slug(club + "-" + ground), club, ground, lat, lng, group,
   sports: sports ? sports.split(",") : [SPORT_OF_GROUP[group] || "FB"],
@@ -1210,6 +1304,7 @@ const BADGES = [
   { id: "ten", shelf: "grounds", icon: "pin", name: "Double Figures", desc: "10 different grounds", code: "10", tier: "s", prog: r => cnt(r.g, 10) },
   { id: "fifty", shelf: "grounds", icon: "pin", name: "Half Century", desc: "50 different grounds", code: "50", tier: "g", prog: r => cnt(r.g, 50) },
   { id: "ton", shelf: "grounds", icon: "pin", name: "Centurion", desc: "100 different grounds", code: "100", tier: "g", prog: r => cnt(r.g, 100) },
+  { id: "nonleague", shelf: "grounds", icon: "whistle", name: "Non-League Day", desc: "5 non-league grounds", code: "NL", tier: "b", prog: r => cnt(r.nonLeague, 5) },
   { id: "half92", shelf: "the92", icon: "ball", name: "Halfway There", desc: "46 of the 92 league grounds", code: "46", tier: "s", prog: r => cnt(r.n92, 46) },
   { id: "l2", shelf: "the92", icon: "trophy", name: "League Two Done", desc: "Every League Two ground", code: "L2", tier: "s", prog: r => cnt(r.div.L2.size, 24) },
   { id: "l1", shelf: "the92", icon: "trophy", name: "League One Done", desc: "Every League One ground", code: "L1", tier: "s", prog: r => cnt(r.div.L1.size, 24) },
@@ -1234,9 +1329,11 @@ const BADGES = [
   { id: "howzat", shelf: "sports", icon: "bat", name: "Howzat", desc: "A cricket ground", code: "CR", tier: "b", prog: r => cnt(r.sports.has("CR") ? 1 : 0, 1) },
   { id: "league13", shelf: "sports", icon: "posts", name: "Up and Under", desc: "A rugby league ground", code: "RL", tier: "b", prog: r => cnt(r.sports.has("RL") ? 1 : 0, 1) },
   { id: "union15", shelf: "sports", icon: "oval", name: "Over the Gain Line", desc: "A rugby union ground", code: "RU", tier: "b", prog: r => cnt(r.sports.has("RU") ? 1 : 0, 1) },
+  { id: "lionesses", shelf: "sports", icon: "ball", name: "Lionesses' Roar", desc: "A women's football match", code: "WSL", tier: "b", prog: r => cnt(r.sports.has("WF") ? 1 : 0, 1) },
+  { id: "croker", shelf: "sports", icon: "posts", name: "Up for the Match", desc: "A Gaelic games ground", code: "GAA", tier: "b", prog: r => cnt(r.sports.has("GA") ? 1 : 0, 1) },
   { id: "gridiron", shelf: "sports", icon: "gridiron", name: "Gridiron", desc: "An NFL stadium", code: "NFL", tier: "b", prog: r => cnt(r.sports.has("NFL") ? 1 : 0, 1) },
   { id: "allround", shelf: "sports", icon: "medal", name: "All-Rounder", desc: "Grounds in 3 different sports", code: "3", tier: "s", prog: r => cnt(r.sports.size, 3) },
-  { id: "fullset", shelf: "sports", icon: "medal", name: "Full Set", desc: "Football, cricket, both rugbies and the NFL", code: "5", tier: "g", prog: r => cnt(r.sports.size, 5) },
+  { id: "fullset", shelf: "sports", icon: "medal", name: "Full Set", desc: "Grounds in 6 different sports", code: "6", tier: "g", prog: r => cnt(r.sports.size, 6) },
 ].map(b => ({ ...b, test: r => { const [c, t] = b.prog(r); return c >= t; } }));
 function countryBadges(r) {
   const out = [];
@@ -1305,7 +1402,7 @@ function leagueRows() {
     if (!r) {
       r = { key: k, uid: c.who ? null : c.by, name: playerName(c), grounds: new Set(), n: 0, scores: [], last: "", n92set: new Set(),
         div: { PL: new Set(), CH: new Set(), L1: new Set(), L2: new Set() }, countries: new Map(), same: new Map(), days: new Map(),
-        photos: 0, fullRated: 0, pie5: 0, sports: new Set(), americas: false, south: false, historic: false, wembley: false };
+        photos: 0, fullRated: 0, pie5: 0, nl: new Set(), sports: new Set(), americas: false, south: false, historic: false, wembley: false };
       rows.set(k, r);
     }
     r.n++; const gk = groundKey(c); r.grounds.add(gk);
@@ -1313,6 +1410,7 @@ function leagueRows() {
     const base = c.groundId && GBYID.get(c.groundId);
     if (base && IN92.has(base.group)) { r.n92set.add(base.id); r.div[base.group].add(base.id); }
     if (base && base.group === "HI") r.historic = true;
+    if (base && base.group === "NL") r.nl.add(base.id);
     if (base && base.ground === "Wembley Stadium") r.wembley = true;
     const lat = base ? base.lat : +c.lat, lng = base ? base.lng : +c.lng;
     if (lng < -30) r.americas = true;
@@ -1331,7 +1429,7 @@ function leagueRows() {
   return [...rows.values()].map(r => {
     const x = { ...r, g: r.grounds.size, n92: r.n92set.size, pts: r.grounds.size * 3 + (r.n - r.grounds.size),
       avg: r.scores.length ? r.scores.reduce((a, b) => a + b, 0) / r.scores.length : null,
-      maxSame: Math.max(0, ...r.same.values()), maxCountry: Math.max(0, ...[...r.countries.values()].map(s => s.size)), doubleDay: [...r.days.values()].some(s => s.size >= 2),
+      maxSame: Math.max(0, ...r.same.values()), nonLeague: r.nl.size, maxCountry: Math.max(0, ...[...r.countries.values()].map(s => s.size)), doubleDay: [...r.days.values()].some(s => s.size >= 2),
       abroad: [...r.countries.entries()].filter(([c]) => !HOME.has(c)).reduce((a, [, s]) => a + s.size, 0) };
     x.badges = [...BADGES.filter(b => b.test(x)), ...countryBadges(x)];
     return x;
