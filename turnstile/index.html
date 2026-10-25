@@ -23,7 +23,7 @@
 :root{
   --paper:#eef1ec; --card:#ffffff; --ink:#15211b; --muted:#5b6b62; --line:#d3dbd5;
   --pitch:#1d6b45; --pitch-2:#e3efe7; --amber:#f2b134; --amber-ink:#4a3200; --claret:#8c2341;
-  --sea:#cfdde3; --land:#f7f8f4; --border:#b9c6be; --pin-todo:#8fa197;
+  --sea:#dde9ee; --land:#fbfcf9; --border:#c9d4cd; --pin-todo:#8fa197;
   --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --body:"Barlow", "Helvetica Neue", Arial, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -32,11 +32,11 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --paper:#0f1713; --card:#17221c; --ink:#e7eee9; --muted:#93a59a; --line:#2a3a31;
   --pitch:#3fae76; --pitch-2:#1b2d23; --amber:#f2b134; --amber-ink:#2b1d00; --claret:#e0698c;
-  --sea:#0b1418; --land:#1d2a23; --border:#33463b; --pin-todo:#5f7468; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }}
+  --sea:#cfdee6; --land:#f3f5f0; --border:#b5c3ba; --pin-todo:#7d9184; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }}
 :root[data-theme="dark"]{
   --paper:#0f1713; --card:#17221c; --ink:#e7eee9; --muted:#93a59a; --line:#2a3a31;
   --pitch:#3fae76; --pitch-2:#1b2d23; --amber:#f2b134; --amber-ink:#2b1d00; --claret:#e0698c;
-  --sea:#0b1418; --land:#1d2a23; --border:#33463b; --pin-todo:#5f7468; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }
+  --sea:#cfdee6; --land:#f3f5f0; --border:#b5c3ba; --pin-todo:#7d9184; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }
 *{box-sizing:border-box}
 html,body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -110,6 +110,11 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .stage{position:relative;height:clamp(420px,68vh,760px);border-radius:16px;overflow:hidden;background:var(--sea);border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
 .stage svg{position:absolute;inset:0;width:100%;height:100%}
+.tiles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.tiles img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none;opacity:0;transition:opacity .25s}
+.tiles img.on{opacity:1}
+.attrib{position:absolute;right:6px;bottom:4px;z-index:3;font-size:10px;color:#33453b;background:rgba(255,255,255,.75);padding:1px 6px;border-radius:6px;max-width:60%;text-align:right}
+.attrib a{color:inherit}
 .stage svg path{fill:var(--land);stroke:var(--border);stroke-width:1px;vector-effect:non-scaling-stroke}
 .pins{position:absolute;inset:0;pointer-events:none}
 .pin{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;border:0;padding:0;background:none}
@@ -118,7 +123,7 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .pin.mine .head{background:var(--pitch);color:#fff}
 .dot{position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--pin-todo);pointer-events:auto;padding:0}
 .dot:hover{border-color:var(--ink)}
-.maplabel{position:absolute;transform:translate(-50%,6px);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
+.maplabel{position:absolute;transform:translate(-50%,6px);font-size:11px;font-weight:600;color:#33453b;white-space:nowrap;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
 .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3}
 .zoom button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:18px}
 .mapgrid{display:grid;gap:14px}
@@ -358,6 +363,8 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
     <div class="mapgrid">
     <div class="stage" id="stage">
       <svg id="land" preserveAspectRatio="none"></svg>
+      <div class="tiles" id="tiles" aria-hidden="true"></div>
+      <div class="attrib" id="attrib" hidden></div>
       <div class="pins" id="pins"></div>
       <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
       <div class="legend"><span><i style="background:var(--amber)"></i>Visited by the group</span><span><i style="background:var(--pitch)"></i>You've been</span><span><i style="background:var(--card);border-color:var(--pin-todo)"></i>Still to do</span><span><i style="background:transparent;border-style:dashed"></i>Drive-by</span></div>
@@ -993,12 +1000,54 @@ function applyView() {
   const { W, H } = stageSize();
   vb.h = vb.w * H / W;
   svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  drawTiles();
   positionPins();
+}
+// Real map tiles where the page is allowed to load them (the hosted site). The SVG map's
+// coordinates are Web Mercator scaled to ±1800, so a tile maps straight onto them.
+const TILES = !!window.TURNSTILE_CONFIG;
+const SAT_FROM = 15;
+const tileEl = $("#tiles"), tileCache = new Map();
+const tileZoom = () => { const { W } = stageSize(); return Math.max(2, Math.min(19, Math.round(Math.log2(3600 * W / vb.w / 256)))); };
+function drawTiles() {
+  if (!TILES) return;
+  const { W, H } = stageSize();
+  const z = tileZoom(), n = 2 ** z, ts = 3600 / n, sat = z >= SAT_FROM;
+  const x0 = Math.floor((vb.x + 1800) / ts), x1 = Math.floor((vb.x + vb.w + 1800) / ts);
+  const y0 = Math.max(0, Math.floor((vb.y + 1800) / ts)), y1 = Math.min(n - 1, Math.floor((vb.y + vb.h + 1800) / ts));
+  if ((x1 - x0 + 1) * (y1 - y0 + 1) > 120) return;
+  const want = new Set(), px = ts / vb.w * W;
+  for (let tx = x0; tx <= x1; tx++) for (let ty = y0; ty <= y1; ty++) {
+    const wx = ((tx % n) + n) % n, key = `${sat ? "s" : "m"}/${z}/${wx}/${ty}/${tx}`;
+    want.add(key);
+    let img = tileCache.get(key);
+    if (!img) {
+      img = new Image(); img.alt = ""; img.decoding = "async";
+      img.onload = () => img.classList.add("on"); img.onerror = () => img.remove();
+      img.src = sat ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty}/${wx}`
+        : `https://${"abcd"[(wx + ty) % 4]}.basemaps.cartocdn.com/light_all/${z}/${wx}/${ty}${devicePixelRatio > 1 ? "@2x" : ""}.png`;
+      tileCache.set(key, img); tileEl.append(img);
+    }
+    img.style.left = ((tx * ts - 1800 - vb.x) / vb.w * W) + "px"; img.style.top = ((ty * ts - 1800 - vb.y) / vb.h * H) + "px";
+    img.style.width = img.style.height = (px + 0.6) + "px";
+  }
+  // keep old tiles a moment so zooming doesn't flash blank
+  for (const [k, img] of tileCache) if (!want.has(k)) { tileCache.delete(k); setTimeout(() => img.remove(), 350); }
+  const at = $("#attrib"); at.hidden = false;
+  at.innerHTML = sat ? "Imagery © Esri, Maxar, Earthstar Geographics" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
+  svg.style.opacity = tileEl.querySelector("img.on") ? "0" : "";
+}
+function birdsEye(lat, lng) {
+  const { W, H } = stageSize();
+  const [x, y] = proj(lat, lng);
+  vb.w = 3600 * W / (256 * 2 ** 17); vb.h = vb.w * H / W;
+  vb.x = x - vb.w / 2; vb.y = y - vb.h / 2;
+  applyView();
 }
 function toScreen(lat, lng) { const [x, y] = proj(lat, lng); const { W, H } = stageSize(); return [(x - vb.x) / vb.w * W, (y - vb.y) / vb.h * H]; }
 function toWorld(sx, sy) { const { W, H } = stageSize(); return [vb.x + sx / W * vb.w, vb.y + sy / H * vb.h]; }
 function zoomAt(factor, sx, sy) {
-  const nw = Math.min(4200, Math.max(1.2, vb.w * factor)); factor = nw / vb.w;
+  const nw = Math.min(4200, Math.max(TILES ? 0.04 : 1.2, vb.w * factor)); factor = nw / vb.w;
   const [wx, wy] = toWorld(sx, sy);
   vb.x = wx - (wx - vb.x) * factor; vb.y = wy - (wy - vb.y) * factor; vb.w = nw;
   applyView();
@@ -1176,6 +1225,7 @@ function openGround(g) {
   } else {
     body.append(h("p", { class: "sub", style: "margin:0", text: "Nobody in the group has ticked this one off yet." }));
   }
+  if (TILES) body.append(h("button", { class: "btn btn-ghost", type: "button", style: "align-self:flex-start", onclick: () => { closeSheet(); switchTab("map"); birdsEye(g.lat, g.lng); }, text: "🛰 Bird's-eye view" }));
   if (!S.readOnly) { const pre = g.base || { custom: true, ground: g.ground, club: g.club, lat: g.lat, lng: g.lng };
     body.append(h("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, h("button", { class: "btn btn-amber", type: "button", onclick: () => openForm(null, pre), text: "+ Check in here" }),
       h("button", { class: "btn btn-ghost", type: "button", onclick: () => openForm(null, pre, true), text: "Log a drive-by" }))); }
