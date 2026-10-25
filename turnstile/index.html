@@ -617,7 +617,7 @@ const GROUNDS_RAW = [
 ["CF Montréal","Stade Saputo",45.5627,-73.5528,"WD","montreal|saputo"],
 ["Nashville SC","GEODIS Park",36.1301,-86.7658,"WD","nashville"],
 ["New England Revolution / Patriots","Gillette Stadium",42.0909,-71.2643,"WD","new england|foxborough|boston|new england patriots|patriots","FB,NFL"],
-["New York City FC","Yankee Stadium",40.8296,-73.9262,"WD","nycfc|bronx"],
+["New York City FC","Yankee Stadium",40.8296,-73.9262,"WD","nycfc|bronx|new york yankees|yankees|bronx bombers","FB,BB"],
 ["New York Red Bulls","Sports Illustrated Stadium",40.7369,-74.1503,"WD","red bull arena harrison|ny red bulls|harrison"],
 ["Orlando City","Inter&Co Stadium",28.5411,-81.3893,"WD","exploria stadium|orlando"],
 ["Philadelphia Union","Subaru Park",39.8328,-75.3788,"WD","talen energy stadium|philadelphia|chester"],
@@ -752,6 +752,36 @@ const GROUNDS_RAW = [
 ["Waterford GAA","Walsh Park",52.2525,-7.118,"GA","walsh park|waterford gaa|deise"],
 ["Clare GAA","Cusack Park",52.8434,-8.9906,"GA","ennis|clare|banner"],
 ["Laois GAA","O'Moore Park",53.0328,-7.291,"GA","omoore park|portlaoise|laois"],
+// Baseball (MLB; Yankee Stadium is listed above with football)
+["Arizona Diamondbacks","Chase Field",33.4455,-112.0667,"MLB","diamondbacks|d-backs|bank one ballpark|phoenix"],
+["Atlanta Braves","Truist Park",33.8908,-84.4678,"MLB","braves|suntrust park"],
+["Baltimore Orioles","Oriole Park at Camden Yards",39.2839,-76.6217,"MLB","camden yards|orioles|o's"],
+["Boston Red Sox","Fenway Park",42.3467,-71.0972,"MLB","fenway|red sox|green monster"],
+["Chicago Cubs","Wrigley Field",41.9484,-87.6553,"MLB","wrigley|cubs|friendly confines"],
+["Chicago White Sox","Rate Field",41.8299,-87.6338,"MLB","guaranteed rate field|us cellular field|comiskey park|white sox"],
+["Cincinnati Reds","Great American Ball Park",39.0975,-84.5066,"MLB","gabp|reds"],
+["Cleveland Guardians","Progressive Field",41.4962,-81.6852,"MLB","jacobs field|the jake|guardians|indians"],
+["Colorado Rockies","Coors Field",39.7559,-104.9942,"MLB","coors|rockies|denver baseball"],
+["Detroit Tigers","Comerica Park",42.339,-83.0485,"MLB","comerica|tigers detroit"],
+["Houston Astros","Daikin Park",29.7573,-95.3555,"MLB","minute maid park|astros|enron field"],
+["Kansas City Royals","Kauffman Stadium",39.0517,-94.4803,"MLB","kauffman|the k|royals"],
+["Los Angeles Angels","Angel Stadium",33.8003,-117.8827,"MLB","angel stadium of anaheim|angels|anaheim"],
+["Los Angeles Dodgers","Dodger Stadium",34.0739,-118.24,"MLB","chavez ravine|dodgers"],
+["Miami Marlins","loanDepot park",25.7781,-80.2197,"MLB","marlins park|loan depot park|marlins"],
+["Milwaukee Brewers","American Family Field",43.028,-87.9712,"MLB","miller park|brewers"],
+["Minnesota Twins","Target Field",44.9817,-93.2776,"MLB","twins|minneapolis baseball"],
+["New York Mets","Citi Field",40.7571,-73.8458,"MLB","mets|queens|flushing"],
+["Athletics","Sutter Health Park",38.5804,-121.5135,"MLB","athletics|a's|oakland athletics|sacramento|west sacramento"],
+["Philadelphia Phillies","Citizens Bank Park",39.9061,-75.1665,"MLB","phillies|cbp"],
+["Pittsburgh Pirates","PNC Park",40.4469,-80.0057,"MLB","pirates|pnc"],
+["San Diego Padres","Petco Park",32.7073,-117.1566,"MLB","padres|petco"],
+["San Francisco Giants","Oracle Park",37.7786,-122.3893,"MLB","at&t park|att park|pac bell park|sf giants|mccovey cove"],
+["Seattle Mariners","T-Mobile Park",47.5914,-122.3325,"MLB","safeco field|mariners"],
+["St. Louis Cardinals","Busch Stadium",38.6226,-90.1928,"MLB","busch|st louis cardinals|cards"],
+["Tampa Bay Rays","Tropicana Field",27.7682,-82.6534,"MLB","the trop|rays|st petersburg"],
+["Texas Rangers","Globe Life Field",32.7473,-97.0847,"MLB","texas rangers|arlington baseball"],
+["Toronto Blue Jays","Rogers Centre",43.6414,-79.3894,"MLB","skydome|blue jays|jays"],
+["Washington Nationals","Nationals Park",38.873,-77.0074,"MLB","nationals|nats"],
 // Cricket
 ["MCC / Middlesex","Lord's",51.5294,-0.1727,"CR","lords|home of cricket|middlesex"],
 ["Surrey","The Oval",51.4837,-0.1150,"CR","kia oval|kennington oval|surrey"],
@@ -855,7 +885,7 @@ const CRITERIA = [
   ["charm", "Character", "Old-school charm or architecture"],
   ["day", "Day out", "Pubs, town, getting there"],
 ];
-const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", NL: "Non-league", WSL: "Women's Super League", W2: "WSL 2", GA: "Gaelic games", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
+const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", NL: "Non-league", WSL: "Women's Super League", W2: "WSL 2", GA: "Gaelic games", MLB: "MLB", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
 const IN92 = new Set(["PL", "CH", "L1", "L2"]);
 
 const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
@@ -863,8 +893,8 @@ const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
   .replace(/\b(fc|afc|the|stadium|football club|ground|arena)\b/g, " ").replace(/\s+/g, " ").trim();
 const slug = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 
-const SPORTS = { FB: "Football", WF: "Women's football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL", GA: "Gaelic games" };
-const SPORT_OF_GROUP = { CR: "CR", RL: "RL", RU: "RU", NFL: "NFL", GA: "GA", WSL: "WF", W2: "WF" };
+const SPORTS = { FB: "Football", WF: "Women's football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL", BB: "Baseball", GA: "Gaelic games" };
+const SPORT_OF_GROUP = { MLB: "BB", CR: "CR", RL: "RL", RU: "RU", NFL: "NFL", GA: "GA", WSL: "WF", W2: "WF" };
 const GROUNDS = GROUNDS_RAW.map(([club, ground, lat, lng, group, aliases, sports]) => ({
   id: slug(club + "-" + ground), club, ground, lat, lng, group,
   sports: sports ? sports.split(",") : [SPORT_OF_GROUP[group] || "FB"],
@@ -881,6 +911,7 @@ const COMPS = [
   { id: "sl", name: "Super League", short: "SL", icon: "posts", list: ["Odsal Stadium", "Wheldon Road", "Stade Gilbert Brutus", "John Smith's Stadium", "MKM Stadium", "Sewell Group Craven Park", "Headingley Stadium", "Leigh Sports Village", "Totally Wicked Stadium", "Stade Ernest-Wallon", "Belle Vue", "Halliwell Jones Stadium", "Brick Community Stadium", "LNER Community Stadium"] },
   { id: "prem", name: "Premiership Rugby", short: "PREM", icon: "oval", list: ["The Recreation Ground", "Ashton Gate", "Sandy Park", "Kingsholm", "Twickenham Stoop", "Mattioli Woods Welford Road", "Kingston Park", "cinch Stadium at Franklin's Gardens", "Salford Community Stadium", "StoneX Stadium"] },
   { id: "county", name: "County Championship", short: "CC", icon: "bat", list: ["Lord's", "The Oval", "Emirates Old Trafford", "Edgbaston", "Headingley Cricket Ground", "Trent Bridge", "Utilita Bowl", "Sophia Gardens", "Seat Unique Riverside", "Seat Unique Stadium Bristol", "Cooper Associates County Ground", "Central County Ground", "Spitfire Ground, St Lawrence", "Cloudfm County Ground", "New Road", "County Ground Northampton", "Uptonsteel County Ground", "Incora County Ground"] },
+  { id: "mlb", name: "MLB", short: "MLB", icon: "baseball", list: ["Chase Field", "Truist Park", "Oriole Park at Camden Yards", "Fenway Park", "Wrigley Field", "Rate Field", "Great American Ball Park", "Progressive Field", "Coors Field", "Comerica Park", "Daikin Park", "Kauffman Stadium", "Angel Stadium", "Dodger Stadium", "loanDepot park", "American Family Field", "Target Field", "Citi Field", "Yankee Stadium", "Sutter Health Park", "Citizens Bank Park", "PNC Park", "Petco Park", "Oracle Park", "T-Mobile Park", "Busch Stadium", "Tropicana Field", "Globe Life Field", "Rogers Centre", "Nationals Park"] },
   { id: "nfl", name: "NFL", short: "NFL", icon: "gridiron", list: ["State Farm Stadium", "Mercedes-Benz Stadium", "M&T Bank Stadium", "Highmark Stadium", "Bank of America Stadium", "Soldier Field", "Paycor Stadium", "Huntington Bank Field", "AT&T Stadium", "Empower Field at Mile High", "Ford Field", "Lambeau Field", "NRG Stadium", "Lucas Oil Stadium", "EverBank Stadium", "Arrowhead Stadium", "Allegiant Stadium", "SoFi Stadium", "Hard Rock Stadium", "U.S. Bank Stadium", "Gillette Stadium", "Caesars Superdome", "MetLife Stadium", "Lincoln Financial Field", "Acrisure Stadium", "Levi's Stadium", "Lumen Field", "Raymond James Stadium", "Nissan Stadium", "Northwest Stadium"] },
 ].map(c => ({ ...c, ids: c.list.map(n => { const [club, gr] = n.includes("@") ? n.split("@") : [null, n]; const g = GROUNDS.find(x => x.ground === gr && (!club || x.club === club)); if (!g) console.warn("Turnstile: comp ground missing", n); return g?.id; }).filter(Boolean) }));
 
@@ -1408,6 +1439,8 @@ const BADGES = [
   { id: "union15", shelf: "sports", icon: "oval", name: "Over the Gain Line", desc: "A rugby union ground", code: "RU", tier: "b", prog: r => cnt(r.sports.has("RU") ? 1 : 0, 1) },
   { id: "lionesses", shelf: "sports", icon: "ball", name: "Lionesses' Roar", desc: "A women's football match", code: "WSL", tier: "b", prog: r => cnt(r.sports.has("WF") ? 1 : 0, 1) },
   { id: "croker", shelf: "sports", icon: "posts", name: "Up for the Match", desc: "A Gaelic games ground", code: "GAA", tier: "b", prog: r => cnt(r.sports.has("GA") ? 1 : 0, 1) },
+  { id: "ballgame", shelf: "sports", icon: "baseball", name: "Take Me Out to the Ball Game", desc: "A Major League ballpark", code: "MLB", tier: "b", prog: r => cnt(r.sports.has("BB") ? 1 : 0, 1) },
+  { id: "stretch", shelf: "sports", icon: "baseball", name: "Seventh-Inning Stretch", desc: "7 different ballparks", code: "7", tier: "s", prog: r => cnt([...r.grounds].filter(k => GBYID.get(k)?.sports.includes("BB")).length, 7) },
   { id: "gridiron", shelf: "sports", icon: "gridiron", name: "Gridiron", desc: "An NFL stadium", code: "NFL", tier: "b", prog: r => cnt(r.sports.has("NFL") ? 1 : 0, 1) },
   { id: "allround", shelf: "sports", icon: "medal", name: "All-Rounder", desc: "Grounds in 3 different sports", code: "3", tier: "s", prog: r => cnt(r.sports.size, 3) },
   { id: "fullset", shelf: "sports", icon: "medal", name: "Full Set", desc: "Grounds in 6 different sports", code: "6", tier: "g", prog: r => cnt(r.sports.size, 6) },
@@ -1450,6 +1483,7 @@ const ICONS = {
   posts: '<path d="M7 3v18M17 3v18M7 12h10"/><ellipse cx="12" cy="17.5" rx="3.6" ry="2.2"/>',
   oval: '<ellipse cx="12" cy="12" rx="9.5" ry="5.6" transform="rotate(-35 12 12)"/><path d="m9.2 14.8 5.6-5.6M10 12.2l1.8 1.8M12.2 10l1.8 1.8"/>',
   gridiron: '<path d="M3.5 12C6 5.5 18 5.5 20.5 12 18 18.5 6 18.5 3.5 12z"/><path d="M8 12h8M10 10.6v2.8M12 10.6v2.8M14 10.6v2.8"/>',
+  baseball: '<circle cx="12" cy="12" r="9"/><path d="M6.2 5.2c2.3 2.2 2.3 11.4 0 13.6M17.8 5.2c-2.3 2.2-2.3 11.4 0 13.6"/><path d="m7.6 8 1.4-.6M7.9 12h1.5M7.6 16l1.4.6M16.4 8 15 7.4M16.1 12h-1.5M16.4 16l-1.4.6"/>',
   medal: '<circle cx="12" cy="14.5" r="6"/><path d="M8 3h3l1 5M16 3h-3l-1 5"/><path d="m12 11.6 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z"/>',
 };
 const METAL = { b: ["#8a4f22", "#d99a5e", "#f3c99b"], s: ["#6f7c84", "#c9d2d7", "#f4f7f8"], g: ["#9a6f05", "#f2b134", "#ffe28a"] };
