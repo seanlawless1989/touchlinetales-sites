@@ -279,7 +279,7 @@ footer.site a{color:inherit}
 .modal header h3{margin:0;font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase}
 .modal .x{margin-left:auto;background:none;border:0;font-size:24px;color:var(--muted)}
 .modal form{padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px}
-label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
+label.f,div.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
 label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);font-weight:400;width:100%}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:480px){.grid2{grid-template-columns:1fr}}
@@ -412,7 +412,7 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
 <div id="sheetHost"></div>
 <div id="modalHost"></div>
 <div id="toastHost"></div>
-<footer class="site wrap">Turnstile is a little side project hosted by <a href="/">Touchline Tales</a>. <button class="linkbtn" type="button" id="myCode" hidden>Show my login code</button> <button class="linkbtn" type="button" id="signOut" hidden>Sign out on this phone</button></footer>
+<footer class="site wrap">Turnstile is a little side project hosted by <a href="/">Touchline Tales</a>. <button class="linkbtn" type="button" id="myCode" hidden>Show my login code</button> <button class="linkbtn" type="button" id="signOut" hidden>Sign out on this phone</button> <span class="ver" style="opacity:.6">Version 25 Oct, 4.15pm</span></footer>
 
 <script>
 // [club, ground, lat, lng, group, aliases]
@@ -1379,7 +1379,7 @@ function openForm(existing, preset, driveby) {
     } catch (ex) { saveBtn.disabled = false; saveBtn.textContent = existing ? "Save changes" : "Check in"; err.textContent = dbErr(ex); }
   } },
     modeBox, driveHint,
-    h("label", { class: "f" }, "Ground", gBox), sportBox,
+    h("div", { class: "f" }, h("span", { text: "Ground" }), gBox), sportBox,
     h("div", { class: "grid2" }, dateBox, matchBox),
     scoreBox,
     h("div", { class: "photo-drop" }, h("div", { style: "flex:1;min-width:180px;font-size:13px" }, h("b", { text: "Photo" }), h("div", { style: "color:var(--muted)", text: "One snap from the day. It gets shrunk to save space." }), fileIn), prev),

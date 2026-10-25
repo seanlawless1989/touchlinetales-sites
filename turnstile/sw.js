@@ -1,5 +1,5 @@
 // Turnstile service worker: offline shell and push notifications
-const CACHE = "turnstile-v4";
+const CACHE = "turnstile-v5";
 const SHELL = ["./", "./index.html", "./config.js", "./icon.svg", "./icon-192.png", "./manifest.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
@@ -14,7 +14,7 @@ self.addEventListener("fetch", e => {
   if (/arcgisonline\.com$/.test(url.hostname)) return;
   if (req.mode === "navigate" || url.origin === location.origin) {
     // network first, so a new version shows up straight away
-    e.respondWith(fetch(req).then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; })
+    e.respondWith(fetch(req, { cache: "no-cache" }).then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; })
       .catch(() => caches.match(req).then(r => r || caches.match("./index.html"))));
     return;
   }
