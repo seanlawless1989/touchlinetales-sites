@@ -7,6 +7,12 @@
 <meta name="theme-color" content="#1d6b45">
 <title>Turnstile</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Turnstile">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -17,7 +23,7 @@
 :root{
   --paper:#eef1ec; --card:#ffffff; --ink:#15211b; --muted:#5b6b62; --line:#d3dbd5;
   --pitch:#1d6b45; --pitch-2:#e3efe7; --amber:#f2b134; --amber-ink:#4a3200; --claret:#8c2341;
-  --sea:#cfdde3; --land:#f7f8f4; --border:#b9c6be; --pin-todo:#8fa197;
+  --sea:#dde9ee; --land:#fbfcf9; --border:#c9d4cd; --pin-todo:#8fa197;
   --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --body:"Barlow", "Helvetica Neue", Arial, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -26,11 +32,11 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --paper:#0f1713; --card:#17221c; --ink:#e7eee9; --muted:#93a59a; --line:#2a3a31;
   --pitch:#3fae76; --pitch-2:#1b2d23; --amber:#f2b134; --amber-ink:#2b1d00; --claret:#e0698c;
-  --sea:#0b1418; --land:#1d2a23; --border:#33463b; --pin-todo:#5f7468; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }}
+  --sea:#cfdee6; --land:#f3f5f0; --border:#b5c3ba; --pin-todo:#7d9184; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }}
 :root[data-theme="dark"]{
   --paper:#0f1713; --card:#17221c; --ink:#e7eee9; --muted:#93a59a; --line:#2a3a31;
   --pitch:#3fae76; --pitch-2:#1b2d23; --amber:#f2b134; --amber-ink:#2b1d00; --claret:#e0698c;
-  --sea:#0b1418; --land:#1d2a23; --border:#33463b; --pin-todo:#5f7468; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }
+  --sea:#cfdee6; --land:#f3f5f0; --border:#b5c3ba; --pin-todo:#7d9184; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }
 *{box-sizing:border-box}
 html,body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -52,6 +58,14 @@ button{cursor:pointer}
 .wordmark{font-family:var(--display);font-weight:900;font-size:34px;letter-spacing:.04em;line-height:.9;text-transform:uppercase}
 .tagline{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:3px}
 .mast .spacer{flex:1}
+.getapp{border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.bell{position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:rgba(0,0,0,.18);color:#fff}
+.bell .dot{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--amber);color:var(--amber-ink);font:800 11px/18px var(--mono);border:2px solid var(--pitch)}
+.newsrow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.newsrow.fresh b{color:var(--pitch)}
+.newsrow .when{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.alertbox{background:var(--pitch-2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
 .me{display:flex;align-items:center;gap:8px;font-size:13px;background:rgba(0,0,0,.18);padding:6px 10px 6px 6px;border-radius:999px}
 .me img{width:26px;height:26px;border-radius:50%}
 .me button{background:none;border:0;color:#fff;text-decoration:underline;padding:0}
@@ -96,6 +110,11 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .stage{position:relative;height:clamp(420px,68vh,760px);border-radius:16px;overflow:hidden;background:var(--sea);border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
 .stage svg{position:absolute;inset:0;width:100%;height:100%}
+.tiles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.tiles img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none;opacity:0;transition:opacity .25s}
+.tiles img.on{opacity:1}
+.attrib{position:absolute;right:6px;bottom:4px;z-index:3;font-size:10px;color:#33453b;background:rgba(255,255,255,.75);padding:1px 6px;border-radius:6px;max-width:60%;text-align:right}
+.attrib a{color:inherit}
 .stage svg path{fill:var(--land);stroke:var(--border);stroke-width:1px;vector-effect:non-scaling-stroke}
 .pins{position:absolute;inset:0;pointer-events:none}
 .pin{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;border:0;padding:0;background:none}
@@ -104,7 +123,7 @@ h2{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02e
 .pin.mine .head{background:var(--pitch);color:#fff}
 .dot{position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--pin-todo);pointer-events:auto;padding:0}
 .dot:hover{border-color:var(--ink)}
-.maplabel{position:absolute;transform:translate(-50%,6px);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
+.maplabel{position:absolute;transform:translate(-50%,6px);font-size:11px;font-weight:600;color:#33453b;white-space:nowrap;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
 .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3}
 .zoom button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:18px}
 .mapgrid{display:grid;gap:14px}
@@ -303,6 +322,8 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
       <div><div class="wordmark">Turnstile</div><div class="tagline">Click in. Pin it. Rate the pie.</div></div>
     </div>
     <div class="spacer"></div>
+    <button class="getapp" id="getApp" type="button" hidden>Get the app</button>
+    <button class="bell" id="bell" type="button" aria-label="What's new" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellN" hidden></span></button>
     <div class="me" id="me" hidden></div>
     <button class="btn btn-amber" id="checkinBtn" type="button">+ Check in</button>
   </div>
@@ -342,6 +363,8 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
     <div class="mapgrid">
     <div class="stage" id="stage">
       <svg id="land" preserveAspectRatio="none"></svg>
+      <div class="tiles" id="tiles" aria-hidden="true"></div>
+      <div class="attrib" id="attrib" hidden></div>
       <div class="pins" id="pins"></div>
       <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
       <div class="legend"><span><i style="background:var(--amber)"></i>Visited by the group</span><span><i style="background:var(--pitch)"></i>You've been</span><span><i style="background:var(--card);border-color:var(--pin-todo)"></i>Still to do</span><span><i style="background:transparent;border-style:dashed"></i>Drive-by</span></div>
@@ -601,7 +624,7 @@ const GROUNDS_RAW = [
 ["CF Montréal","Stade Saputo",45.5627,-73.5528,"WD","montreal|saputo"],
 ["Nashville SC","GEODIS Park",36.1301,-86.7658,"WD","nashville"],
 ["New England Revolution / Patriots","Gillette Stadium",42.0909,-71.2643,"WD","new england|foxborough|boston|new england patriots|patriots","FB,NFL"],
-["New York City FC","Yankee Stadium",40.8296,-73.9262,"WD","nycfc|bronx"],
+["New York City FC","Yankee Stadium",40.8296,-73.9262,"WD","nycfc|bronx|new york yankees|yankees|bronx bombers","FB,BB"],
 ["New York Red Bulls","Sports Illustrated Stadium",40.7369,-74.1503,"WD","red bull arena harrison|ny red bulls|harrison"],
 ["Orlando City","Inter&Co Stadium",28.5411,-81.3893,"WD","exploria stadium|orlando"],
 ["Philadelphia Union","Subaru Park",39.8328,-75.3788,"WD","talen energy stadium|philadelphia|chester"],
@@ -736,6 +759,36 @@ const GROUNDS_RAW = [
 ["Waterford GAA","Walsh Park",52.2525,-7.118,"GA","walsh park|waterford gaa|deise"],
 ["Clare GAA","Cusack Park",52.8434,-8.9906,"GA","ennis|clare|banner"],
 ["Laois GAA","O'Moore Park",53.0328,-7.291,"GA","omoore park|portlaoise|laois"],
+// Baseball (MLB; Yankee Stadium is listed above with football)
+["Arizona Diamondbacks","Chase Field",33.4455,-112.0667,"MLB","diamondbacks|d-backs|bank one ballpark|phoenix"],
+["Atlanta Braves","Truist Park",33.8908,-84.4678,"MLB","braves|suntrust park"],
+["Baltimore Orioles","Oriole Park at Camden Yards",39.2839,-76.6217,"MLB","camden yards|orioles|o's"],
+["Boston Red Sox","Fenway Park",42.3467,-71.0972,"MLB","fenway|red sox|green monster"],
+["Chicago Cubs","Wrigley Field",41.9484,-87.6553,"MLB","wrigley|cubs|friendly confines"],
+["Chicago White Sox","Rate Field",41.8299,-87.6338,"MLB","guaranteed rate field|us cellular field|comiskey park|white sox"],
+["Cincinnati Reds","Great American Ball Park",39.0975,-84.5066,"MLB","gabp|reds"],
+["Cleveland Guardians","Progressive Field",41.4962,-81.6852,"MLB","jacobs field|the jake|guardians|indians"],
+["Colorado Rockies","Coors Field",39.7559,-104.9942,"MLB","coors|rockies|denver baseball"],
+["Detroit Tigers","Comerica Park",42.339,-83.0485,"MLB","comerica|tigers detroit"],
+["Houston Astros","Daikin Park",29.7573,-95.3555,"MLB","minute maid park|astros|enron field"],
+["Kansas City Royals","Kauffman Stadium",39.0517,-94.4803,"MLB","kauffman|the k|royals"],
+["Los Angeles Angels","Angel Stadium",33.8003,-117.8827,"MLB","angel stadium of anaheim|angels|anaheim"],
+["Los Angeles Dodgers","Dodger Stadium",34.0739,-118.24,"MLB","chavez ravine|dodgers"],
+["Miami Marlins","loanDepot park",25.7781,-80.2197,"MLB","marlins park|loan depot park|marlins"],
+["Milwaukee Brewers","American Family Field",43.028,-87.9712,"MLB","miller park|brewers"],
+["Minnesota Twins","Target Field",44.9817,-93.2776,"MLB","twins|minneapolis baseball"],
+["New York Mets","Citi Field",40.7571,-73.8458,"MLB","mets|queens|flushing"],
+["Athletics","Sutter Health Park",38.5804,-121.5135,"MLB","athletics|a's|oakland athletics|sacramento|west sacramento"],
+["Philadelphia Phillies","Citizens Bank Park",39.9061,-75.1665,"MLB","phillies|cbp"],
+["Pittsburgh Pirates","PNC Park",40.4469,-80.0057,"MLB","pirates|pnc"],
+["San Diego Padres","Petco Park",32.7073,-117.1566,"MLB","padres|petco"],
+["San Francisco Giants","Oracle Park",37.7786,-122.3893,"MLB","at&t park|att park|pac bell park|sf giants|mccovey cove"],
+["Seattle Mariners","T-Mobile Park",47.5914,-122.3325,"MLB","safeco field|mariners"],
+["St. Louis Cardinals","Busch Stadium",38.6226,-90.1928,"MLB","busch|st louis cardinals|cards"],
+["Tampa Bay Rays","Tropicana Field",27.7682,-82.6534,"MLB","the trop|rays|st petersburg"],
+["Texas Rangers","Globe Life Field",32.7473,-97.0847,"MLB","texas rangers|arlington baseball"],
+["Toronto Blue Jays","Rogers Centre",43.6414,-79.3894,"MLB","skydome|blue jays|jays"],
+["Washington Nationals","Nationals Park",38.873,-77.0074,"MLB","nationals|nats"],
 // Cricket
 ["MCC / Middlesex","Lord's",51.5294,-0.1727,"CR","lords|home of cricket|middlesex"],
 ["Surrey","The Oval",51.4837,-0.1150,"CR","kia oval|kennington oval|surrey"],
@@ -839,7 +892,7 @@ const CRITERIA = [
   ["charm", "Character", "Old-school charm or architecture"],
   ["day", "Day out", "Pubs, town, getting there"],
 ];
-const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", NL: "Non-league", WSL: "Women's Super League", W2: "WSL 2", GA: "Gaelic games", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
+const GROUP_NAMES = { PL: "Premier League", CH: "Championship", L1: "League One", L2: "League Two", SC: "Scotland", OT: "Other UK & Ireland", NL: "Non-league", WSL: "Women's Super League", W2: "WSL 2", GA: "Gaelic games", MLB: "MLB", HI: "Former ground", EU: "Europe", WD: "Rest of the world", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL" };
 const IN92 = new Set(["PL", "CH", "L1", "L2"]);
 
 const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
@@ -847,8 +900,8 @@ const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
   .replace(/\b(fc|afc|the|stadium|football club|ground|arena)\b/g, " ").replace(/\s+/g, " ").trim();
 const slug = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 
-const SPORTS = { FB: "Football", WF: "Women's football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL", GA: "Gaelic games" };
-const SPORT_OF_GROUP = { CR: "CR", RL: "RL", RU: "RU", NFL: "NFL", GA: "GA", WSL: "WF", W2: "WF" };
+const SPORTS = { FB: "Football", WF: "Women's football", CR: "Cricket", RL: "Rugby league", RU: "Rugby union", NFL: "NFL", BB: "Baseball", GA: "Gaelic games" };
+const SPORT_OF_GROUP = { MLB: "BB", CR: "CR", RL: "RL", RU: "RU", NFL: "NFL", GA: "GA", WSL: "WF", W2: "WF" };
 const GROUNDS = GROUNDS_RAW.map(([club, ground, lat, lng, group, aliases, sports]) => ({
   id: slug(club + "-" + ground), club, ground, lat, lng, group,
   sports: sports ? sports.split(",") : [SPORT_OF_GROUP[group] || "FB"],
@@ -856,6 +909,18 @@ const GROUNDS = GROUNDS_RAW.map(([club, ground, lat, lng, group, aliases, sports
 }));
 const sportOf = c => c.sport || (c.groundId && GBYID.get(c.groundId)?.sports[0]) || "FB";
 const GBYID = new Map(GROUNDS.map(g => [g.id, g]));
+
+// Completion tables, like The 92 for other competitions (2025–26 / 2026 seasons)
+const COMPS = [
+  { id: "spl", name: "Scottish Premiership", short: "SPFL", icon: "trophy", list: ["Celtic Park", "Ibrox Stadium", "Pittodrie Stadium", "Tynecastle Park", "Easter Road", "Tannadice Park", "Dens Park", "Fir Park", "Rugby Park", "SMiSA Stadium", "Almondvale Stadium", "Falkirk Stadium"] },
+  { id: "nl", name: "National League", short: "NL", icon: "whistle", list: ["Recreation Ground", "Moss Lane", "Meadow Park", "Jakemans Community Stadium", "Cressing Road", "St James Park", "Brunton Park", "Silverlake Stadium", "The Shay", "The New Lawn", "Gateshead International Stadium", "Hartlepool United@Victoria Park", "Mazuma Mobile Stadium", "Spotland", "Glanford Park", "Damson Park", "Roots Hall", "Gander Green Lane", "The Lamb Ground", "Grosvenor Vale", "Kingfield Stadium", "Huish Park", "LNER Community Stadium"] },
+  { id: "wsl", name: "Women's Super League", short: "WSL", icon: "ball", list: ["Meadow Park", "Villa Park", "Broadfield Stadium", "Kingsmeadow", "Goodison Park", "King Power Stadium", "Totally Wicked Stadium", "Hayes Lane", "Joie Stadium", "Leigh Sports Village", "Brisbane Road", "Chigwell Construction Stadium"] },
+  { id: "sl", name: "Super League", short: "SL", icon: "posts", list: ["Odsal Stadium", "Wheldon Road", "Stade Gilbert Brutus", "John Smith's Stadium", "MKM Stadium", "Sewell Group Craven Park", "Headingley Stadium", "Leigh Sports Village", "Totally Wicked Stadium", "Stade Ernest-Wallon", "Belle Vue", "Halliwell Jones Stadium", "Brick Community Stadium", "LNER Community Stadium"] },
+  { id: "prem", name: "Premiership Rugby", short: "PREM", icon: "oval", list: ["The Recreation Ground", "Ashton Gate", "Sandy Park", "Kingsholm", "Twickenham Stoop", "Mattioli Woods Welford Road", "Kingston Park", "cinch Stadium at Franklin's Gardens", "Salford Community Stadium", "StoneX Stadium"] },
+  { id: "county", name: "County Championship", short: "CC", icon: "bat", list: ["Lord's", "The Oval", "Emirates Old Trafford", "Edgbaston", "Headingley Cricket Ground", "Trent Bridge", "Utilita Bowl", "Sophia Gardens", "Seat Unique Riverside", "Seat Unique Stadium Bristol", "Cooper Associates County Ground", "Central County Ground", "Spitfire Ground, St Lawrence", "Cloudfm County Ground", "New Road", "County Ground Northampton", "Uptonsteel County Ground", "Incora County Ground"] },
+  { id: "mlb", name: "MLB", short: "MLB", icon: "baseball", list: ["Chase Field", "Truist Park", "Oriole Park at Camden Yards", "Fenway Park", "Wrigley Field", "Rate Field", "Great American Ball Park", "Progressive Field", "Coors Field", "Comerica Park", "Daikin Park", "Kauffman Stadium", "Angel Stadium", "Dodger Stadium", "loanDepot park", "American Family Field", "Target Field", "Citi Field", "Yankee Stadium", "Sutter Health Park", "Citizens Bank Park", "PNC Park", "Petco Park", "Oracle Park", "T-Mobile Park", "Busch Stadium", "Tropicana Field", "Globe Life Field", "Rogers Centre", "Nationals Park"] },
+  { id: "nfl", name: "NFL", short: "NFL", icon: "gridiron", list: ["State Farm Stadium", "Mercedes-Benz Stadium", "M&T Bank Stadium", "Highmark Stadium", "Bank of America Stadium", "Soldier Field", "Paycor Stadium", "Huntington Bank Field", "AT&T Stadium", "Empower Field at Mile High", "Ford Field", "Lambeau Field", "NRG Stadium", "Lucas Oil Stadium", "EverBank Stadium", "Arrowhead Stadium", "Allegiant Stadium", "SoFi Stadium", "Hard Rock Stadium", "U.S. Bank Stadium", "Gillette Stadium", "Caesars Superdome", "MetLife Stadium", "Lincoln Financial Field", "Acrisure Stadium", "Levi's Stadium", "Lumen Field", "Raymond James Stadium", "Nissan Stadium", "Northwest Stadium"] },
+].map(c => ({ ...c, ids: c.list.map(n => { const [club, gr] = n.includes("@") ? n.split("@") : [null, n]; const g = GROUNDS.find(x => x.ground === gr && (!club || x.club === club)); if (!g) console.warn("Turnstile: comp ground missing", n); return g?.id; }).filter(Boolean) }));
 
 // ---------- state ----------
 const S = {
@@ -935,12 +1000,54 @@ function applyView() {
   const { W, H } = stageSize();
   vb.h = vb.w * H / W;
   svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  drawTiles();
   positionPins();
+}
+// Real map tiles where the page is allowed to load them (the hosted site). The SVG map's
+// coordinates are Web Mercator scaled to ±1800, so a tile maps straight onto them.
+const TILES = !!window.TURNSTILE_CONFIG;
+const SAT_FROM = 15;
+const tileEl = $("#tiles"), tileCache = new Map();
+const tileZoom = () => { const { W } = stageSize(); return Math.max(2, Math.min(19, Math.round(Math.log2(3600 * W / vb.w / 256)))); };
+function drawTiles() {
+  if (!TILES) return;
+  const { W, H } = stageSize();
+  const z = tileZoom(), n = 2 ** z, ts = 3600 / n, sat = z >= SAT_FROM;
+  const x0 = Math.floor((vb.x + 1800) / ts), x1 = Math.floor((vb.x + vb.w + 1800) / ts);
+  const y0 = Math.max(0, Math.floor((vb.y + 1800) / ts)), y1 = Math.min(n - 1, Math.floor((vb.y + vb.h + 1800) / ts));
+  if ((x1 - x0 + 1) * (y1 - y0 + 1) > 120) return;
+  const want = new Set(), px = ts / vb.w * W;
+  for (let tx = x0; tx <= x1; tx++) for (let ty = y0; ty <= y1; ty++) {
+    const wx = ((tx % n) + n) % n, key = `${sat ? "s" : "m"}/${z}/${wx}/${ty}/${tx}`;
+    want.add(key);
+    let img = tileCache.get(key);
+    if (!img) {
+      img = new Image(); img.alt = ""; img.decoding = "async";
+      img.onload = () => img.classList.add("on"); img.onerror = () => img.remove();
+      img.src = sat ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty}/${wx}`
+        : `https://${"abcd"[(wx + ty) % 4]}.basemaps.cartocdn.com/light_all/${z}/${wx}/${ty}${devicePixelRatio > 1 ? "@2x" : ""}.png`;
+      tileCache.set(key, img); tileEl.append(img);
+    }
+    img.style.left = ((tx * ts - 1800 - vb.x) / vb.w * W) + "px"; img.style.top = ((ty * ts - 1800 - vb.y) / vb.h * H) + "px";
+    img.style.width = img.style.height = (px + 0.6) + "px";
+  }
+  // keep old tiles a moment so zooming doesn't flash blank
+  for (const [k, img] of tileCache) if (!want.has(k)) { tileCache.delete(k); setTimeout(() => img.remove(), 350); }
+  const at = $("#attrib"); at.hidden = false;
+  at.innerHTML = sat ? "Imagery © Esri, Maxar, Earthstar Geographics" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
+  svg.style.opacity = tileEl.querySelector("img.on") ? "0" : "";
+}
+function birdsEye(lat, lng) {
+  const { W, H } = stageSize();
+  const [x, y] = proj(lat, lng);
+  vb.w = 3600 * W / (256 * 2 ** 17); vb.h = vb.w * H / W;
+  vb.x = x - vb.w / 2; vb.y = y - vb.h / 2;
+  applyView();
 }
 function toScreen(lat, lng) { const [x, y] = proj(lat, lng); const { W, H } = stageSize(); return [(x - vb.x) / vb.w * W, (y - vb.y) / vb.h * H]; }
 function toWorld(sx, sy) { const { W, H } = stageSize(); return [vb.x + sx / W * vb.w, vb.y + sy / H * vb.h]; }
 function zoomAt(factor, sx, sy) {
-  const nw = Math.min(4200, Math.max(1.2, vb.w * factor)); factor = nw / vb.w;
+  const nw = Math.min(4200, Math.max(TILES ? 0.04 : 1.2, vb.w * factor)); factor = nw / vb.w;
   const [wx, wy] = toWorld(sx, sy);
   vb.x = wx - (wx - vb.x) * factor; vb.y = wy - (wy - vb.y) * factor; vb.w = nw;
   applyView();
@@ -1118,6 +1225,7 @@ function openGround(g) {
   } else {
     body.append(h("p", { class: "sub", style: "margin:0", text: "Nobody in the group has ticked this one off yet." }));
   }
+  if (TILES) body.append(h("button", { class: "btn btn-ghost", type: "button", style: "align-self:flex-start", onclick: () => { closeSheet(); switchTab("map"); birdsEye(g.lat, g.lng); }, text: "🛰 Bird's-eye view" }));
   if (!S.readOnly) { const pre = g.base || { custom: true, ground: g.ground, club: g.club, lat: g.lat, lng: g.lng };
     body.append(h("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, h("button", { class: "btn btn-amber", type: "button", onclick: () => openForm(null, pre), text: "+ Check in here" }),
       h("button", { class: "btn btn-ghost", type: "button", onclick: () => openForm(null, pre, true), text: "Log a drive-by" }))); }
@@ -1346,7 +1454,7 @@ const HOME = new Set(["England", "Scotland", "Wales", "Northern Ireland", "Irela
 
 // ---------- players & badges ----------
 const DIVS = [["PL", "Premier League", 20], ["CH", "Championship", 24], ["L1", "League One", 24], ["L2", "League Two", 24]];
-const SHELVES = [["grounds", "Grounds"], ["the92", "The 92"], ["road", "On the road"], ["loyal", "Loyalty"], ["matchday", "Matchday"], ["sports", "Other sports"]];
+const SHELVES = [["grounds", "Grounds"], ["the92", "The 92"], ["road", "On the road"], ["loyal", "Loyalty"], ["matchday", "Matchday"], ["sports", "Other sports"], ["sets", "Complete sets"]];
 const cnt = (cur, target) => [Math.min(cur, target), target];
 const BADGES = [
   { id: "first", shelf: "grounds", icon: "whistle", name: "First Whistle", desc: "Your first check-in", code: "1", tier: "b", prog: r => cnt(r.n, 1) },
@@ -1381,9 +1489,22 @@ const BADGES = [
   { id: "union15", shelf: "sports", icon: "oval", name: "Over the Gain Line", desc: "A rugby union ground", code: "RU", tier: "b", prog: r => cnt(r.sports.has("RU") ? 1 : 0, 1) },
   { id: "lionesses", shelf: "sports", icon: "ball", name: "Lionesses' Roar", desc: "A women's football match", code: "WSL", tier: "b", prog: r => cnt(r.sports.has("WF") ? 1 : 0, 1) },
   { id: "croker", shelf: "sports", icon: "posts", name: "Up for the Match", desc: "A Gaelic games ground", code: "GAA", tier: "b", prog: r => cnt(r.sports.has("GA") ? 1 : 0, 1) },
+  { id: "ballgame", shelf: "sports", icon: "baseball", name: "Take Me Out to the Ball Game", desc: "A Major League ballpark", code: "MLB", tier: "b", prog: r => cnt(r.sports.has("BB") ? 1 : 0, 1) },
+  { id: "stretch", shelf: "sports", icon: "baseball", name: "Seventh-Inning Stretch", desc: "7 different ballparks", code: "7", tier: "s", prog: r => cnt([...r.grounds].filter(k => GBYID.get(k)?.sports.includes("BB")).length, 7) },
   { id: "gridiron", shelf: "sports", icon: "gridiron", name: "Gridiron", desc: "An NFL stadium", code: "NFL", tier: "b", prog: r => cnt(r.sports.has("NFL") ? 1 : 0, 1) },
   { id: "allround", shelf: "sports", icon: "medal", name: "All-Rounder", desc: "Grounds in 3 different sports", code: "3", tier: "s", prog: r => cnt(r.sports.size, 3) },
   { id: "fullset", shelf: "sports", icon: "medal", name: "Full Set", desc: "Grounds in 6 different sports", code: "6", tier: "g", prog: r => cnt(r.sports.size, 6) },
+  { id: "london", shelf: "road", icon: "pin", name: "London Calling", desc: "10 grounds within 15 miles of central London", code: "LDN", tier: "s", prog: r => cnt(r.london.size, 10) },
+  { id: "north", shelf: "road", icon: "flag", name: "Grim Up North", desc: "25 grounds north of Manchester", code: "N", tier: "s", prog: r => cnt(r.north.size, 25) },
+  { id: "weekend", shelf: "matchday", icon: "calendar", name: "Hat-trick Weekend", desc: "3 different grounds in 3 days", code: "3D", tier: "s", prog: r => cnt(r.weekend, 3) },
+  { id: "marathon", shelf: "matchday", icon: "whistle", name: "Groundhop Marathon", desc: "5 check-ins in a week", code: "7D", tier: "g", prog: r => cnt(r.week, 5) },
+  { id: "decade", shelf: "loyal", icon: "calendar", name: "Ten-Year Itch", desc: "Check-ins 10 years apart", code: "10Y", tier: "s", prog: r => cnt(r.span, 10) },
+  { id: "veteran", shelf: "loyal", icon: "crown", name: "Old Timer", desc: "Check-ins 25 years apart", code: "25Y", tier: "g", prog: r => cnt(r.span, 25) },
+  { id: "trail", shelf: "grounds", icon: "flag", name: "Trailblazer", desc: "First in the group to 10 grounds", code: "1ST", tier: "s", prog: r => cnt(r.firsts, 10) },
+  ...COMPS.flatMap(c => [
+    { id: "half-" + c.id, shelf: "sets", icon: c.icon, name: `Halfway: ${c.name}`, desc: `Half the ${c.name} grounds`, code: c.short, tier: "b", prog: r => cnt(r.comp[c.id], Math.ceil(c.ids.length / 2)) },
+    { id: "full-" + c.id, shelf: "sets", icon: c.icon, name: `${c.name} Complete`, desc: `Every ${c.name} ground (${c.ids.length})`, code: c.short, tier: "g", prog: r => cnt(r.comp[c.id], c.ids.length) },
+  ]),
 ].map(b => ({ ...b, test: r => { const [c, t] = b.prog(r); return c >= t; } }));
 function countryBadges(r) {
   const out = [];
@@ -1412,6 +1533,7 @@ const ICONS = {
   posts: '<path d="M7 3v18M17 3v18M7 12h10"/><ellipse cx="12" cy="17.5" rx="3.6" ry="2.2"/>',
   oval: '<ellipse cx="12" cy="12" rx="9.5" ry="5.6" transform="rotate(-35 12 12)"/><path d="m9.2 14.8 5.6-5.6M10 12.2l1.8 1.8M12.2 10l1.8 1.8"/>',
   gridiron: '<path d="M3.5 12C6 5.5 18 5.5 20.5 12 18 18.5 6 18.5 3.5 12z"/><path d="M8 12h8M10 10.6v2.8M12 10.6v2.8M14 10.6v2.8"/>',
+  baseball: '<circle cx="12" cy="12" r="9"/><path d="M6.2 5.2c2.3 2.2 2.3 11.4 0 13.6M17.8 5.2c-2.3 2.2-2.3 11.4 0 13.6"/><path d="m7.6 8 1.4-.6M7.9 12h1.5M7.6 16l1.4.6M16.4 8 15 7.4M16.1 12h-1.5M16.4 16l-1.4.6"/>',
   medal: '<circle cx="12" cy="14.5" r="6"/><path d="M8 3h3l1 5M16 3h-3l-1 5"/><path d="m12 11.6 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z"/>',
 };
 const METAL = { b: ["#8a4f22", "#d99a5e", "#f3c99b"], s: ["#6f7c84", "#c9d2d7", "#f4f7f8"], g: ["#9a6f05", "#f2b134", "#ffe28a"] };
@@ -1452,7 +1574,7 @@ function leagueRows() {
     if (!r) {
       r = { key: k, uid: c.who ? null : c.by, name: playerName(c), grounds: new Set(), n: 0, scores: [], last: "", n92set: new Set(),
         div: { PL: new Set(), CH: new Set(), L1: new Set(), L2: new Set() }, countries: new Map(), same: new Map(), days: new Map(),
-        photos: 0, fullRated: 0, pie5: 0, nl: new Set(), sports: new Set(), americas: false, south: false, historic: false, wembley: false };
+        photos: 0, fullRated: 0, pie5: 0, nl: new Set(), gids: new Set(), y0: 9999, y1: 0, dated: [], north: new Set(), london: new Set(), sports: new Set(), americas: false, south: false, historic: false, wembley: false };
       rows.set(k, r);
     }
     r.n++; const gk = groundKey(c); r.grounds.add(gk);
@@ -1461,6 +1583,10 @@ function leagueRows() {
     if (base && IN92.has(base.group)) { r.n92set.add(base.id); r.div[base.group].add(base.id); }
     if (base && base.group === "HI") r.historic = true;
     if (base && base.group === "NL") r.nl.add(base.id);
+    if (base) r.gids.add(base.id);
+    if (c.date) { const y = +c.date.slice(0, 4); if (y) { r.y0 = Math.min(r.y0, y); r.y1 = Math.max(r.y1, y); } }
+    if (c.date && c.date.length === 10) r.dated.push([c.date, gk]);
+    { const la = base ? base.lat : +c.lat, ln = base ? base.lng : +c.lng; if (la > 53.5) r.north.add(gk); if (miles(la, ln, 51.5074, -0.1278) < 15) r.london.add(gk); }
     if (base && base.ground === "Wembley Stadium") r.wembley = true;
     const lat = base ? base.lat : +c.lat, lng = base ? base.lng : +c.lng;
     if (lng < -30) r.americas = true;
@@ -1476,11 +1602,24 @@ function leagueRows() {
     const o = overall(c); if (o != null) r.scores.push(o);
     if ((c.date || "") > r.last) r.last = c.date;
   }
+  const firsts = new Map(), seenG = new Set();
+  for (const c of list) if (c.date && c.date.length === 10) { const gk = groundKey(c); if (seenG.has(gk)) continue; seenG.add(gk); const k = playerKey(c); firsts.set(k, (firsts.get(k) || 0) + 1); }
   return [...rows.values()].map(r => {
     const x = { ...r, g: r.grounds.size, n92: r.n92set.size, pts: r.grounds.size * 3 + (r.n - r.grounds.size),
       avg: r.scores.length ? r.scores.reduce((a, b) => a + b, 0) / r.scores.length : null,
       maxSame: Math.max(0, ...r.same.values()), nonLeague: r.nl.size, maxCountry: Math.max(0, ...[...r.countries.values()].map(s => s.size)), doubleDay: [...r.days.values()].some(s => s.size >= 2),
       abroad: [...r.countries.entries()].filter(([c]) => !HOME.has(c)).reduce((a, [, s]) => a + s.size, 0) };
+    x.comp = Object.fromEntries(COMPS.map(c => [c.id, c.ids.filter(id => r.gids.has(id)).length]));
+    x.span = r.y1 ? r.y1 - r.y0 : 0;
+    x.firsts = firsts.get(r.key) || 0;
+    // most grounds in any 3-day window, and most check-ins in any 7-day window
+    const ds = r.dated.map(([d, g]) => [Date.parse(d) / 864e5, g]).sort((a, b) => a[0] - b[0]);
+    x.weekend = 0; x.week = 0;
+    for (let i = 0; i < ds.length; i++) {
+      const g3 = new Set(); let n7 = 0;
+      for (let j = i; j < ds.length && ds[j][0] - ds[i][0] <= 6; j++) { n7++; if (ds[j][0] - ds[i][0] <= 2) g3.add(ds[j][1]); }
+      x.weekend = Math.max(x.weekend, g3.size); x.week = Math.max(x.week, n7);
+    }
     x.badges = [...BADGES.filter(b => b.test(x)), ...countryBadges(x)];
     return x;
   }).sort((a, b) => b.pts - a.pts || b.g - a.g || a.name.localeCompare(b.name));
@@ -1510,12 +1649,13 @@ S.leagueTab = "points";
 async function renderLeague() {
   const el = $("#league"); el.innerHTML = "";
   const rows = leagueRows();
-  const subs = [["points", "Points"], ["the92", "The 92"], ["globe", "Globetrotter"], ["badges", "Badges"], ["drive", "Drive-bys"]];
+  const subs = [["points", "Points"], ["the92", "The 92"], ["globe", "Globetrotter"], ["sets", "More leagues"], ["badges", "Badges"], ["drive", "Drive-bys"]];
   el.append(h("div", { class: "subtabs", role: "tablist", "aria-label": "League tables" }, subs.map(([id, label]) =>
     h("button", { type: "button", role: "tab", "aria-selected": String(S.leagueTab === id), onclick: () => { S.leagueTab = id; renderLeague(); }, text: label }))));
   const intro = { points: "Three points for every new ground, one for a return visit. Ties go to whoever has seen more grounds.",
     the92: "The Premier League and EFL grounds for the 2025–26 season. Tap a name to see which grounds are still to do.",
     globe: "Who has been the furthest. Countries come from where each ground is on the map, with England, Scotland, Wales and Northern Ireland counted separately.",
+    sets: "Like The 92, for other competitions. Pick one to see who's closest to doing the lot. Tap a name for what's left.",
     drive: "Grounds you've seen but not been inside: from the motorway, the train window or the car park. They don't count for points, the 92 or badges.",
     badges: "Badges are earned automatically as check-ins come in. Open anyone's trophy cabinet to see what they've collected and what's still to earn. Tap a badge for details." }[S.leagueTab];
   el.append(h("p", { class: "sub", text: intro }));
@@ -1543,6 +1683,20 @@ async function renderLeague() {
         h("td", {}, h("div", { class: "p92" }, h("div", { class: "bar92" }, h("i", { style: `width:${r.n92 / 92 * 100}%` })), h("b", { text: `${r.n92}/92` })))), left);
     });
     el.append(...table([["#"], ["Hopper"], ["Prem", 1], ["Champ", 1], ["Lg 1", 1], ["Lg 2", 1], ["The 92"]], tb));
+  } else if (S.leagueTab === "sets") {
+    if (!S.comp) S.comp = "sl";
+    const comp = COMPS.find(c => c.id === S.comp);
+    el.append(h("div", { class: "sportbar", style: "margin-bottom:10px" }, COMPS.map(c => h("button", { type: "button", "aria-pressed": String(c.id === S.comp), onclick: () => { S.comp = c.id; renderLeague(); }, text: c.name }))));
+    const n = comp.ids.length, tb = h("tbody");
+    [...rows].sort((a, b) => b.comp[comp.id] - a.comp[comp.id] || b.g - a.g).forEach((r, i) => {
+      const done = r.comp[comp.id];
+      const todo = comp.ids.filter(id => !r.gids.has(id)).map(id => GBYID.get(id));
+      const left = h("tr", { class: "leftrow", hidden: true }, h("td", { colspan: 3 }, h("div", { class: "todo" }, h("b", { text: todo.length ? `${todo.length} to go` : "All done. Legend." }), h("span", { text: todo.map(g => `${g.ground} (${g.club})`).join(" · ") }))));
+      tb.append(h("tr", { class: i === 0 && done ? "top" : "" }, h("td", { class: "pos", text: i + 1 }),
+        h("td", {}, h("button", { class: "plbtn", type: "button", "aria-expanded": "false", onclick: e => { left.hidden = !left.hidden; e.currentTarget.setAttribute("aria-expanded", !left.hidden); } }, playerCell(r))),
+        h("td", {}, h("div", { class: "p92" }, h("div", { class: "bar92" }, h("i", { style: `width:${done / n * 100}%` })), h("b", { text: `${done}/${n}` })))), left);
+    });
+    el.append(...table([["#"], ["Hopper"], [comp.name]], tb));
   } else if (S.leagueTab === "drive") {
     const real = new Map();
     for (const c of S.checkins.values()) if (isReal(c)) { const k = playerKey(c); if (!real.has(k)) real.set(k, new Set()); real.get(k).add(groundKey(c)); }
@@ -1862,6 +2016,58 @@ function renderStats() {
   $("#b92").style.width = (g92 / 92 * 100) + "%";
   $("#sHoppers").textContent = new Set([...S.checkins.values()].filter(isReal).map(playerKey)).size;
 }
+// ---------- what's new ----------
+const lsGet2 = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet2 = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+let knownIds = null;
+function othersNews() {
+  return [...S.checkins.entries()].map(([id, c]) => ({ id, ...c })).filter(c => isReal(c) && !isMine(c) && c.source !== "import")
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+}
+function newsLine(c, all) {
+  const ord = x => (x.date || "") + ":" + String(x.createdAt || 0).padStart(14, "0");
+  const before = all.filter(x => isReal(x) && x.id !== c.id && playerKey(x) === playerKey(c) && groundKey(x) === groundKey(c) && ord(x) < ord(c)).length;
+  const name = (c.groundId && GBYID.get(c.groundId)?.ground) || c.ground || "a ground";
+  return before ? `is back at ${name}` : `ticked off ${name}`;
+}
+function ago(ms) { const m = Math.round((Date.now() - ms) / 6e4); return m < 60 ? `${Math.max(1, m)}m ago` : m < 1440 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`; }
+function renderBell() {
+  const b = $("#bell"); if (!b) return;
+  b.hidden = !S.me || S.readOnly;
+  let seen = +lsGet2("turnstile-seen") || 0;
+  if (!seen && S.snapReady) { seen = Date.now(); lsSet2("turnstile-seen", seen); }
+  const n = othersNews().filter(c => (c.createdAt || 0) > seen).length;
+  $("#bellN").hidden = !n; $("#bellN").textContent = n > 9 ? "9+" : n;
+  b.setAttribute("aria-label", n ? `What's new, ${n} new` : "What's new");
+}
+function noticeNew() {
+  if (!S.snapReady) return;
+  const ids = new Set(S.checkins.keys());
+  if (knownIds) {
+    const all = [...S.checkins.entries()].map(([id, c]) => ({ id, ...c }));
+    const fresh = all.filter(c => !knownIds.has(c.id) && isReal(c) && !isMine(c) && c.source !== "import");
+    if (fresh.length === 1) toast(`${playerName(fresh[0])} ${newsLine(fresh[0], all)}`);
+    else if (fresh.length > 1) toast(`${fresh.length} new check-ins from the group`);
+  }
+  knownIds = ids;
+}
+function openNews() {
+  const host = $("#modalHost"); host.innerHTML = "";
+  const seen = +lsGet2("turnstile-seen") || 0;
+  const all = [...S.checkins.entries()].map(([id, c]) => ({ id, ...c }));
+  const list = othersNews().slice(0, 25);
+  const body = h("div", { style: "padding:4px 18px 18px;display:flex;flex-direction:column;gap:12px" });
+  if (S.pushPanel) body.append(S.pushPanel());
+  body.append(list.length ? h("div", {}, list.map(c => h("div", { class: "newsrow" + ((c.createdAt || 0) > seen ? " fresh" : "") },
+    h("div", { style: "min-width:0" }, h("b", { text: playerName(c) }), " " + newsLine(c, all), h("div", { style: "font-size:13px;color:var(--muted)", text: [fmtDate(c.date), c.match].filter(Boolean).join(" · ") })),
+    h("span", { class: "when", text: c.createdAt ? ago(c.createdAt) : "" })))) : h("p", { class: "sub", style: "margin:0", text: "Nothing from your mates yet. When they check in, it shows up here." }));
+  host.append(h("div", { class: "modal-bg", onclick: e => { if (e.target === e.currentTarget) closeModal(); } },
+    h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": "What's new" },
+      h("header", {}, h("h3", { text: "What's new" }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeModal, text: "×" })), body)));
+  lsSet2("turnstile-seen", Date.now()); renderBell();
+}
+$("#bell").onclick = openNews;
+
 // ---------- fact file ----------
 const miles = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 3959 * 2 * Math.asin(Math.sqrt(x)); };
 const nfmt = n => Math.round(n).toLocaleString("en-GB");
@@ -1958,7 +2164,7 @@ function renderFacts() {
   })));
 }
 function renderCurrent() {
-  renderStats();
+  renderStats(); noticeNew(); renderBell();
   checkNewBadges(leagueRows());
   if (S.tab === "map") { renderPins(); renderFacts(); }
   else if (S.tab === "league") renderLeague();
@@ -2045,9 +2251,13 @@ const sbDb = {
           if (error) throw sbErr(error); return;
         }
         if (col === "checkins") {
+          const isNew = !S.checkins.has(id);
           const { error } = await sb.from("ts_checkins").upsert({ id, player_id: d.by, data: d, updated_at: new Date().toISOString() });
           if (error) throw sbErr(error);
-          S.checkins.set(id, d); scheduleRender(); return;
+          S.checkins.set(id, d); scheduleRender();
+          // tell the rest of the group (the server skips drive-bys, imports and anything already sent)
+          if (isNew && !d.driveby && d.source !== "import") try { sb.functions.invoke("ts-notify", { body: { checkin_id: id } }).catch(() => {}); } catch {}
+          return;
         }
         if (col === "players") {
           const { error } = await sb.from("ts_players").update({ nick: d.nick }).eq("id", id);
@@ -2164,6 +2374,76 @@ $("#signOut").onclick = async e => {
   if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "Tap again to sign out. Make sure you have your login code."; return; }
   await sb.auth.signOut(); lsSet("turnstile-secret", null); location.reload();
 };
+// ---------- install as an app ----------
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+let installEvt = null;
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+navigator.serviceWorker?.addEventListener?.("message", e => { if (e.data?.type === "ts-refresh" && S.me) loadAll().catch(() => {}); });
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("#getApp").hidden = false; });
+addEventListener("appinstalled", () => { $("#getApp").hidden = true; toast("Turnstile is on your home screen"); });
+if (!isStandalone() && (isIOS || /android/i.test(navigator.userAgent))) $("#getApp").hidden = false;
+function showInstall() {
+  const host = $("#modalHost"); host.innerHTML = "";
+  const steps = isIOS
+    ? ["Open this page in Safari.", "Tap the Share button (the square with an arrow).", "Scroll down and tap Add to Home Screen, then Add.", "Open Turnstile from your home screen. You can then turn on alerts."]
+    : ["Open this page in Chrome.", "Tap the three-dot menu at the top right.", "Tap Add to Home screen or Install app.", "Open Turnstile from your home screen."];
+  host.append(h("div", { class: "modal-bg", onclick: e => { if (e.target === e.currentTarget) closeModal(); } },
+    h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": "Get the app" },
+      h("header", {}, h("h3", { text: "Get the app" }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeModal, text: "×" })),
+      h("div", { style: "padding:4px 18px 18px;display:flex;flex-direction:column;gap:12px" },
+        h("p", { style: "margin:0", text: "Turnstile works like an app on your phone: its own icon, full screen, and alerts when your mates tick off a ground. Nothing to download from an app store." }),
+        h("ol", { class: "steps" }, steps.map(s => h("li", { text: s }))),
+        h("div", { class: "actions" }, h("button", { class: "btn btn-amber", type: "button", onclick: closeModal, text: "Got it" }))))));
+}
+$("#getApp").onclick = async () => {
+  if (installEvt) { installEvt.prompt(); const r = await installEvt.userChoice.catch(() => null); installEvt = null; if (r?.outcome === "accepted") $("#getApp").hidden = true; return; }
+  showInstall();
+};
+
+// ---------- push notifications ----------
+const pushOK = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+function b64ToBytes(s) { const p = "=".repeat((4 - s.length % 4) % 4); const r = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, c => c.charCodeAt(0)); }
+async function currentSub() { if (!pushOK()) return null; const reg = await navigator.serviceWorker.ready; return reg.pushManager.getSubscription(); }
+S.pushPanel = () => {
+  const box = h("div", { class: "alertbox" });
+  const draw = async () => {
+    box.innerHTML = "";
+    box.append(h("b", { text: "Phone alerts" }));
+    if (!pushOK()) {
+      box.append(h("span", { text: isIOS && !isStandalone() ? "On iPhone, add Turnstile to your home screen first, then open it from there to turn on alerts." : "This browser can't do alerts. Try Chrome on Android, or Safari on iPhone with Turnstile added to your home screen." }));
+      if (isIOS && !isStandalone()) box.append(h("button", { class: "btn btn-ghost", type: "button", onclick: showInstall, text: "Show me how" }));
+      return;
+    }
+    if (Notification.permission === "denied") { box.append(h("span", { text: "Alerts are blocked for Turnstile in your phone's settings. Allow notifications there, then come back." })); return; }
+    const sub = await currentSub().catch(() => null);
+    let on = false;
+    if (sub) { const { data } = await sb.rpc("ts_push_status", { p_endpoint: sub.endpoint }); on = !!data; }
+    if (on) {
+      box.append(h("span", { text: "On for this phone. You'll get a ping when someone in the group checks in." }),
+        h("div", { style: "display:flex;gap:8px;flex-wrap:wrap" },
+          h("button", { class: "btn btn-ghost", type: "button", onclick: async () => { const r = await sb.functions.invoke("ts-notify", { body: { test: true } }); toast(r.error ? "Couldn't send a test just now" : "Test sent"); }, text: "Send a test" }),
+          h("button", { class: "btn btn-ghost", type: "button", onclick: async () => { await sb.rpc("ts_push_remove", { p_endpoint: sub.endpoint }); await sub.unsubscribe().catch(() => {}); toast("Alerts off"); draw(); }, text: "Turn off" })));
+    } else {
+      box.append(h("span", { text: "Get a notification when your mates log a new stadium." }),
+        h("button", { class: "btn btn-amber", type: "button", onclick: async ev => {
+          ev.currentTarget.disabled = true;
+          try {
+            if ((await Notification.requestPermission()) !== "granted") throw new Error("denied");
+            const reg = await navigator.serviceWorker.ready;
+            const s = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(CFG.vapidPublicKey) });
+            const { error } = await sb.rpc("ts_push_save", { p_sub: s.toJSON() });
+            if (error) throw error;
+            toast("Alerts on");
+          } catch (ex) { toast(ex.message === "denied" ? "No worries, alerts stay off" : "Couldn't turn alerts on just now"); }
+          draw();
+        }, text: "Turn on alerts" }));
+    }
+  };
+  draw();
+  return box;
+};
+
 (async () => {
   if (!sb) { S.readOnly = true; S.loaded = true; renderMe(); toast("Turnstile couldn't load. Refresh the page."); return; }
   try {
