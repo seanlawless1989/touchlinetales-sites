@@ -22,8 +22,9 @@
   document.head.appendChild(s);
 })();
 
-// Counts a moment worth knowing about (a sign-up sent, the demo opened) as an event in GoatCounter.
+// Counts a moment worth knowing about (a sign-up sent, the demo opened) as an event in GoatCounter, and in HeyCatch where it's loaded.
 // Safe to call before the counter has loaded or when it's blocked: then it does nothing.
 window.ttCount = function (name, title) {
   try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: name, title: title || name, event: true }); } catch (e) {}
+  try { if (window.ttHeyCatch) window.ttHeyCatch(name); } catch (e) {} // heycatch.js: the same moment as a HeyCatch event
 };
