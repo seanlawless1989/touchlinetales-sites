@@ -1,0 +1,47 @@
+# Rebuilds the touchlinetales.club blog from HeyCatch and commits any changes.
+# The key lives in the repository secret HEYCATCH_API_KEY, never in the code.
+name: Update blog
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # new articles appear within about 15 minutes
+  workflow_dispatch:         # "Run workflow" button to publish straight away
+  push:
+    branches: [main]
+    paths: ["tools/build_blog.py", ".github/workflows/blog.yml"]
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: blog
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch articles and build pages
+        env:
+          HEYCATCH_API_KEY: ${{ secrets.HEYCATCH_API_KEY }}
+        run: python3 tools/build_blog.py
+      - name: Commit and publish if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -A blog sitemap.xml index.html about changelog privacy dpa guides
+          if git diff --cached --quiet; then
+            echo "Blog unchanged."
+            exit 0
+          fi
+          git config user.name "touchline-tales-blog"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Blog: update articles from HeyCatch"
+          git push
+          # Make sure GitHub Pages rebuilds after a bot push.
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null || true

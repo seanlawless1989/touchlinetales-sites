@@ -279,3 +279,34 @@ details p{padding:0 22px 18px;margin:0}
 .log p{margin:0 0 .6em}
 .founder.founder-light{margin:0 0 8px;padding:0;border:0}
 .founder-light h2{margin-top:0}
+
+/* Blog */
+.guide .post-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.guide .post-list li{max-width:none;margin:0}
+.post-list .card{border-left:5px solid var(--green)}
+.post-list h2{font-size:clamp(22px,3vw,28px);margin:0}
+.post-list h2 a{color:var(--night);text-decoration:none}
+.post-list h2 a:hover{color:var(--green);text-decoration:underline;text-underline-offset:4px}
+.post-meta{font:500 13px/1.2 var(--body);text-transform:uppercase;letter-spacing:.14em;color:var(--green);margin:0 0 10px}
+.post-empty{font-size:19px}
+.guide-hero .eyebrow a{color:var(--gold);text-decoration:none}
+.guide-hero .eyebrow a:hover{text-decoration:underline}
+.toc{background:var(--white);border-left:5px solid var(--gold);border-radius:var(--r);padding:20px 24px 12px;margin:0 0 8px;box-shadow:0 1px 0 var(--line)}
+.toc ol{margin:0;padding-left:1.3em}
+.toc li{margin-bottom:.4em}
+.post-body h2{scroll-margin-top:80px}
+.post-body h3{font-size:clamp(20px,2.6vw,24px);margin:1.4em 0 .4em}
+.post-body h4,.post-body h5,.post-body h6{font-size:18px;margin:1.2em 0 .4em}
+.post-body strong{color:var(--night);font-weight:500}
+.post-body blockquote{margin:0 0 1.2em;background:var(--white);border-left:5px solid var(--green);border-radius:var(--r);padding:16px 22px;box-shadow:0 1px 0 var(--line)}
+.post-body blockquote p:last-child{margin-bottom:0}
+.post-body code{font:15px/1.4 ui-monospace,Menlo,Consolas,monospace;background:#EEEADD;padding:1px 5px;border-radius:5px}
+.post-body pre{overflow-x:auto;background:var(--night);color:var(--chalk);border-radius:var(--r);padding:16px 18px}
+.post-body pre code{background:none;padding:0;color:inherit}
+.post-body table{width:100%;border-collapse:collapse;margin:0 0 1.4em;font-size:16px;display:block;overflow-x:auto}
+.post-body th,.post-body td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.post-body th{color:var(--night);font-weight:500;background:#EEEADD}
+.post-body img{height:auto;border-radius:var(--r);margin:0 0 1.2em}
+.post-body figure{margin:0 0 1.4em}
+.post-body figcaption{font-size:14px;margin-top:-.6em}
+.post-back{margin-top:40px;font-weight:500}
