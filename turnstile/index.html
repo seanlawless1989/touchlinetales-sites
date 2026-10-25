@@ -1270,11 +1270,15 @@ function openForm(existing, preset, driveby) {
   const err = h("div", { class: "err", role: "alert" });
   let sportReady = false;
   const gBox = h("div", {});
+  // iPhone can deliver the tap that picked a ground a second time, onto the "Change" button that
+  // has just appeared in the same spot, which wiped the choice. Ignore taps for a moment after a redraw.
+  let drawnAt = 0;
+  const settled = fn => () => { if (Date.now() - drawnAt > 600) fn(); };
   function drawGround() {
-    gBox.innerHTML = ""; if (sportReady) drawSport();
+    gBox.innerHTML = ""; drawnAt = Date.now(); if (sportReady) drawSport();
     if (st.ground && !st.ground.custom) {
       gBox.append(h("div", { class: "chosen" }, h("span", {}, st.ground.ground, h("small", { style: "display:block;font-weight:400;color:var(--muted)", text: st.ground.club })),
-        h("button", { class: "linkbtn", type: "button", onclick: () => { st.ground = null; drawGround(); }, text: "Change" })));
+        h("button", { class: "linkbtn", type: "button", onclick: settled(() => { st.ground = null; drawGround(); }), text: "Change" })));
       return;
     }
     if (st.ground && st.ground.custom) {
@@ -1283,13 +1287,16 @@ function openForm(existing, preset, driveby) {
       const where = h("span", { style: "font-size:13px;color:var(--muted)", text: st.ground.lat != null ? `Pinned at ${(+st.ground.lat).toFixed(4)}, ${(+st.ground.lng).toFixed(4)}` : "Not pinned yet" });
       gBox.append(h("div", { style: "display:flex;flex-direction:column;gap:8px" }, gn, cn,
         h("div", { style: "display:flex;gap:10px;align-items:center;flex-wrap:wrap" },
-          h("button", { class: "btn btn-ghost", type: "button", onclick: () => { modal.hidden = true; startPick((lat, lng) => { modal.hidden = false; if (lat != null) { st.ground.lat = lat; st.ground.lng = lng; } drawGround(); }); }, text: st.ground.lat != null ? "Move pin" : "Drop pin on map" }), where),
-        h("button", { class: "linkbtn", type: "button", style: "align-self:flex-start", onclick: () => { st.ground = null; drawGround(); }, text: "Search the list instead" })));
+          h("button", { class: "btn btn-ghost", type: "button", onclick: settled(() => { modal.hidden = true; startPick((lat, lng) => { modal.hidden = false; if (lat != null) { st.ground.lat = lat; st.ground.lng = lng; } drawGround(); }); }), text: st.ground.lat != null ? "Move pin" : "Drop pin on map" }), where),
+        h("button", { class: "linkbtn", type: "button", style: "align-self:flex-start", onclick: settled(() => { st.ground = null; drawGround(); }), text: "Search the list instead" })));
       return;
     }
     const inp = h("input", { class: "f-in", id: "g-search", placeholder: "Search any club or ground: Edgeley Park, Lord's, Lambeau…", autocomplete: "off" });
     const sug = h("div", {});
+    let lastQ = null;
     inp.addEventListener("input", () => {
+      // iPhone fires an extra input event when the keyboard closes; rebuilding then swallows the tap
+      if (inp.value === lastQ) return; lastQ = inp.value;
       sug.innerHTML = "";
       const r = searchGrounds(inp.value);
       const box = h("div", { class: "suggest" });
