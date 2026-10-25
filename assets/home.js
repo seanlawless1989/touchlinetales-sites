@@ -13,7 +13,7 @@ const form = document.getElementById("signup-form");
 const msg = form.querySelector(".form-msg");
 
 const LABELS = {
-  name: "Name", email: "Email", phone: "Mobile", club: "Club", team: "Team",
+  name: "Name", email: "Email", phone: "Mobile", club: "Club or team",
   role: "Role", age_group: "Age group", format: "Format", heard: "Heard about us",
   ref: "Link used", message: "Message"
 };
@@ -40,9 +40,7 @@ form.addEventListener("submit", async e => {
   const missing = [...form.querySelectorAll("[required]")].filter(el => !el.checkValidity());
   missing.forEach(el => el.classList.add("invalid"));
   if (missing.length) {
-    say(missing.some(el => el.type === "checkbox") && missing.length === 1
-      ? "Please tick the box so we can get back to you."
-      : "Please fill in the highlighted boxes.", "err");
+    say("Please fill in the highlighted boxes.", "err");
     missing[0].focus();
     return;
   }
@@ -52,7 +50,7 @@ form.addEventListener("submit", async e => {
     .filter(([, v]) => v);
 
   const payload = Object.fromEntries(fields);
-  payload._subject = `Touchline Tales sign up: ${data.get("club")} ${data.get("team")}`;
+  payload._subject = `Touchline Tales sign up: ${data.get("club")}`;
   payload._replyto = data.get("email");
   payload._template = "table";
   payload._captcha = "false";
@@ -70,6 +68,7 @@ form.addEventListener("submit", async e => {
     if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
     form.classList.add("sent");
     count("signup-sent", "Sign-up form sent");
+    try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
     button.disabled = false;
@@ -77,60 +76,19 @@ form.addEventListener("submit", async e => {
   }
 });
 
-// Demo gate: links to the demo site first ask who you are, so we can follow up. It can be skipped,
-// and once someone has filled it in (or skipped) on this device the links go straight through.
-// The demo itself asks again later, gently, if it hasn't heard from them (see demo.js in nayfcu9).
-const LEAD_KEY = "tt-lead";
-const gate = document.getElementById("demo-gate");
-const demoForm = document.getElementById("demo-form");
-const demoMsg = demoForm.querySelector(".form-msg");
-// each demo link says which demo it opens (football, rugby union or rugby league); the gate remembers the one clicked
-let demoPath = "demo/";
-const demoUrl = () => demoPath + (ref ? "?ref=" + encodeURIComponent(ref.slice(0, 40)) : "");
-const remember = v => { try { localStorage.setItem(LEAD_KEY, v); } catch {} };
-const known = () => { try { return !!localStorage.getItem(LEAD_KEY); } catch { return false; } };
-
-document.querySelectorAll("[data-demo-gate]").forEach(a => a.addEventListener("click", e => {
-  demoPath = (a.getAttribute("href") || "demo/").split("?")[0];
+// Demo links open the demo straight away, keeping any ?ref= tag. The demo itself asks, gently and later on,
+// whether they'd like a chat (see demo.js in nayfcu9), so nobody has to fill in a form to see it.
+document.querySelectorAll("[data-demo]").forEach(a => a.addEventListener("click", () => {
   count("demo-click", "Demo link clicked");
-  if (known() || typeof gate.showModal !== "function") { a.href = demoUrl(); return; }
-  e.preventDefault();
-  gate.showModal();
+  if (ref) a.href = (a.getAttribute("href") || "demo/").split("?")[0] + "?ref=" + encodeURIComponent(ref.slice(0, 40));
 }));
-gate.querySelector("[data-close]").addEventListener("click", () => gate.close());
-gate.querySelector("[data-skip]").addEventListener("click", e => { e.preventDefault(); count("demo-gate-skipped", "Demo form skipped"); remember("skipped"); location.href = demoUrl(); });
-gate.addEventListener("click", e => { if (e.target === gate) gate.close(); });
-demoForm.addEventListener("input", e => e.target.classList.remove("invalid"));
 
-demoForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const data = new FormData(demoForm);
-  if (data.get("website")) return;
-  const missing = [...demoForm.querySelectorAll("[required]")].filter(el => !el.checkValidity());
-  missing.forEach(el => el.classList.add("invalid"));
-  if (missing.length) {
-    demoMsg.textContent = missing.length === 1 && missing[0].type === "checkbox"
-      ? "Please tick the box so we can get back to you." : "Please fill in the highlighted boxes.";
-    demoMsg.className = "form-msg err";
-    missing[0].focus();
-    return;
-  }
-  const payload = {
-    "Name": data.get("name").trim(), "Email": data.get("email").trim(), "Club and team": data.get("club").trim(),
-    "Role": data.get("role"), "Where": `Before opening the ${demoPath.replace(/\/$/, "")} demo (home page)`, "Link used": ref || "",
-    _subject: `Touchline Tales demo: ${data.get("club").trim()}`, _replyto: data.get("email").trim(),
-    _template: "table", _captcha: "false"
-  };
-  demoForm.querySelector("button[type=submit]").disabled = true;
-  demoMsg.textContent = "Opening the demo…";
-  demoMsg.className = "form-msg";
-  // Let them in whatever happens: a slow or failed send shouldn't stand between them and the demo.
-  await Promise.race([
-    fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload), keepalive: true }).catch(() => {}),
-    new Promise(r => setTimeout(r, 4000))
-  ]);
-  count("demo-gate-sent", "Demo form sent");
-  remember("sent");
-  location.href = demoUrl();
-});
+// Founding places: the count and the dots come from data-taken / data-total in the hero, so there's one number to change.
+const founding = document.querySelector(".founding");
+if (founding) {
+  const total = +founding.dataset.total || 5, taken = Math.min(+founding.dataset.taken || 0, total), left = total - taken;
+  founding.querySelector(".founding-count").innerHTML = left
+    ? `<b class="founding-left">${left} of ${total}</b> founding-team places left for the 2026-27 season`
+    : `All ${total} founding-team places are taken for the 2026-27 season`;
+  founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => `<li${i < taken ? ' class="taken"' : ""}></li>`).join("");
+}
