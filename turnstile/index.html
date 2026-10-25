@@ -60,6 +60,11 @@ button{cursor:pointer}
 .mast .spacer{flex:1}
 .getapp{border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px}
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.invlink{font:600 13px/1.4 var(--mono);word-break:break-all;background:var(--paper,#f4f5f1);border:1px dashed var(--border);border-radius:10px;padding:10px 12px}
+.share3{display:flex;gap:8px;flex-wrap:wrap}
+.alertask{text-align:center}
+.alertask .big{font-size:44px;line-height:1}
+@media (max-width:560px){.mast .getapp{padding:6px 9px;font-size:12px}}
 .bell{position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:rgba(0,0,0,.18);color:#fff}
 .bell .dot{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--amber);color:var(--amber-ink);font:800 11px/18px var(--mono);border:2px solid var(--pitch)}
 .newsrow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -328,6 +333,7 @@ label.f input,label.f textarea,label.f select,.f-in{padding:10px 12px;border:1.5
     </div>
     <div class="spacer"></div>
     <button class="getapp" id="getApp" type="button" hidden>Get the app</button>
+    <button class="getapp" id="invite" type="button" hidden>Invite mates</button>
     <button class="bell" id="bell" type="button" aria-label="What's new" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellN" hidden></span></button>
     <div class="me" id="me" hidden></div>
     <button class="btn btn-amber" id="checkinBtn" type="button">+ Check in</button>
@@ -2331,9 +2337,10 @@ function showSecret(secret, fresh) {
       h("div", { class: "actions" }, copy, h("button", { class: "btn btn-amber", type: "submit", text: "Got it" }))));
   host.append(h("div", { class: "modal-bg" }, modal));
 }
+const inviteParam = new URLSearchParams(location.search).get("join");
 function joinPanel() {
   const err = h("div", { class: "err", role: "alert" });
-  const code = h("input", { class: "f-in", id: "j-code", placeholder: "The code Sean sent you", autocomplete: "off", autocapitalize: "none" });
+  const code = h("input", { class: "f-in", id: "j-code", placeholder: "The code Sean sent you", autocomplete: "off", autocapitalize: "none", value: inviteParam || "" });
   const nick = h("input", { class: "f-in", id: "j-nick", placeholder: "What your mates call you", maxlength: 24 });
   const go = h("button", { class: "btn btn-amber", type: "submit", text: "Join the group" });
   const n2 = h("input", { class: "f-in", id: "c-nick", placeholder: "Your name in Turnstile", maxlength: 24 });
@@ -2351,7 +2358,7 @@ function joinPanel() {
   } }, h("label", { class: "f" }, "Name", n2), h("label", { class: "f" }, "Login code", s2), err2, h("button", { class: "btn btn-ghost", type: "submit", text: "Sign in" }));
   return h("div", { class: "join" },
     h("h2", { text: "Join the group" }),
-    h("p", { class: "sub", style: "margin:0", text: "Turnstile is for our group of groundhoppers. Ask Sean for the group code, pick the name you want on the league table, and you're in. No email or password." }),
+    h("p", { class: "sub", style: "margin:0", text: inviteParam ? "You've been invited. The group code is filled in for you, so just pick the name you want on the league table. No email or password." : "Turnstile is for our group of groundhoppers. Ask Sean for the group code, pick the name you want on the league table, and you're in. No email or password." }),
     h("form", { style: "display:flex;flex-direction:column;gap:10px", onsubmit: async e => {
       e.preventDefault(); err.textContent = ""; go.disabled = true;
       try {
@@ -2359,6 +2366,7 @@ function joinPanel() {
         const { data, error } = await sb.rpc("ts_join", { p_code: code.value, p_nick: nick.value });
         if (error) throw error;
         lsSet("turnstile-secret", data.secret);
+        if (inviteParam) history.replaceState(null, "", location.pathname);
         await signedIn(data.player_id); showSecret(data.secret, true);
       } catch (ex) { err.textContent = joinErr(ex); }
       go.disabled = false;
@@ -2368,10 +2376,11 @@ function joinPanel() {
 }
 async function signedIn(pid) {
   S.me = pid; S.readOnly = false; S.loaded = true; S.db = sbDb;
-  $("#myCode").hidden = !lsGet("turnstile-secret"); $("#signOut").hidden = false;
+  $("#myCode").hidden = !lsGet("turnstile-secret"); $("#signOut").hidden = false; $("#invite").hidden = false;
   await loadAll();
   if (!signedIn.live) { signedIn.live = true; subscribeLive(); }
   renderMe();
+  askAlerts();
 }
 $("#myCode").onclick = () => { const s = lsGet("turnstile-secret"); if (s) showSecret(s, false); };
 $("#signOut").onclick = async e => {
@@ -2406,10 +2415,50 @@ $("#getApp").onclick = async () => {
   showInstall();
 };
 
+// ---------- invite friends ----------
+async function showInvite() {
+  const host = $("#modalHost"); host.innerHTML = "";
+  const body = h("form", { onsubmit: e => e.preventDefault() });
+  const modal = h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": "Invite mates" },
+    h("header", {}, h("h3", { text: "Invite mates" }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeModal, text: "×" })), body);
+  host.append(h("div", { class: "modal-bg" }, modal));
+  body.append(h("p", { style: "margin:0", text: "Loading…" }));
+  const { data: code } = await sb.rpc("ts_invite_code");
+  body.innerHTML = "";
+  if (!code) {
+    // the code was set before Turnstile kept a copy: someone who knows it types it once
+    const inp = h("input", { class: "f-in", placeholder: "The group code", autocomplete: "off", autocapitalize: "none" });
+    const err = h("div", { class: "err", role: "alert" });
+    body.onsubmit = async e => {
+      e.preventDefault(); err.textContent = "";
+      const { error } = await sb.rpc("ts_set_invite_code", { p_code: inp.value });
+      if (error) { err.textContent = /bad_code/.test(error.message) ? "That isn't the group code. Check it with Sean." : "Couldn't save it just now."; return; }
+      showInvite();
+    };
+    body.append(h("p", { style: "margin:0", text: "Type the group code once and Turnstile will remember it, so anyone in the group can send invites after that." }),
+      h("label", { class: "f" }, "Group code", inp), err, h("div", { class: "actions" }, h("button", { class: "btn btn-amber", type: "submit", text: "Save" })));
+    return;
+  }
+  const link = location.origin + location.pathname + "?join=" + encodeURIComponent(code);
+  const msg = `Join our groundhopping league on Turnstile. Tap the link and pick a name, the code's already filled in: ${link}`;
+  const copy = async () => { try { await navigator.clipboard.writeText(msg); toast("Invite copied"); } catch { toast("Press and hold the link to copy it"); } };
+  body.append(h("p", { style: "margin:0", text: "Send this link to a mate. It opens Turnstile with the group code filled in, so all they do is pick a name." }),
+    h("div", { class: "invlink", text: link }),
+    h("p", { class: "sub", style: "margin:0", text: `Group code: ${code}` }),
+    h("div", { class: "share3" },
+      navigator.share ? h("button", { class: "btn btn-amber", type: "button", onclick: () => navigator.share({ title: "Join Turnstile", text: msg }).catch(() => {}), text: "Share…" }) : null,
+      h("a", { class: "btn btn-ghost", href: "https://wa.me/?text=" + encodeURIComponent(msg), target: "_blank", rel: "noopener", text: "WhatsApp" }),
+      h("button", { class: "btn btn-ghost", type: "button", onclick: copy, text: "Copy invite" })));
+}
+$("#invite").onclick = showInvite;
 // ---------- push notifications ----------
 const pushOK = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 function b64ToBytes(s) { const p = "=".repeat((4 - s.length % 4) % 4); const r = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, c => c.charCodeAt(0)); }
-async function currentSub() { if (!pushOK()) return null; const reg = await navigator.serviceWorker.ready; return reg.pushManager.getSubscription(); }
+async function currentSub() {
+  if (!pushOK()) return null;
+  const reg = await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(r, 4000))]);
+  return reg ? reg.pushManager.getSubscription() : null;
+}
 S.pushPanel = () => {
   const box = h("div", { class: "alertbox" });
   const draw = async () => {
@@ -2440,6 +2489,7 @@ S.pushPanel = () => {
             const { error } = await sb.rpc("ts_push_save", { p_sub: s.toJSON() });
             if (error) throw error;
             toast("Alerts on");
+            if ($(".alertask")) { lsSet("turnstile-alert-ask", String(Date.now() + 3650 * 864e5)); closeModal(); return; }
           } catch (ex) { toast(ex.message === "denied" ? "No worries, alerts stay off" : "Couldn't turn alerts on just now"); }
           draw();
         }, text: "Turn on alerts" }));
@@ -2448,6 +2498,32 @@ S.pushPanel = () => {
   draw();
   return box;
 };
+
+// ask once after signing in (and again a week after "Not now") so nobody misses alerts
+async function askAlerts() {
+  try {
+    const last = +lsGet("turnstile-alert-ask") || 0;
+    if (Date.now() - last < 7 * 864e5) return;
+    if (pushOK()) {
+      if (Notification.permission === "denied") return;
+      const sub = await currentSub().catch(() => null);
+      if (sub) { const { data } = await sb.rpc("ts_push_status", { p_endpoint: sub.endpoint }); if (data) return; }
+    } else if (!(isIOS && !isStandalone())) return;
+    // wait for the login code popup to be closed first
+    while ($("#modalHost").firstChild) await new Promise(r => setTimeout(r, 700));
+    const host = $("#modalHost");
+    const later = () => { lsSet("turnstile-alert-ask", String(Date.now())); closeModal(); };
+    const body = h("div", { class: "alertask", style: "display:flex;flex-direction:column;gap:12px;padding:4px 2px" },
+      h("div", { class: "big", text: "🔔" }),
+      h("h3", { style: "margin:0", text: "Never miss a new ground" }),
+      h("p", { style: "margin:0", text: pushOK() ? "Get a ping on this phone whenever one of your mates checks in somewhere." : "To get a ping when your mates check in, add Turnstile to your home screen first, then open it from there." }),
+      pushOK() ? S.pushPanel() : h("button", { class: "btn btn-amber", type: "button", onclick: () => { lsSet("turnstile-alert-ask", String(Date.now())); showInstall(); }, text: "Show me how" }),
+      h("button", { class: "linkbtn", type: "button", onclick: later, text: "Not now" }));
+    host.innerHTML = "";
+    host.append(h("div", { class: "modal-bg" }, h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": "Turn on alerts" },
+      h("header", {}, h("h3", { text: "Phone alerts" }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: later, text: "×" })), body)));
+  } catch {}
+}
 
 (async () => {
   if (!sb) { S.readOnly = true; S.loaded = true; renderMe(); toast("Turnstile couldn't load. Refresh the page."); return; }
