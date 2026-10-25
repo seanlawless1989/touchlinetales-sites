@@ -1,4 +1,4 @@
-// Visitor counts for the Touchline Tales pages (home, demo, guides, privacy), via GoatCounter (goatcounter.com).
+// Visitor counts for the Touchline Tales pages (home, demo, guides, about, changelog, privacy), via GoatCounter (goatcounter.com).
 // GoatCounter sets no cookies and stores nothing on the visitor's device, so no cookie banner is needed.
 // It is NOT used on team or club sites: those belong to the clubs and carry children's information.
 //
