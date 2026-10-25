@@ -1,5 +1,5 @@
 // Turnstile service worker: offline shell and push notifications
-const CACHE = "turnstile-v3";
+const CACHE = "turnstile-v4";
 const SHELL = ["./", "./index.html", "./config.js", "./icon.svg", "./icon-192.png", "./manifest.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
