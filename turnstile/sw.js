@@ -1,5 +1,5 @@
 // Turnstile service worker: offline shell and push notifications
-const CACHE = "turnstile-v2";
+const CACHE = "turnstile-v3";
 const SHELL = ["./", "./index.html", "./config.js", "./icon.svg", "./icon-192.png", "./manifest.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
@@ -11,7 +11,7 @@ self.addEventListener("fetch", e => {
   // never cache Supabase data, auth or photos
   if (url.hostname.endsWith("supabase.co")) return;
   // map and satellite tiles: leave to the browser cache, there are far too many to keep
-  if (/cartocdn\.com$|arcgisonline\.com$/.test(url.hostname)) return;
+  if (/arcgisonline\.com$/.test(url.hostname)) return;
   if (req.mode === "navigate" || url.origin === location.origin) {
     // network first, so a new version shows up straight away
     e.respondWith(fetch(req).then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; })

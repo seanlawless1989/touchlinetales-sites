@@ -1024,8 +1024,7 @@ function drawTiles() {
     if (!img) {
       img = new Image(); img.alt = ""; img.decoding = "async";
       img.onload = () => img.classList.add("on"); img.onerror = () => img.remove();
-      img.src = sat ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty}/${wx}`
-        : `https://${"abcd"[(wx + ty) % 4]}.basemaps.cartocdn.com/light_all/${z}/${wx}/${ty}${devicePixelRatio > 1 ? "@2x" : ""}.png`;
+      img.src = `https://server.arcgisonline.com/ArcGIS/rest/services/${sat ? "World_Imagery" : "Canvas/World_Light_Gray_Base"}/MapServer/tile/${z}/${ty}/${wx}`;
       tileCache.set(key, img); tileEl.append(img);
     }
     img.style.left = ((tx * ts - 1800 - vb.x) / vb.w * W) + "px"; img.style.top = ((ty * ts - 1800 - vb.y) / vb.h * H) + "px";
@@ -1034,7 +1033,7 @@ function drawTiles() {
   // keep old tiles a moment so zooming doesn't flash blank
   for (const [k, img] of tileCache) if (!want.has(k)) { tileCache.delete(k); setTimeout(() => img.remove(), 350); }
   const at = $("#attrib"); at.hidden = false;
-  at.innerHTML = sat ? "Imagery © Esri, Maxar, Earthstar Geographics" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
+  at.textContent = sat ? "Imagery © Esri, Maxar, Earthstar Geographics" : "© Esri, HERE, Garmin, OpenStreetMap contributors";
   svg.style.opacity = tileEl.querySelector("img.on") ? "0" : "";
 }
 function birdsEye(lat, lng) {
