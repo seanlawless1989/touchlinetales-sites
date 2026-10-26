@@ -78,7 +78,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/home.css?v=10">
+<link rel="stylesheet" href="assets/home.css?v=11">
 <script src="/assets/stats.js" async></script>
 <script type="module" src="/assets/heycatch.js"></script>
 </head>
@@ -120,6 +120,8 @@
         <p class="founding-count"><b class="founding-left">4 of 5</b> founding-team places left for the 2026-27 season</p>
         <ol class="founding-slots" aria-hidden="true"><li class="taken"></li><li></li><li></li><li></li><li></li></ol>
         <p class="small">Founding teams pay nothing until June 2027, in return for honest feedback.</p>
+        <!-- Live teams: count only team sites that are live and used on matchday. Never pad it. -->
+        <p class="live-teams" data-live="2"><span class="live-dot" aria-hidden="true"></span><span>Now keeping the season for <b>2 teams</b></span></p>
       </div>
     </div>
 
@@ -191,6 +193,24 @@
     <p class="small screens-note">All screens are from our made-up Sample Town Under 12s. <a href="demo/" data-demo>Open the demo site</a> to click around it yourself.</p>
   </div>
 </section>
+
+<!-- Stories from founding teams. Hidden until real quotes exist: never invent one.
+     As each founding team passes mid-season, ask the coach and one parent for two lines, with written permission.
+     First name, role and team only, e.g. "Sam, coach of an Under 9s side". No surnames or children's names.
+     Each quote should include one concrete moment, e.g. "the grandparents follow every goal now".
+     To publish: fill in three quotes, then delete this comment's first and last lines.
+<section id="stories" class="band alt">
+  <div class="wrap">
+    <p class="eyebrow">From our founding teams</p>
+    <h2>What coaches and parents say</h2>
+    <div class="grid quotes">
+      <figure class="card quote"><blockquote><p>Quote one: two lines and one real moment.</p></blockquote><figcaption>First name, coach of an Under __ side</figcaption></figure>
+      <figure class="card quote"><blockquote><p>Quote two</p></blockquote><figcaption>First name, parent, Under __ side</figcaption></figure>
+      <figure class="card quote"><blockquote><p>Quote three</p></blockquote><figcaption>First name, role, team</figcaption></figure>
+    </div>
+  </div>
+</section>
+-->
 
 <!-- Problem -->
 <section class="band">
@@ -445,7 +465,8 @@
     </ul>
     <p class="safety-more">Welfare officer or club secretary? <a href="guides/welfare-officer-checklist/">Read our checklist for signing off a team website</a>, or see the <a href="dpa/">data processing agreement</a> your club would accept.</p>
 
-    <!-- Founder: pseudonym on purpose. Swap the initials for a picture once one is chosen. -->
+    <!-- Founder: pseudonym on purpose. Swap the initials for a picture once one is chosen:
+         <img class="founder-pic" src="assets/founder.jpg" alt="Murph Hartley" width="96" height="96"> -->
     <div class="founder" id="founder">
       <div class="founder-pic" aria-hidden="true">MH</div>
       <div class="founder-copy">
@@ -453,23 +474,12 @@
         <h3>Murph Hartley, founder</h3>
         <p>"I coach a junior football team. I built our team's website so parents who couldn't make it on a Sunday could still follow the game, and so every child's season was kept somewhere better than the group chat. Touchline Tales is that site, made for your team."</p>
         <p class="small">Questions about how children's information is handled come straight to me at <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a>. <a href="about/">More about Touchline Tales</a> · <a href="changelog/">What we've shipped</a></p>
+        <p class="founder-follow small">Follow what we're building on <a href="https://www.facebook.com/touchlinetales" rel="me noopener">Facebook</a>, <a href="https://www.instagram.com/touchline_tales_club/" rel="me noopener">Instagram</a> and <a href="https://www.tiktok.com/@touchline.tales0" rel="me noopener">TikTok</a>.</p>
+        <!-- Founder profile link: add Murph's own LinkedIn or X here once one exists, e.g. "Murph is on <a href="…">LinkedIn</a>." Also add it to "sameAs" on the founder in the JSON-LD. -->
       </div>
     </div>
   </div>
 </section>
-
-<!-- Stories from founding teams: add three to five once real coaches and parents have agreed in writing.
-     First name, role and area only, e.g. "Sam, coach, Under 9s, County Durham". Never invent one.
-<section id="stories" class="band">
-  <div class="wrap">
-    <p class="eyebrow">From our founding teams</p>
-    <h2>What coaches and parents say</h2>
-    <div class="grid quotes">
-      <figure class="card quote"><blockquote><p>…</p></blockquote><figcaption>First name, role, age group, area</figcaption></figure>
-    </div>
-  </div>
-</section>
--->
 
 <!-- Price -->
 <section id="price" class="band alt">
@@ -493,7 +503,7 @@
         <p>Our first five teams pay nothing for the 2026-27 season, in return for honest feedback.</p>
       </div>
     </div>
-    <p class="note">Running three or more teams? Every team from your third gets 10% off. Ask us about a club price.</p>
+    <p class="note club-note">Running three or more teams? Ask about a club price, and hand your welfare officer our <a href="guides/welfare-officer-checklist/">checklist</a> and <a href="dpa/">data processing agreement</a>. Every team from your third gets 10% off.</p>
     <p class="note">Not included: subs or payments, club membership, or custom features for one team.</p>
   </div>
 </section>
@@ -632,11 +642,14 @@
       <a href="changelog/">What we've shipped</a>
       <a href="privacy/">Privacy</a>
       <a href="dpa/">Data processing agreement</a>
+      <a href="https://www.facebook.com/touchlinetales" rel="me noopener">Facebook</a>
+      <a href="https://www.instagram.com/touchline_tales_club/" rel="me noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@touchline.tales0" rel="me noopener">TikTok</a>
     </nav>
     <p class="small">&copy; <span id="year">2026</span> Touchline Tales. Team websites for grassroots football and rugby.</p>
   </div>
 </footer>
 
-<script src="assets/home.js?v=9" defer></script>
+<script src="assets/home.js?v=10" defer></script>
 </body>
 </html>

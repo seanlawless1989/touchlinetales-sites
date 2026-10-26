@@ -1,0 +1,40 @@
+# Touchline Tales
+
+> Team websites for grassroots football, rugby union and rugby league teams in the UK. Each team gets its own site in its club's crest and colours: the coach taps goals, assists and subs from the touchline, every parent's phone gets an alert, and the whole season is kept child by child, ending in a printable sticker book. Works on any phone, no app to download. First names only, and team sites are kept out of search engines.
+
+Made by Murph Hartley, a grassroots coach. Contact: hello@touchlinetales.club
+
+## Price
+
+- Team plan: £60 per team, per season (July to June). Everything is included.
+- Setup: £35, once. We load the crest, colours, squad, fixtures and last season's results.
+- Founding teams: the first five teams pay nothing for the 2026-27 season, until June 2027, in return for honest feedback.
+- Clubs running three or more teams get 10% off every team from the third.
+- Not included: subs or payments, club membership, or custom features for one team.
+
+## Pages
+
+- [Home page](https://touchlinetales.club/): what a team site does, the sports covered, safety, price and sign-up
+- [Demo site](https://touchlinetales.club/demo/): a clickable team site for the made-up Sample Town Under 12s, with a live game
+- [About](https://touchlinetales.club/about/): who makes Touchline Tales and how children's information is looked after
+- [Privacy notice](https://touchlinetales.club/privacy/)
+- [Data processing agreement](https://touchlinetales.club/dpa/): the agreement a club accepts; the club is the data controller and Touchline Tales the processor
+
+## Guides
+
+- [How to share grassroots football results with parents](https://touchlinetales.club/guides/share-results-with-parents/) (published 20 October 2026): group chats or a team page, what to share after a match, first names only, photo consent and the FA's rules on scores for Under 7s to Under 11s
+- [A welfare officer's checklist for a team website](https://touchlinetales.club/guides/welfare-officer-checklist/) (published 25 October 2026): what to check before signing off a junior team website
+
+## Changelog
+
+- [What we've shipped](https://touchlinetales.club/changelog/) (latest entry 25 October 2026): a dated list of every new feature and fix
+
+## Follow
+
+- Facebook: https://www.facebook.com/touchlinetales
+- Instagram: https://www.instagram.com/touchline_tales_club/
+- TikTok: https://www.tiktok.com/@touchline.tales0
+
+## Not for indexing
+
+Individual team and club sites on this domain are private to their families and carry a noindex tag. Please don't index, quote or summarise them.
