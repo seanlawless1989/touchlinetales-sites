@@ -8,6 +8,7 @@ Allow: /$
 Allow: /index.html
 Allow: /assets/
 Allow: /guides/
+Allow: /vs/
 Allow: /privacy/
 Allow: /dpa/
 Allow: /about/
@@ -34,6 +35,7 @@ Allow: /$
 Allow: /index.html
 Allow: /assets/
 Allow: /guides/
+Allow: /vs/
 Allow: /privacy/
 Allow: /dpa/
 Allow: /about/
