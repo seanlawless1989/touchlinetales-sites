@@ -92,11 +92,3 @@ if (founding) {
     : `All ${total} founding-team places are taken for the 2026-27 season`;
   founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => `<li${i < taken ? ' class="taken"' : ""}></li>`).join("");
 }
-
-// Live teams: the number comes from data-live in the hero. Hidden if it's ever 0, as an empty count is worse than none.
-const live = document.querySelector(".live-teams");
-if (live) {
-  const n = +live.dataset.live || 0;
-  if (!n) live.hidden = true;
-  else live.querySelector("b").textContent = `${n} ${n === 1 ? "team" : "teams"}`;
-}
