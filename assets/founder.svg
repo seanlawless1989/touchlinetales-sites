@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Murph Hartley drawn as a toy figure in a green coach's jacket with a whistle">
+  <defs><clipPath id="c"><circle cx="100" cy="100" r="100"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="200" height="200" fill="#C9DCCF"/>
+    <path d="M0 200 L0 150 L200 60 L200 85 L30 200 Z" fill="#B5CDBD" opacity=".7"/>
+    <!-- torso -->
+    <path d="M52 200 L62 146 Q64 138 72 138 L128 138 Q136 138 138 146 L148 200 Z" fill="#13804A"/>
+    <path d="M86 138 L100 162 L114 138 Z" fill="#F6F3EA"/>
+    <path d="M100 162 L100 200" stroke="#0E2A1D" stroke-width="3"/>
+    <!-- arms -->
+    <path d="M62 146 Q46 152 40 182 L40 200 L60 200 L62 176 Z" fill="#0F6B3D"/>
+    <path d="M138 146 Q154 152 160 182 L160 200 L140 200 L138 176 Z" fill="#0F6B3D"/>
+    <!-- whistle on a lanyard -->
+    <path d="M80 140 Q86 170 104 176" stroke="#F2C230" stroke-width="3" fill="none"/>
+    <rect x="102" y="170" width="18" height="11" rx="5" fill="#C9DCCF" stroke="#0E2A1D" stroke-width="2"/>
+    <!-- neck -->
+    <rect x="86" y="128" width="28" height="12" rx="3" fill="#F7D23E"/>
+    <!-- head -->
+    <rect x="66" y="58" width="68" height="74" rx="18" fill="#FFD83A" stroke="#E0B02A" stroke-width="2"/>
+    <!-- cap -->
+    <path d="M64 78 Q64 50 100 50 Q136 50 136 78 Z" fill="#0E2A1D"/>
+    <path d="M100 76 L150 76 Q156 76 154 82 L100 82 Z" fill="#0E2A1D"/>
+    <circle cx="100" cy="64" r="5" fill="#F2C230"/>
+    <!-- face -->
+    <circle cx="88" cy="100" r="5" fill="#0E2A1D"/>
+    <circle cx="112" cy="100" r="5" fill="#0E2A1D"/>
+    <circle cx="89.5" cy="98.5" r="1.5" fill="#fff"/>
+    <circle cx="113.5" cy="98.5" r="1.5" fill="#fff"/>
+    <path d="M84 113 Q100 126 116 113" stroke="#0E2A1D" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
