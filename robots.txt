@@ -13,6 +13,7 @@ Allow: /dpa/
 Allow: /about/
 Allow: /changelog/
 Allow: /blog/
+Allow: /llms.txt
 Disallow: /*/badges/
 Disallow: /*.png$
 Disallow: /*.jpg$
@@ -38,6 +39,7 @@ Allow: /dpa/
 Allow: /about/
 Allow: /changelog/
 Allow: /blog/
+Allow: /llms.txt
 Disallow: /
 
 Sitemap: https://touchlinetales.club/sitemap.xml
