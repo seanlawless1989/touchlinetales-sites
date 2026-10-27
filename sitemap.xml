@@ -40,4 +40,14 @@
     <loc>https://touchlinetales.club/vs/pitchero/</loc>
     <lastmod>2026-10-26</lastmod>
   </url>
+  <!-- blog:start -->
+  <url>
+    <loc>https://touchlinetales.club/blog/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://touchlinetales.club/blog/how-to-write-a-full-time-match-report/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <!-- blog:end -->
 </urlset>

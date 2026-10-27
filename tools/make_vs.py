@@ -125,7 +125,7 @@ def page(slug, p):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/home.css?v=10">
+<link rel="stylesheet" href="../../assets/home.css?v=11">
 <script type="application/ld+json">
 {json.dumps(ld, indent=2, ensure_ascii=False)}
 </script>
