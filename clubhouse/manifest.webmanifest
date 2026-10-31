@@ -1,0 +1,17 @@
+{
+  "name": "Clubhouse",
+  "short_name": "Clubhouse",
+  "description": "The group's favourites, settled. Coffee shops, cinnamon swirls, pubs and beers, with Turnstile one tap away.",
+  "id": "/clubhouse/",
+  "start_url": "/clubhouse/",
+  "scope": "/clubhouse/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#24161a",
+  "theme_color": "#5a1f2b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
