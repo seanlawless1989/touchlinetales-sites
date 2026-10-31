@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#5a1f2b">
+<title>Clubhouse</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Clubhouse">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<style>
+/* Clubhouse: the group's home. Same type as Turnstile, warmer bar-room colours. */
+:root{
+  --paper:#f4efe8; --card:#ffffff; --ink:#24161a; --muted:#6c5a5e; --line:#e2d8cf;
+  --bar:#5a1f2b; --bar-2:#f3e4e2; --amber:#f2b134; --amber-ink:#4a3200; --pitch:#1d6b45; --pitch-2:#e3efe7;
+  --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body:"Barlow", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --shadow:0 10px 30px rgba(40,10,20,.16); --gold:#e8b62c; --silver:#b4bec4; --bronze:#c98a52;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#140e10; --card:#1f1619; --ink:#f0e8e6; --muted:#ad9a9d; --line:#3a2a2f;
+  --bar:#7a2a3a; --bar-2:#2d1c21; --pitch:#3fae76; --pitch-2:#1b2d23; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#140e10; --card:#1f1619; --ink:#f0e8e6; --muted:#ad9a9d; --line:#3a2a2f;
+  --bar:#7a2a3a; --bar-2:#2d1c21; --pitch:#3fae76; --pitch-2:#1b2d23; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark }
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper)}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+/* masthead */
+.mast{background:var(--bar);color:#fff;position:relative;overflow:hidden}
+.mast::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 2px,transparent 2px 22px);pointer-events:none}
+.mast .wrap{display:flex;align-items:center;gap:12px;padding-block:14px;position:relative;z-index:1;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;text-decoration:none}
+.brand svg{width:44px;height:44px;flex:none}
+.wordmark{font-family:var(--display);font-weight:900;font-size:34px;letter-spacing:.04em;line-height:.9;text-transform:uppercase}
+.tagline{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:3px}
+.spacer{flex:1}
+.pill{border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap}
+.me{font-weight:700;font-size:14px;opacity:.95}
+@media (max-width:560px){.wordmark{font-size:28px}.tagline{display:none}.pill{padding:6px 9px;font-size:12px}}
+
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:8px;justify-content:center;text-decoration:none}
+.btn-amber{background:var(--amber);color:var(--amber-ink)}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn-bar{background:var(--bar);color:#fff}
+.btn:disabled{opacity:.6}
+.linkbtn{background:none;border:0;padding:0;color:var(--bar);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .linkbtn{color:var(--amber)} }
+
+/* tabs */
+.tabs{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:13px 12px 10px;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--amber)}
+main{padding-block:20px 60px}
+h2.sec{font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:.04em;text-transform:uppercase;margin:26px 0 12px;display:flex;align-items:center;gap:10px}
+h2.sec:first-child{margin-top:0}
+.sub{color:var(--muted)}
+
+/* home grid */
+.doors{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.door{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:132px;box-shadow:0 1px 0 rgba(0,0,0,.03);position:relative;text-decoration:none;color:inherit}
+.door:hover{border-color:var(--amber)}
+.door .em{font-size:28px;line-height:1}
+.door .lbl{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.door .mine{font-weight:700}
+.door .mine.none{color:var(--muted);font-weight:500}
+.door .grp{font-size:13px;color:var(--muted);margin-top:auto}
+.door .cnt{position:absolute;top:12px;right:12px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.door.ts{background:var(--pitch);color:#fff;border-color:transparent;grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;gap:14px}
+.door.ts svg{width:52px;height:52px;flex:none}
+.door.ts .grp{color:rgba(255,255,255,.85);margin:0}
+.door.ts .go{margin-left:auto;font-weight:800;white-space:nowrap}
+@media (max-width:560px){.doors{grid-template-columns:1fr 1fr;gap:10px}.door{min-height:118px;padding:12px}.door .lbl{font-size:18px}.door .em{font-size:24px}.door .mine{font-size:14px}.door .grp{font-size:12px}.door .cnt{top:10px;right:10px;font-size:11px}.door.ts svg{width:40px;height:40px}}
+.door.add{border-style:dashed;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+
+/* lists */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .rk{font-family:var(--display);font-weight:900;font-size:22px;width:28px;text-align:center;flex:none;color:var(--muted)}
+.row .rk.g1{color:var(--gold)} .row .rk.g2{color:var(--silver)} .row .rk.g3{color:var(--bronze)}
+.row .main{flex:1;min-width:0}
+.row .t{font-weight:700;overflow-wrap:anywhere}
+.row .m{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.row .note{font-size:14px;margin-top:3px;font-style:italic;overflow-wrap:anywhere}
+.row .end{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.score{font-family:var(--mono);font-weight:700;font-size:15px;background:var(--bar-2);border-radius:8px;padding:3px 8px;white-space:nowrap}
+.fave{font-size:12px;font-weight:700;color:var(--amber-ink);background:var(--amber);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.tiny{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.tiny button,.tiny a{background:none;border:0;padding:0;font-size:13px;font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+.empty{padding:22px 16px;text-align:center;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.cathead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.cathead .em{font-size:40px;line-height:1}
+.cathead h2{font-family:var(--display);font-weight:900;font-size:36px;letter-spacing:.04em;text-transform:uppercase;margin:0;line-height:1}
+.back{background:none;border:0;padding:0 0 12px;font-weight:700;color:var(--muted)}
+h3.mini{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:.05em;text-transform:uppercase;margin:18px 0 8px}
+.mates{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.mate h3{font-family:var(--display);font-weight:900;font-size:24px;letter-spacing:.04em;text-transform:uppercase;margin:0;padding:12px 14px 4px}
+.mate .row{padding:8px 14px}
+.mate .em{font-size:20px;width:26px;text-align:center;flex:none}
+
+/* join */
+.join{max-width:460px;margin:10px auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.join h2{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.04em;text-transform:uppercase;margin:0}
+.f{display:flex;flex-direction:column;gap:5px;font-weight:600;font-size:14px}
+.f-in{border:1.5px solid var(--line);background:var(--paper);border-radius:10px;padding:11px 12px;font-size:16px;width:100%}
+textarea.f-in{min-height:70px;resize:vertical}
+.err{color:#c0392b;font-weight:600;font-size:14px;min-height:0}
+.err:empty{display:none}
+.codebox{font-family:var(--mono);font-size:26px;font-weight:700;letter-spacing:.08em;text-align:center;background:var(--bar-2);border-radius:12px;padding:14px}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(20,8,12,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+@media (min-width:640px){.modal-bg{align-items:center}}
+.modal{background:var(--card);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;box-shadow:var(--shadow);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (min-width:640px){.modal{border-radius:18px}}
+.modal header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}
+.modal h3{font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:.04em;text-transform:uppercase;margin:0}
+.x{background:none;border:0;font-size:28px;line-height:1;color:var(--muted);padding:4px 8px}
+.modal form{padding:6px 18px 18px;display:flex;flex-direction:column;gap:12px}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.rate{display:flex;gap:4px;flex-wrap:wrap}
+.rate button{width:38px;height:38px;border-radius:9px;border:1.5px solid var(--line);background:var(--paper);font-family:var(--mono);font-weight:700}
+.rate button[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+.chk{display:flex;gap:10px;align-items:center;font-weight:600}
+.chk input{width:20px;height:20px;accent-color:var(--bar)}
+.sugg{display:flex;gap:6px;flex-wrap:wrap}
+.sugg button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 10px;font-size:13px}
+.emojis{display:flex;gap:6px;flex-wrap:wrap}
+.emojis button{width:40px;height:40px;border-radius:9px;border:1.5px solid var(--line);background:var(--paper);font-size:20px}
+.emojis button[aria-pressed="true"]{border-color:var(--amber);background:var(--bar-2)}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:9px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--bar);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-weight:600;z-index:80;max-width:90vw;text-align:center}
+.fab{position:fixed;right:max(16px, env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:var(--shadow);border-radius:999px;padding:14px 20px;font-size:16px}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:10px 0 90px}
+footer button{background:none;border:0;color:inherit;text-decoration:underline;font-size:12px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 48 48">
+    <rect x="2" y="2" width="44" height="44" rx="11" fill="#f2b134"/>
+    <path d="M10 22 L24 11 L38 22" fill="none" stroke="#5a1f2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="14" y="22" width="20" height="16" rx="2" fill="#5a1f2b"/>
+    <path d="M24 26.5 l1.6 3.3 3.6.5 -2.6 2.5 .6 3.6 -3.2-1.7 -3.2 1.7 .6-3.6 -2.6-2.5 3.6-.5z" fill="#f2b134"/>
+  </symbol>
+  <symbol id="tslogo" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="none" stroke="#fff" stroke-width="3"/>
+    <path d="M24 3 V45 M3 24 H45" stroke="#fff" stroke-width="2.4" opacity=".6"/>
+    <circle cx="24" cy="24" r="7" fill="#f2b134"/>
+  </symbol>
+</svg>
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Clubhouse home">
+      <svg role="img" aria-label="Clubhouse logo"><use href="#logo"/></svg>
+      <div><div class="wordmark">Clubhouse</div><div class="tagline">The group's favourites, settled.</div></div>
+    </a>
+    <div class="spacer"></div>
+    <a class="pill" href="/turnstile/">Turnstile</a>
+    <button class="pill" id="getApp" type="button" hidden>Get the app</button>
+    <div class="me" id="me" hidden></div>
+  </div>
+</header>
+<nav class="tabs" id="tabs" hidden aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" data-tab="home" aria-selected="true">Favourites</button>
+    <button class="tab" role="tab" data-tab="feed" aria-selected="false">Latest</button>
+    <button class="tab" role="tab" data-tab="mates" aria-selected="false">Mates</button>
+  </div>
+</nav>
+<main class="wrap" id="main"><p class="sub">Loading…</p></main>
+<button class="btn btn-amber fab" id="fab" type="button" hidden>+ Log a favourite</button>
+<footer id="foot" hidden><span id="ver">Version 2026.10.31</span> · <button id="myCode" type="button" hidden>My login code</button> <button id="signOut" type="button">Sign out</button></footer>
+<div id="modalHost"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el[k] = v;
+    else if (k === "hidden" || k === "disabled" || k === "checked") el[k] = !!v;
+    else if (k === "value") el.value = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return el;
+}
+function toast(msg) { const t = h("div", { class: "toast", role: "status", text: msg }); document.body.append(t); setTimeout(() => t.remove(), 2600); }
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const esc = s => String(s ?? "");
+const norm = s => esc(s).toLowerCase().replace(/[’']/g, "'").replace(/^the\s+/, "").replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
+const ago = iso => { const d = (Date.now() - new Date(iso)) / 1000; if (d < 90) return "just now"; if (d < 3600) return Math.round(d / 60) + " min ago"; if (d < 86400) return Math.round(d / 3600) + "h ago"; if (d < 86400 * 7) return Math.round(d / 86400) + "d ago"; return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: d > 86400 * 300 ? "numeric" : undefined }); };
+const mapsUrl = e => e.lat != null && e.lng != null ? `https://www.google.com/maps/search/?api=1&query=${e.lat},${e.lng}` : e.place ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.name + " " + e.place)}` : null;
+
+// ---------- state ----------
+const S = { me: null, isAdmin: false, players: new Map(), cats: [], entries: [], faves: [], tab: "home", cat: null };
+const CFG = window.TURNSTILE_CONFIG || {};
+// Same storage key as Turnstile, so anyone signed in there is already signed in here (same site)
+const sb = window.supabase && CFG.supabaseUrl ? window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, storageKey: "turnstile-auth" } }) : null;
+const nick = id => S.players.get(id)?.nick || "Someone";
+const catById = id => S.cats.find(c => c.id === id);
+const faveOf = (pid, cid) => { const f = S.faves.find(f => f.player_id === pid && f.category_id === cid); return f && S.entries.find(e => e.id === f.entry_id); };
+const isFave = e => S.faves.some(f => f.entry_id === e.id);
+const entriesIn = cid => S.entries.filter(e => e.category_id === cid);
+
+// The group's ranking for a category: same name (loosely matched) = same thing
+function groupTable(cid) {
+  const m = new Map();
+  for (const e of entriesIn(cid)) {
+    const k = norm(e.name); if (!k) continue;
+    let g = m.get(k);
+    if (!g) m.set(k, g = { key: k, names: new Map(), places: new Map(), people: new Set(), ratings: [], faves: 0, last: e });
+    g.names.set(e.name.trim(), (g.names.get(e.name.trim()) || 0) + 1);
+    if (e.place) g.places.set(e.place.trim(), (g.places.get(e.place.trim()) || 0) + 1);
+    g.people.add(e.player_id);
+    if (e.rating) g.ratings.push(e.rating);
+    if (isFave(e)) g.faves++;
+    if (e.created_at > g.last.created_at) g.last = e;
+  }
+  const top = mp => [...mp.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  return [...m.values()].map(g => {
+    const avg = g.ratings.length ? g.ratings.reduce((a, b) => a + b, 0) / g.ratings.length : 0;
+    // faves count most, then the average score, then how many mates have had it
+    return { ...g, name: top(g.names), place: top(g.places), avg, score: g.faves * 3 + avg + g.people.size * 0.5 };
+  }).sort((a, b) => b.score - a.score || b.avg - a.avg);
+}
+
+// ---------- data ----------
+function sbErrText(error) { const m = error?.message || ""; return /row-level|permission|violates/i.test(m) ? "You can't change that one." : "Couldn't save just now. Check your signal and try again."; }
+async function loadAll() {
+  const [c, e, f, p] = await Promise.all([
+    sb.from("fv_categories").select("*").order("sort").order("created_at"),
+    sb.from("fv_entries").select("*").order("created_at", { ascending: false }).limit(5000),
+    sb.from("fv_faves").select("*"),
+    sb.from("ts_players").select("id,nick,is_admin"),
+  ]);
+  for (const r of [c, e, f, p]) if (r.error) throw r.error;
+  S.cats = c.data; S.entries = e.data; S.faves = f.data;
+  S.players = new Map(p.data.map(x => [x.id, { nick: x.nick, isAdmin: x.is_admin }]));
+  S.isAdmin = !!S.players.get(S.me)?.isAdmin;
+  render();
+}
+let reloadT = null;
+function subscribeLive() {
+  const again = () => { clearTimeout(reloadT); reloadT = setTimeout(() => loadAll().catch(() => {}), 500); };
+  sb.channel("fv-live")
+    .on("postgres_changes", { event: "*", schema: "public", table: "fv_entries" }, again)
+    .on("postgres_changes", { event: "*", schema: "public", table: "fv_faves" }, again)
+    .on("postgres_changes", { event: "*", schema: "public", table: "fv_categories" }, again)
+    .subscribe();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) again(); });
+}
+async function setFave(entry) {
+  const { error } = await sb.from("fv_faves").upsert({ player_id: S.me, category_id: entry.category_id, entry_id: entry.id, updated_at: new Date().toISOString() });
+  if (error) throw error;
+}
+
+// ---------- rendering ----------
+function render() {
+  if (!S.me) return;
+  for (const t of document.querySelectorAll(".tab")) t.setAttribute("aria-selected", String(t.dataset.tab === S.tab && !S.cat));
+  const main = $("#main"); main.innerHTML = "";
+  if (S.cat && catById(S.cat)) main.append(renderCat(catById(S.cat)));
+  else if (S.tab === "feed") main.append(renderFeed());
+  else if (S.tab === "mates") main.append(renderMates());
+  else main.append(renderHome());
+}
+function renderHome() {
+  const frag = document.createDocumentFragment();
+  frag.append(h("h2", { class: "sec", text: "Your favourites" }));
+  const grid = h("div", { class: "doors" });
+  grid.append(h("a", { class: "door ts", href: "/turnstile/" },
+    (() => { const d = h("span", { style: "display:flex;flex:none" }); d.innerHTML = '<svg aria-hidden="true"><use href="#tslogo"/></svg>'; return d; })(),
+    h("div", {}, h("div", { class: "lbl", text: "Turnstile" }), h("div", { class: "grp", text: "Grounds, check-ins and the league table" })),
+    h("span", { class: "go", text: "Open →" })));
+  for (const c of S.cats) {
+    const mine = faveOf(S.me, c.id);
+    const top = groupTable(c.id)[0];
+    const n = entriesIn(c.id).length;
+    grid.append(h("button", { class: "door", type: "button", onclick: () => openCat(c.id) },
+      n ? h("span", { class: "cnt", text: n + (n === 1 ? " log" : " logs") }) : null,
+      h("span", { class: "em", text: c.emoji }),
+      h("span", { class: "lbl", text: c.label }),
+      mine ? h("span", { class: "mine", text: mine.name + (mine.place && c.kind === "place" ? ", " + mine.place : "") }) : h("span", { class: "mine none", text: "Not picked yet" }),
+      h("span", { class: "grp", text: top ? `Group's pick: ${top.name}` : "Nobody's logged one yet" })));
+  }
+  grid.append(h("button", { class: "door add", type: "button", onclick: () => catForm(), text: "+ New category" }));
+  frag.append(grid);
+  return frag;
+}
+function entryRow(e, opts = {}) {
+  const c = catById(e.category_id);
+  const url = mapsUrl(e);
+  const mine = e.player_id === S.me;
+  const tiny = h("div", { class: "tiny" });
+  if (url) tiny.append(h("a", { href: url, target: "_blank", rel: "noopener", text: "Map" }));
+  if (mine) {
+    if (!isFave(e)) tiny.append(h("button", { type: "button", text: "Make it my favourite", onclick: async () => { try { await setFave(e); toast(`${e.name} is your ${c.label.toLowerCase()} now`); await loadAll(); } catch (ex) { toast(sbErrText(ex)); } } }));
+    tiny.append(h("button", { type: "button", text: "Edit", onclick: () => entryForm({ entry: e }) }));
+  }
+  if (mine || S.isAdmin) tiny.append(h("button", { type: "button", text: "Delete", onclick: async ev => {
+    const b = ev.currentTarget; if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "Tap again to delete"; return; }
+    const { error } = await sb.from("fv_entries").delete().eq("id", e.id); if (error) return toast(sbErrText(error)); toast("Deleted"); await loadAll();
+  } }));
+  const meta = [opts.who !== false ? nick(e.player_id) : null, opts.cat ? c?.label : null, e.place, ago(e.created_at)].filter(Boolean).join(" · ");
+  return h("div", { class: "row" },
+    opts.emoji ? h("span", { class: "em", style: "font-size:24px;flex:none", text: c?.emoji || "⭐" }) : null,
+    h("div", { class: "main" }, h("div", { class: "t", text: e.name }), h("div", { class: "m", text: meta }), e.note ? h("div", { class: "note", text: "“" + e.note + "”" }) : null, tiny.childNodes.length ? tiny : null),
+    h("div", { class: "end" }, e.rating ? h("span", { class: "score", text: e.rating + "/10" }) : null, isFave(e) ? h("span", { class: "fave", text: "★ Fave" }) : null));
+}
+function renderCat(c) {
+  const frag = document.createDocumentFragment();
+  frag.append(h("button", { class: "back", type: "button", text: "← All favourites", onclick: () => { S.cat = null; render(); scrollTo(0, 0); } }));
+  const head = h("div", { class: "cathead" }, h("span", { class: "em", text: c.emoji }), h("h2", { text: c.label }), h("div", { class: "spacer" }),
+    h("button", { class: "btn btn-amber", type: "button", text: "+ Log one", onclick: () => entryForm({ cat: c.id }) }));
+  frag.append(head);
+  const canEdit = c.created_by === S.me || S.isAdmin;
+  if (canEdit) frag.append(h("div", { class: "tiny", style: "margin:0 0 6px" }, h("button", { type: "button", text: "Edit category", onclick: () => catForm(c) })));
+  const two = h("div", { class: "two" });
+  // group ranking
+  const tbl = groupTable(c.id);
+  const left = h("div", {}, h("h3", { class: "mini", text: "The group's top " + c.label.toLowerCase() + (c.label.endsWith("s") ? "" : "s") }));
+  const card = h("div", { class: "card" });
+  if (!tbl.length) card.append(h("div", { class: "empty", text: `No ${c.label.toLowerCase()} logged yet. Be the first.` }));
+  tbl.slice(0, 15).forEach((g, i) => {
+    const bits = [g.place, `${g.people.size} ${g.people.size === 1 ? "mate" : "mates"}`, g.faves ? `${g.faves} ★` : null].filter(Boolean).join(" · ");
+    const url = mapsUrl(g.last);
+    card.append(h("div", { class: "row" }, h("span", { class: "rk" + (i < 3 ? " g" + (i + 1) : ""), text: i + 1 }),
+      h("div", { class: "main" }, h("div", { class: "t", text: g.name }), h("div", { class: "m", text: bits }), url && c.kind === "place" ? h("div", { class: "tiny" }, h("a", { href: url, target: "_blank", rel: "noopener", text: "Map" })) : null),
+      h("div", { class: "end" }, g.avg ? h("span", { class: "score", text: (Math.round(g.avg * 10) / 10) + "/10" }) : null)));
+  });
+  left.append(card);
+  // each mate's fave
+  const right = h("div", {}, h("h3", { class: "mini", text: "Everyone's favourite" }));
+  const fc = h("div", { class: "card" });
+  const pids = [...S.players.keys()].sort((a, b) => (a === S.me ? -1 : b === S.me ? 1 : nick(a).localeCompare(nick(b))));
+  for (const pid of pids) {
+    const f = faveOf(pid, c.id);
+    const n = entriesIn(c.id).filter(e => e.player_id === pid).length;
+    if (!f && !n && pid !== S.me) continue;
+    fc.append(h("div", { class: "row" }, h("div", { class: "main" }, h("div", { class: "t", text: pid === S.me ? "You" : nick(pid) }),
+      h("div", { class: "m", text: f ? f.name + (f.place ? ", " + f.place : "") : n ? "Logged " + n + ", no favourite picked" : "Not picked yet" })),
+      f?.rating ? h("div", { class: "end" }, h("span", { class: "score", text: f.rating + "/10" })) : null));
+  }
+  if (!fc.childNodes.length) fc.append(h("div", { class: "empty", text: "Nobody has picked one yet." }));
+  right.append(fc);
+  two.append(left, right);
+  frag.append(two);
+  // the full log
+  const log = entriesIn(c.id);
+  frag.append(h("h3", { class: "mini", text: "Every log" }));
+  const lc = h("div", { class: "card" });
+  if (!log.length) lc.append(h("div", { class: "empty", text: "Nothing yet." }));
+  for (const e of log) lc.append(entryRow(e));
+  frag.append(lc);
+  return frag;
+}
+function renderFeed() {
+  const frag = document.createDocumentFragment();
+  frag.append(h("h2", { class: "sec", text: "Latest from the group" }));
+  const card = h("div", { class: "card" });
+  if (!S.entries.length) card.append(h("div", { class: "empty", text: "Nobody's logged anything yet. Tap + Log a favourite to start." }));
+  for (const e of S.entries.slice(0, 80)) card.append(entryRow(e, { cat: true, emoji: true }));
+  frag.append(card);
+  return frag;
+}
+function renderMates() {
+  const frag = document.createDocumentFragment();
+  frag.append(h("h2", { class: "sec", text: "Mates' favourites" }));
+  const grid = h("div", { class: "mates" });
+  const pids = [...S.players.keys()].sort((a, b) => (a === S.me ? -1 : b === S.me ? 1 : nick(a).localeCompare(nick(b))));
+  for (const pid of pids) {
+    const card = h("div", { class: "card mate" }, h("h3", { text: pid === S.me ? nick(pid) + " (you)" : nick(pid) }));
+    let any = false;
+    for (const c of S.cats) {
+      const f = faveOf(pid, c.id); if (!f) continue; any = true;
+      card.append(h("div", { class: "row" }, h("span", { class: "em", text: c.emoji }),
+        h("div", { class: "main" }, h("div", { class: "m", text: c.label }), h("div", { class: "t", text: f.name + (f.place && c.kind === "place" ? ", " + f.place : "") })),
+        f.rating ? h("div", { class: "end" }, h("span", { class: "score", text: f.rating + "/10" })) : null));
+    }
+    if (!any) card.append(h("div", { class: "empty", style: "text-align:left;padding:4px 14px 14px", text: "No favourites picked yet." }));
+    grid.append(card);
+  }
+  frag.append(grid);
+  return frag;
+}
+function openCat(id) { S.cat = id; render(); scrollTo(0, 0); }
+for (const t of document.querySelectorAll(".tab")) t.onclick = () => { S.tab = t.dataset.tab; S.cat = null; render(); };
+
+// ---------- modals ----------
+function closeModal() { $("#modalHost").innerHTML = ""; }
+function modal(title, form) {
+  const host = $("#modalHost"); host.innerHTML = "";
+  host.append(h("div", { class: "modal-bg", onclick: e => { if (e.target === e.currentTarget) closeModal(); } },
+    h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": title },
+      h("header", {}, h("h3", { text: title }), h("button", { class: "x", type: "button", "aria-label": "Close", onclick: closeModal, text: "×" })), form)));
+}
+function entryForm({ entry, cat } = {}) {
+  const edit = !!entry;
+  let cid = entry?.category_id || cat || S.cat || S.cats[0]?.id;
+  let rating = entry?.rating || 0;
+  let pos = entry && entry.lat != null ? { lat: entry.lat, lng: entry.lng } : null;
+  const err = h("div", { class: "err", role: "alert" });
+  const sel = h("select", { class: "f-in", id: "e-cat", disabled: edit }, S.cats.map(c => h("option", { value: c.id, text: c.emoji + " " + c.label })));
+  sel.value = cid;
+  const name = h("input", { class: "f-in", id: "e-name", maxlength: 80, autocomplete: "off", value: entry?.name || "" });
+  const place = h("input", { class: "f-in", id: "e-place", maxlength: 120, autocomplete: "off", value: entry?.place || "" });
+  const note = h("textarea", { class: "f-in", id: "e-note", maxlength: 500, value: entry?.note || "" });
+  const sugg = h("div", { class: "sugg", "aria-label": "Already logged by the group" });
+  const rate = h("div", { class: "rate", role: "group", "aria-label": "Score out of 10" });
+  const drawRate = () => { rate.innerHTML = ""; for (let i = 1; i <= 10; i++) rate.append(h("button", { type: "button", "aria-pressed": String(i === rating), text: i, onclick: () => { rating = rating === i ? 0 : i; drawRate(); } })); };
+  drawRate();
+  const locBtn = h("button", { class: "btn btn-ghost", type: "button", text: pos ? "📍 Location saved (tap to clear)" : "📍 Use where I am now" });
+  locBtn.onclick = () => {
+    if (pos) { pos = null; locBtn.textContent = "📍 Use where I am now"; return; }
+    if (!navigator.geolocation) return toast("Your phone didn't share a location");
+    locBtn.textContent = "Finding you…";
+    navigator.geolocation.getCurrentPosition(p => { pos = { lat: +p.coords.latitude.toFixed(5), lng: +p.coords.longitude.toFixed(5) }; locBtn.textContent = "📍 Location saved (tap to clear)"; },
+      () => { locBtn.textContent = "📍 Use where I am now"; toast("Couldn't get your location. Type the place instead."); }, { enableHighAccuracy: true, timeout: 12000 });
+  };
+  const hasFave = () => !!faveOf(S.me, cid);
+  const faveBox = h("input", { type: "checkbox", id: "e-fave", checked: edit ? isFave(entry) : !hasFave() });
+  const faveLbl = h("span", {});
+  const nameLbl = h("span", {}), placeLbl = h("span", {});
+  const sync = () => {
+    const c = catById(cid);
+    nameLbl.textContent = c.kind === "place" ? "Name of the " + c.label.toLowerCase() : "Which " + c.label.toLowerCase() + "?";
+    name.placeholder = c.kind === "place" ? "e.g. The Crown" : c.id === "beer" ? "e.g. Timothy Taylor Landlord" : c.id === "coffee" ? "e.g. Flat white" : "What is it?";
+    placeLbl.textContent = c.kind === "place" ? "Where is it?" : "Where did you have it? (optional)";
+    place.placeholder = c.kind === "place" ? "Town or street" : "Shop, pub or town";
+    locBtn.hidden = c.kind !== "place";
+    faveLbl.textContent = `Make this my favourite ${c.label.toLowerCase()}`;
+    if (!edit) faveBox.checked = !hasFave();
+    sugg.innerHTML = "";
+    const names = groupTable(cid).slice(0, 8);
+    if (names.length && !edit) {
+      sugg.append(h("span", { class: "sub", style: "font-size:13px;align-self:center", text: "Already logged:" }));
+      for (const g of names) sugg.append(h("button", { type: "button", text: g.name, onclick: () => { name.value = g.name; if (g.place && !place.value) place.value = g.place; } }));
+    }
+  };
+  sel.onchange = () => { cid = sel.value; sync(); };
+  sync();
+  const go = h("button", { class: "btn btn-amber", type: "submit", text: edit ? "Save" : "Log it" });
+  const form = h("form", { onsubmit: async ev => {
+    ev.preventDefault(); err.textContent = "";
+    const n = name.value.trim(); if (!n) { err.textContent = "Give it a name."; name.focus(); return; }
+    go.disabled = true;
+    const row = { category_id: cid, name: n, place: place.value.trim() || null, note: note.value.trim() || null, rating: rating || null, lat: pos?.lat ?? null, lng: pos?.lng ?? null, updated_at: new Date().toISOString() };
+    try {
+      let saved;
+      if (edit) { const r = await sb.from("fv_entries").update(row).eq("id", entry.id).select().single(); if (r.error) throw r.error; saved = r.data; }
+      else { const r = await sb.from("fv_entries").insert({ ...row, player_id: S.me }).select().single(); if (r.error) throw r.error; saved = r.data; }
+      if (faveBox.checked && !isFave(saved)) await setFave(saved);
+      else if (!faveBox.checked && edit && isFave(saved)) { const r = await sb.from("fv_faves").delete().eq("player_id", S.me).eq("category_id", cid); if (r.error) throw r.error; }
+      closeModal(); toast(edit ? "Saved" : faveBox.checked ? `${n} is your favourite ${catById(cid).label.toLowerCase()}` : "Logged");
+      await loadAll();
+    } catch (ex) { err.textContent = sbErrText(ex); go.disabled = false; }
+  } },
+    h("label", { class: "f" }, "Category", sel),
+    h("label", { class: "f" }, nameLbl, name),
+    sugg,
+    h("label", { class: "f" }, placeLbl, place),
+    locBtn,
+    h("div", { class: "f" }, h("span", { text: "Score out of 10" }), rate),
+    h("label", { class: "f" }, "Notes (optional)", note),
+    h("label", { class: "chk" }, faveBox, faveLbl),
+    err,
+    h("div", { class: "actions" }, h("button", { class: "btn btn-ghost", type: "button", text: "Cancel", onclick: closeModal }), go));
+  modal(edit ? "Edit" : "Log a favourite", form);
+  if (!edit) setTimeout(() => name.focus(), 50);
+}
+const EMOJIS = ["⭐", "☕", "🫘", "🌀", "🍺", "🍻", "🍷", "🥃", "🍸", "🥧", "🍟", "🍛", "🍕", "🍔", "🌭", "🥐", "🍩", "🍰", "🍦", "🥪", "🌮", "🍜", "🍣", "🥩", "🏟️", "⚽", "🏌️", "🎵", "🎬", "📺", "🏖️", "🚗"];
+function catForm(cat) {
+  const edit = !!cat;
+  let emoji = cat?.emoji || "⭐", kind = cat?.kind || "thing";
+  const err = h("div", { class: "err", role: "alert" });
+  const label = h("input", { class: "f-in", id: "c-label", maxlength: 40, placeholder: "e.g. Sunday roast", value: cat?.label || "" });
+  const em = h("div", { class: "emojis", role: "group", "aria-label": "Icon" });
+  const drawEm = () => { em.innerHTML = ""; for (const x of EMOJIS) em.append(h("button", { type: "button", "aria-pressed": String(x === emoji), "aria-label": x, text: x, onclick: () => { emoji = x; drawEm(); } })); };
+  drawEm();
+  const seg = h("div", { class: "seg", role: "group", "aria-label": "Type" });
+  const drawSeg = () => { seg.innerHTML = ""; for (const [k, t] of [["place", "A place"], ["thing", "A thing"]]) seg.append(h("button", { type: "button", "aria-pressed": String(k === kind), text: t, onclick: () => { kind = k; drawSeg(); } })); };
+  drawSeg();
+  const go = h("button", { class: "btn btn-amber", type: "submit", text: edit ? "Save" : "Add it" });
+  const del = edit ? h("button", { class: "btn btn-ghost", type: "button", text: "Delete category", onclick: async ev => {
+    const b = ev.currentTarget; if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "Tap again: this deletes every log in it"; return; }
+    const { error, count } = await sb.from("fv_categories").delete({ count: "exact" }).eq("id", cat.id);
+    if (error || !count) { err.textContent = "Only Sean can delete a category other people have logged in."; return; }
+    closeModal(); S.cat = null; toast("Category deleted"); await loadAll();
+  } }) : null;
+  const form = h("form", { onsubmit: async ev => {
+    ev.preventDefault(); err.textContent = "";
+    const l = label.value.trim(); if (!l) { err.textContent = "Give it a name."; return; }
+    go.disabled = true;
+    try {
+      if (edit) { const { error } = await sb.from("fv_categories").update({ label: l, emoji, kind }).eq("id", cat.id); if (error) throw error; }
+      else {
+        let id = l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 32) || "cat";
+        if (S.cats.some(c => c.id === id)) { if (S.cats.some(c => c.label.toLowerCase() === l.toLowerCase())) { err.textContent = "There's already a category called that."; go.disabled = false; return; } id += "-" + Math.random().toString(36).slice(2, 6); }
+        const { error } = await sb.from("fv_categories").insert({ id, label: l, emoji, kind, sort: 1000, created_by: S.me }); if (error) throw error;
+        S.cat = id;
+      }
+      closeModal(); toast(edit ? "Saved" : `${l} added for everyone`); await loadAll();
+    } catch (ex) { err.textContent = sbErrText(ex); go.disabled = false; }
+  } },
+    h("label", { class: "f" }, "Name", label),
+    h("div", { class: "f" }, h("span", { text: "Is it a place or a thing?" }), seg, h("span", { class: "sub", style: "font-weight:400;font-size:13px", text: "Places get a location and map link, like pubs. Things are what you have, like a beer." })),
+    h("div", { class: "f" }, h("span", { text: "Icon" }), em),
+    err,
+    h("div", { class: "actions" }, del, h("button", { class: "btn btn-ghost", type: "button", text: "Cancel", onclick: closeModal }), go));
+  modal(edit ? "Edit category" : "New category", form);
+}
+$("#fab").onclick = () => entryForm({});
+
+// ---------- joining (same group as Turnstile) ----------
+const JOIN_ERRORS = {
+  bad_code: "That group code isn't right. Check it with Sean.",
+  nick_taken: "Someone already has that name. If it's you, sign in with your login code below.",
+  bad_nick: "Pick a name up to 24 characters.",
+  bad_login: "That name and login code don't match.",
+};
+function joinErr(error) { const m = error?.message || ""; for (const k in JOIN_ERRORS) if (m.includes(k)) return JOIN_ERRORS[k]; return "Couldn't connect just now. Check your signal and try again."; }
+async function ensureSession() {
+  const { data } = await sb.auth.getSession();
+  if (data.session) return data.session;
+  const r = await sb.auth.signInAnonymously(); if (r.error) throw r.error; return r.data.session;
+}
+function showSecret(secret, fresh) {
+  const copy = h("button", { class: "btn btn-ghost", type: "button", text: "Copy", onclick: async () => { try { await navigator.clipboard.writeText(secret); toast("Copied"); } catch { toast("Press and hold the code to copy it"); } } });
+  modal(fresh ? "You're in" : "Your login code", h("form", { onsubmit: e => { e.preventDefault(); closeModal(); } },
+    h("p", { style: "margin:0", text: "This is your personal login code, for Clubhouse and Turnstile. Use it with your name to sign in on another phone or if you clear your browser. Screenshot it or save it somewhere safe." }),
+    h("div", { class: "codebox", text: secret }),
+    h("div", { class: "actions" }, copy, h("button", { class: "btn btn-amber", type: "submit", text: "Got it" }))));
+}
+const inviteParam = new URLSearchParams(location.search).get("join");
+function joinPanel() {
+  const err = h("div", { class: "err", role: "alert" }), err2 = h("div", { class: "err", role: "alert" });
+  const code = h("input", { class: "f-in", id: "j-code", placeholder: "The code Sean sent you", autocomplete: "off", autocapitalize: "none", value: inviteParam || "" });
+  const nk = h("input", { class: "f-in", id: "j-nick", placeholder: "What your mates call you", maxlength: 24 });
+  const go = h("button", { class: "btn btn-amber", type: "submit", text: "Join the group" });
+  const n2 = h("input", { class: "f-in", id: "c-nick", placeholder: "Your name in Turnstile or Clubhouse", maxlength: 24 });
+  const s2 = h("input", { class: "f-in", id: "c-code", placeholder: "Login code, e.g. 7F3A-91C2", autocomplete: "off", autocapitalize: "characters" });
+  const claimForm = h("form", { hidden: true, style: "display:flex;flex-direction:column;gap:10px", onsubmit: async e => {
+    e.preventDefault(); err2.textContent = "";
+    try {
+      await ensureSession();
+      const { data, error } = await sb.rpc("ts_claim", { p_nick: n2.value, p_secret: s2.value }); if (error) throw error;
+      lsSet("turnstile-secret", s2.value.trim().toUpperCase());
+      await signedIn(data.player_id); toast("Welcome back");
+    } catch (ex) { err2.textContent = joinErr(ex); }
+  } }, h("label", { class: "f" }, "Name", n2), h("label", { class: "f" }, "Login code", s2), err2, h("button", { class: "btn btn-ghost", type: "submit", text: "Sign in" }));
+  return h("div", { class: "join" },
+    h("h2", { text: "Join the group" }),
+    h("p", { class: "sub", style: "margin:0", text: "Clubhouse is where our group logs its favourites: coffee shops, cinnamon swirls, pubs, beers and whatever else we argue about. It's the same group as Turnstile, so if you're already in Turnstile on this phone you'll be signed in automatically. Otherwise ask Sean for the group code." }),
+    h("form", { style: "display:flex;flex-direction:column;gap:10px", onsubmit: async e => {
+      e.preventDefault(); err.textContent = ""; go.disabled = true;
+      try {
+        await ensureSession();
+        const { data, error } = await sb.rpc("ts_join", { p_code: code.value, p_nick: nk.value }); if (error) throw error;
+        lsSet("turnstile-secret", data.secret);
+        if (inviteParam) history.replaceState(null, "", location.pathname);
+        await signedIn(data.player_id); showSecret(data.secret, true);
+      } catch (ex) { err.textContent = joinErr(ex); }
+      go.disabled = false;
+    } }, h("label", { class: "f" }, "Group code", code), h("label", { class: "f" }, "Your name", nk), err, go),
+    h("button", { class: "linkbtn", type: "button", style: "align-self:flex-start;text-align:left", onclick: () => { claimForm.hidden = !claimForm.hidden; }, text: "Already joined on another phone? Sign in with your login code" }),
+    claimForm);
+}
+async function signedIn(pid) {
+  S.me = pid;
+  $("#tabs").hidden = false; $("#fab").hidden = false; $("#foot").hidden = false;
+  $("#myCode").hidden = !lsGet("turnstile-secret");
+  await loadAll();
+  $("#me").hidden = false; $("#me").textContent = nick(pid);
+  if (!signedIn.live) { signedIn.live = true; subscribeLive(); }
+}
+$("#myCode").onclick = () => { const s = lsGet("turnstile-secret"); if (s) showSecret(s, false); };
+$("#signOut").onclick = async e => {
+  const b = e.currentTarget;
+  if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "Tap again to sign out of Clubhouse and Turnstile. Make sure you have your login code."; return; }
+  await sb.auth.signOut(); lsSet("turnstile-secret", null); location.reload();
+};
+
+// ---------- install as an app ----------
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+let installEvt = null;
+if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("#getApp").hidden = false; });
+addEventListener("appinstalled", () => { $("#getApp").hidden = true; toast("Clubhouse is on your home screen"); });
+if (!isStandalone() && (isIOS || /android/i.test(navigator.userAgent))) $("#getApp").hidden = false;
+$("#getApp").onclick = async () => {
+  if (installEvt) { installEvt.prompt(); const r = await installEvt.userChoice.catch(() => null); installEvt = null; if (r?.outcome === "accepted") $("#getApp").hidden = true; return; }
+  const steps = isIOS
+    ? ["Open this page in Safari.", "Tap the Share button (the square with an arrow).", "Scroll down and tap Add to Home Screen, then Add.", "Open Clubhouse from your home screen."]
+    : ["Open this page in Chrome.", "Tap the three-dot menu at the top right.", "Tap Add to Home screen or Install app.", "Open Clubhouse from your home screen."];
+  modal("Get the app", h("form", { onsubmit: e => { e.preventDefault(); closeModal(); } },
+    h("p", { style: "margin:0", text: "Clubhouse works like an app on your phone, with its own icon and full screen. Nothing to download from an app store." }),
+    h("ol", { style: "margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px" }, steps.map(s => h("li", { text: s }))),
+    h("div", { class: "actions" }, h("button", { class: "btn btn-amber", type: "submit", text: "Got it" }))));
+};
+
+// ---------- boot ----------
+(async () => {
+  const main = $("#main");
+  if (!sb) { main.innerHTML = ""; main.append(h("p", { class: "sub", text: "Clubhouse couldn't load. Refresh to try again." })); return; }
+  try {
+    const { data } = await sb.auth.getSession();
+    if (data.session) {
+      const { data: pid, error } = await sb.rpc("ts_me");
+      if (!error && pid) { await signedIn(pid); return; }
+    }
+  } catch {}
+  main.innerHTML = ""; main.append(joinPanel());
+})();
+</script>
+</body>
+</html>
