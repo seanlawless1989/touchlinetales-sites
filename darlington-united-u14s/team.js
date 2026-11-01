@@ -23,7 +23,7 @@ self.TEAM = {
              accent: "#FFFFFF", accentDeep: "#B3141B" },
   crest: "crest.png",
   sponsor: null,
-  potm: { sponsor: "", logo: "", icon: "⭐", ribbon: "DU U14s" },
+  potm: { sponsor: "", logo: "", icon: "🏆", ribbon: "DU U14s" },
   kitSponsor: null,
   kits: {
     home: { label: "Home", body: "#ED1B24", trim: "#111111", ink: "#FFFFFF", band: "#FFFFFF", bandInk: "#111111" }
