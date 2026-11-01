@@ -150,11 +150,12 @@ function render(){
   if(PRACTICE&&view!=="live"&&view!=="tl"){matches=matches.filter(m=>!m.practice);PRACTICE=null;if(LV&&LV.id==="practice")LV=null}
   if(setupPending()&&!canWrite&&view!=="login"){main.innerHTML=settingUpView();document.body.classList.toggle("ro",true);return}
   renderTicker();
-  if(view==="home")main.innerHTML=(canWrite&&setupPending()?setupBanner():"")+homeView();
+  if(view==="home")main.innerHTML=(canWrite&&setupPending()?setupBanner():"")+bdHomeCard()+homeView();
   else if(view==="setup")main.innerHTML=setupView();
   else if(view==="sponsors")main.innerHTML=sponsorsView();
   else if(view==="ratings")main.innerHTML=ratingsView();
-  else if(view==="kit")main.innerHTML=kitView();
+  else if(view==="pom")main.innerHTML=pomView();
+  else if(view==="birthdays")main.innerHTML=birthdaysView();
   else if(view==="results")main.innerHTML=resultsView();
   else if(view==="fixtures")main.innerHTML=fixturesView();
   else if(view==="honours")main.innerHTML=honoursView();
@@ -213,7 +214,7 @@ function heroHtml(){const live=liveNow().find(m=>m.live.status!=="ft");const nm=
     <div class="btns">${live?`<button class="btn gold" data-tl="${esc(m.id)}">Follow live</button>`:hasPreview(m)?`<button class="btn gold" data-md="${esc(m.id)}">📰 Read preview</button>`:""}${days<=1||live?`<button class="btn gold" data-mday="${esc(m.id)}">📣 Matchday</button>`:""}<button class="btn ghost" data-view="alerts">🔔 Match alerts</button></div></section>`}
 
 const HOME_ITEMS=[["matchday","📣","Matchday","The next game: when, where, kit and the squad"],["fixtures","📅","Fixtures","Next games, kick-off times and venues"],["results",SP.ball,"Results","Every score, scorer and player of the match"],["reports","📝","Match reports","Write-ups from the coaches"],["players",/girl/i.test(PL)?"👧":/boy|lad/i.test(PL)?"👦":"🧒","Players",`${RUGBY?"Tries, points":"Goals"}, games and awards for each ${PL.replace(/s$/,"")}`],["alerts","🔔","Match alerts",`Kick-off, ${SP.goals} and full time on your phone`],["parents","👪","Parents","Sign in with your family code"],["app","📲","Get the app","On your home screen, like any other app"],["calendar","🗓️","Add to calendar","Every game in your phone's calendar"],["training","🏃","Training","When, where and what to bring"],["gallery","📸","Photos","Match-day pictures"],["honours","🏆","Honours","Trophies and tournaments we've won"],["review","📊","Season review","Records and milestones"],["opps","🆚","Opponents","Our record against every team"],["squad","👕","Squad","Shirt numbers and kits"]];
-const HOME_COACH=[["new","➕","Add a match","Fixture or result"],["gfx","🎨","Graphics","Posts for Facebook and WhatsApp"],["book","📒","Sticker book","Print the season book"],["tnew","🏅","Tournament","Add a tournament day"],["sponsors","🤝","Sponsors","Logos and links on the home page"],["ratings","⭐","Player ratings","Scores out of 10, coaches only"],["kit","📏","Kit sizes","Shirts, shorts and socks for ordering kit"],["help","🛟","Help and changes","Ask for a fix or a change"]];
+const HOME_COACH=[["new","➕","Add a match","Fixture or result"],["gfx","🎨","Graphics","Posts for Facebook and WhatsApp"],["book","📒","Sticker book","Print the season book"],["tnew","🏅","Tournament","Add a tournament day"],["sponsors","🤝","Sponsors","Logos and links on the home page"],["pom","🏅","Player of the month","Pick the star, make the poster"],["ratings","⭐","Player ratings","Scores out of 10, coaches only"],["birthdays","🎂","Birthdays","Reminders, coaches only"],["help","🛟","Help and changes","Ask for a fix or a change"]];
 function homeMenu(){const tile=([v,ic,t,d],c)=>{if(v==="training"&&TR)d=`Every ${TR.day} ${clock(TR.start)}, ${TR.venue.split(",")[0]}`;if(v==="parents"&&myKids().length)d="Signed in for "+myKids().join(" and ");if(noScores())d=({results:"Every game and "+POTM,players:`Games and awards for each ${PL.replace(/s$/,"")}`,alerts:"Kick-off, half time and full time on your phone",opps:"Every team we play",review:"Appearances and milestones"})[v]||d;return `<button class="hm-tile${c}" data-view="${v}"><span class="ic">${ic}</span><b>${t}</b><span>${esc(d)}</span></button>`};
   const pics=GAL.slice(-6).reverse(),openPolls=POLLS.filter(pollOpen);
   if(openPolls.length||canWrite)HOME_ITEMS.some(x=>x[0]==="votes")||HOME_ITEMS.splice(4,0,["votes","🗳️","Votes",`${RUGBY?"Try":"Goal"} of the month and more`]);
@@ -236,7 +237,7 @@ function homeView(){if(noScores())return homeNoScores();
   return `<div class="stack">
   ${flagged&&canWrite?`<div class="note">${flagged} match${flagged>1?"es need":" needs"} checking. Look for the orange tag on the Results page.</div>`:""}
   ${homeLive()||heroHtml()}
-  ${homeMenu()}
+  ${homeMenu()}${pomHome()}
   <h2 class="sect"><span class="ctag c-league">${LEAGUE_NAME}</span> ${season}</h2>
   <section class="card"><h3>${LEAGUE_NAME} record</h3>${REC(lt)}
       ${ldone.length?`<div style="margin-top:12px" class="btns"><span class="hint">Form</span><div class="form">${ldone.slice(-6).map(m=>`<span class="chip ${result(m)}" title="${esc(m.opp)} ${m.us}-${m.them}">${result(m)}</span>`).join("")}</div></div>`:""}</section>
@@ -266,7 +267,7 @@ function homeView(){if(noScores())return homeNoScores();
 function homeNoScores(){const list=seasonMatches(),ps=playerStats(list);
   const done=list.filter(m=>!isFixture(m)&&!m.postponed),upcoming=list.filter(isFixture).filter(m=>!m.postponed&&!isLive(m))[0];
   const potms=Object.entries(ps).filter(([,o])=>o.potm>0).sort((a,b)=>b[1].potm-a[1].potm||a[0].localeCompare(b[0]));
-  return `<div class="stack">${homeLive()||heroHtml()}${homeMenu()}
+  return `<div class="stack">${homeLive()||heroHtml()}${homeMenu()}${pomHome()}
   <h2 class="sect">${esc(season)} season</h2>
   <div class="cols">
     <section class="card"><h3>Recent games</h3>${done.length?done.slice(-3).reverse().map(matchRow).join(""):`<p class="hint">No games played yet this season.</p>`}
@@ -448,6 +449,62 @@ document.addEventListener("click",async e=>{const b=e.target.closest("button");i
     const q=f.id?sb.from("sponsors").update(row).eq("id",f.id):sb.from("sponsors").insert(Object.assign({sort:SPON.reduce((m,s)=>Math.max(m,s.sort+1),0)},row));
     const {error}=await q;spBusy=false;if(error){toast(/logo/i.test(error.message||"")?"That logo is too big. Try a smaller picture.":"Couldn't save that. Try again.");render();return}
     spEdit=null;await loadSponsors();toast(f.id?"Sponsor updated.":`${name} added. They're on the home page now.`);render();return}
+});
+// ---------- player of the month (public.player_of_month, supabase/20_player_of_month.sql) ----------
+// Coaches pick one player each month on the Player of the month page (optional line on why). Everyone sees the latest
+// on the home page, every award on the honours board and on the player's page; coaches make the poster from here.
+let POMS=[],POM_ON=false,pomEdit=null,pomBusy=false;
+const POM_IC="🏅";
+async function loadPom(){if(!sb)return;try{const {data,error}=await sb.from("player_of_month").select("month,player,note").order("month",{ascending:false});if(error)return;POM_ON=true;POMS=data||[]}catch(e){}}
+const ymNow=(k=0)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+k);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`};
+const pomMonthName=ym=>LONGM[+ym.slice(5,7)-1]||"";
+const pomLabel=ym=>`${pomMonthName(ym)} ${ym.slice(0,4)}`;
+const pomOf=n=>POMS.filter(x=>x.player===n);
+const pomSeason=s=>POMS.filter(x=>seasonOf(x.month+"-01")===s);
+const pomFace=n=>PHOTOS[n]?pface(n,"pom-face"):`<span class="pom-face pom-num">${esc(numOf(n))||POM_IC}</span>`;
+// home page: the latest award while it's still fresh (this month or the last two)
+function pomHome(){const x=POMS[0];
+  if(!x||x.month<ymNow(-2))return canWrite&&POM_ON?`<section class="card edit-only"><h3>${POM_IC} Player of the month</h3><p class="hint">Pick a player of the month and it shows here for everyone, with a poster ready for Facebook.</p><div class="btns" style="margin-top:8px"><button class="btn ghost" data-view="pom">${POM_IC} Choose player of the month</button></div></section>`:"";
+  return `<section class="card pom-home"><div class="kick">${POM_IC} ${esc(pomMonthName(x.month))} player of the month</div>
+    <div class="pom-row click" data-player="${esc(x.player)}">${pomFace(x.player)}<div style="min-width:0"><b class="pom-name">${esc(x.player)}</b>${x.note?`<p class="pom-note">${esc(x.note)}</p>`:""}</div></div>
+    <div class="btns" style="margin-top:10px"><button class="btn ghost" data-view="pom">All players of the month</button>${canWrite?`<button class="btn ghost edit-only" data-pomgfx="${esc(x.month)}">Poster</button>`:""}</div></section>`}
+// honours board and the list on the page
+function pomList(L,coach){return `<div class="stack" style="gap:8px">${L.map(x=>`<div class="pom-item"><div class="pom-row click" data-player="${esc(x.player)}">${pomFace(x.player)}<div style="min-width:0"><div class="meta">${esc(pomLabel(x.month))}</div><b>${esc(x.player)}</b>${x.note?`<div class="meta">${esc(x.note)}</div>`:""}</div></div>
+  ${coach?`<div class="mg edit-only"><button class="mini" data-pomgfx="${esc(x.month)}">Poster</button><button class="mini" data-pomedit="${esc(x.month)}">Edit</button><button class="mini" data-pomdel="${esc(x.month)}">Remove</button></div>`:""}</div>`).join("")}</div>`}
+function pomView(){
+  const bySeason={};POMS.forEach(x=>{const s=seasonOf(x.month+"-01");(bySeason[s]=bySeason[s]||[]).push(x)});
+  const lists=Object.keys(bySeason).length?Object.entries(bySeason).map(([s,L])=>`<section class="card"><h3>${esc(s)}</h3>${pomList(L,canWrite)}</section>`).join(""):`<div class="card empty">No player of the month yet. ${POM_IC}</div>`;
+  if(!canWrite)return `<div class="stack"><section class="card"><h2 style="margin-top:0">${POM_IC} Player of the month</h2><p class="hint">Each month the coaches pick one ${esc(PL.replace(/s$/,""))} who has really stood out.</p></section>${lists}</div>`;
+  if(!POM_ON)return `<div class="stack"><section class="card"><h2 style="margin-top:0">${POM_IC} Player of the month</h2><p class="hint">Player of the month isn't switched on for this team's database yet. Ask Touchline Tales to turn it on.</p></section></div>`;
+  if(!pomEdit){const def=new Date().getDate()<=15?ymNow(-1):ymNow(0),had=POMS.find(x=>x.month===def);pomEdit={month:def,player:had?had.player:"",note:had?had.note||"":""}}
+  const months=[1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11].map(ymNow);if(!months.includes(pomEdit.month))months.push(pomEdit.month);
+  const cur=players.filter(p=>p.current).map(p=>p.name),pool=[...new Set([...cur,...(pomEdit.player?[pomEdit.player]:[])])];
+  const had=POMS.find(x=>x.month===pomEdit.month);
+  const s=seasonOf(pomEdit.month+"-01"),won=new Set(pomSeason(s).filter(x=>x.month!==pomEdit.month).map(x=>x.player)),none=won.size?cur.filter(n=>!won.has(n)):[];
+  return `<div class="stack"><section class="card stack"><h2 style="margin-top:0">${POM_IC} Player of the month</h2>
+    <p class="hint">Pick one ${esc(PL.replace(/s$/,""))} each month. Everyone sees it on the home page, the honours board and ${PRN.p} own page, and you get a poster for Facebook and WhatsApp.</p>
+    <label class="f">Month<select id="pom-month">${months.sort().reverse().map(m=>`<option value="${m}"${m===pomEdit.month?" selected":""}>${esc(pomLabel(m))}${POMS.some(x=>x.month===m)?" ✓":""}</option>`).join("")}</select></label>
+    <label class="f">${esc(PL.replace(/s$/,"").replace(/^./,c=>c.toUpperCase()))}<select id="pom-player"><option value="">Choose…</option>${pool.map(n=>`<option${n===pomEdit.player?" selected":""}>${esc(n)}</option>`).join("")}</select></label>
+    ${none.length?`<p class="hint" style="margin-top:-6px">Not been player of the month yet this season: ${none.map(esc).join(", ")}.</p>`:""}
+    <label class="f">Why, in a few words <span class="hint">(optional, everyone can see it)</span><input type="text" id="pom-note" maxlength="160" value="${esc(pomEdit.note||"")}" placeholder="e.g. Brilliant in goal all month"></label>
+    <div class="btns"><button class="btn gold" id="pomSave"${pomBusy?" disabled":""}>${had?"Save changes":"Save"}</button>${had?`<button class="btn ghost" data-pomgfx="${esc(had.month)}">Make the poster</button>`:""}</div></section>
+  ${lists}</div>`}
+function pomRead(){if(!pomEdit)return;const v=id=>(document.getElementById(id)||{}).value;pomEdit.player=v("pom-player")||"";pomEdit.note=v("pom-note")||""}
+document.addEventListener("change",e=>{if(view!=="pom"||!pomEdit)return;
+  if(e.target.id==="pom-month"){const m=e.target.value,had=POMS.find(x=>x.month===m);pomEdit=had?{month:m,player:had.player,note:had.note||""}:{month:m,player:"",note:""};render();return}
+  if(e.target.id==="pom-player"||e.target.id==="pom-note")pomRead()});
+document.addEventListener("input",e=>{if(view==="pom"&&e.target.id==="pom-note")pomRead()});
+document.addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+  if(d.pomgfx){if(!canWrite)return;e.stopPropagation();const x=POMS.find(y=>y.month===d.pomgfx);if(!x)return;F=null;setView("gfx");await (await gfxReady()).loadPom(x);return}
+  if(view!=="pom"||!canWrite||!sb)return;
+  if(d.pomedit){const x=POMS.find(y=>y.month===d.pomedit);if(x){pomEdit={month:x.month,player:x.player,note:x.note||""};render();window.scrollTo({top:0})}return}
+  if(d.pomdel){const x=POMS.find(y=>y.month===d.pomdel);if(!x||!confirm(`Remove ${x.player} as ${pomLabel(x.month)} player of the month?`))return;
+    const {error}=await sb.from("player_of_month").delete().eq("month",x.month);if(error){toast("Couldn't remove that. Try again.");return}
+    await loadPom();if(pomEdit&&pomEdit.month===x.month)pomEdit={month:x.month,player:"",note:""};toast("Removed.");render();return}
+  if(b.id==="pomSave"&&!pomBusy){pomRead();const f=pomEdit;if(!f.player){toast(`Choose the ${PL.replace(/s$/,"")}.`);return}
+    pomBusy=true;render();const {error}=await sb.from("player_of_month").upsert({month:f.month,player:f.player,note:String(f.note||"").trim().slice(0,160)||null,updated:new Date().toISOString()},{onConflict:"month"});pomBusy=false;
+    if(error){toast("Couldn't save that. Try again.");render();return}
+    await loadPom();toast(`${f.player} is ${pomMonthName(f.month)} player of the month. Make the poster below.`);render();return}
 });
 function pface(n,cls){return PHOTOS[n]?`<img class="${cls}" src="${PHOTOS[n]}" alt="">`:""}
 function shrinkPhoto(file){return new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const S=300,c=document.createElement("canvas"),k=Math.min(im.width,im.height);c.width=c.height=S;c.getContext("2d").drawImage(im,(im.width-k)/2,(im.height-k)/2,k,k,0,0,S,S);ok(c.toDataURL("image/jpeg",.82))};im.onerror=bad;im.src=r.result};r.onerror=bad;r.readAsDataURL(file)})}
@@ -712,7 +769,7 @@ function privacyView(){const club=esc((TEAM.club&&TEAM.club.name)||TEAM.fullName
   const sec=(h,b)=>`<section class="card"><h3>${h}</h3>${b}</section>`;
   return `<div class="stack"><h2 style="margin:6px 0 -6px">🔒 Privacy</h2><p class="hint">How this site looks after your child's details. Last updated October 2026.</p>
   ${sec("Who's in charge",`<p>This site is run by <b>${club}</b> for its <b>${team}</b>. The club decides what goes on it and is responsible for your child's information (the "data controller"). Touchline Tales builds and hosts the site for the club and only uses the information to run it (the "data processor").</p>`)}
-  ${sec("What's on the site about the children",`<ul><li>First names only, and a shirt number if the team uses them. Never surnames, ages, birthdays, schools or addresses.</li><li>Match details: who played, ${RUGBY?"tries, kicks and points":"goals, assists, saves"}, playing time, awards and milestones, and match reports the coaches write.</li><li>Coaches' own scores out of 10 for each game, used to help pick end-of-season awards. Only the team's signed-in coaches can see them.</li><li>Kit sizes (shirt, shorts and socks) so the team can order kit. Only the coaches and the ${kid}'s own family can see them.</li><li>Availability answers for each game and training session, and training attendance. Only the coaches can see these, and each signed-in family sees its own answers.</li><li>A small profile picture of a ${kid}, but only if the club has their parent's consent. Ask the coach to take one down at any time. There's no photo gallery.</li></ul>`)}
+  ${sec("What's on the site about the children",`<ul><li>First names only, and a shirt number if the team uses them. Never surnames, ages, dates of birth, schools or addresses.</li><li>Match details: who played, ${RUGBY?"tries, kicks and points":"goals, assists, saves"}, playing time, awards and milestones, and match reports the coaches write.</li><li>A birthday (day and month only, never the year) if the coaches add one, so they get a reminder. Only the team's signed-in coaches can see it.</li><li>Coaches' own scores out of 10 for each game, used to help pick end-of-season awards. Only the team's signed-in coaches can see them.</li><li>Availability answers for each game and training session, and training attendance. Only the coaches can see these, and each signed-in family sees its own answers.</li><li>A small profile picture of a ${kid}, but only if the club has their parent's consent. Ask the coach to take one down at any time. There's no photo gallery.</li></ul>`)}
   ${sec("What we keep about you and your phone",`<ul><li>Nothing that names you. Parents never give us a name or email address.</li><li>If you sign in with your ${kid}'s family code: a random sign-in id for your phone, which ${kid} it's linked to and when. Your availability answers and votes then count for your family. The link is deleted when you sign the phone out, when the coach makes a new code, or when your ${kid} leaves the squad. Only the coaches see family codes, and only how many phones use each one. Supabase, which runs the sign-in, keeps short technical logs that include your phone's internet address.</li><li>If you turn on match alerts, the web address your phone's alert service gives us (from Apple, Google or Mozilla) and which alerts you picked. If the phone is signed in with a family code, the alerts are linked to that sign-in, so reminders to answer availability only come while your ${kid} hasn't answered. It's deleted when you turn alerts off.</li><li>If you vote in a poll, your family (when signed in) or a random code made on your phone, so each family or phone votes once.</li><li>If you send a cheer: which cheer, the first name you typed (if any) and a random code made on your phone, used only to stop floods of cheers. Cheers and the names on them show to anyone with the link, so only type your own first name. Coaches can hide any cheer. Cheers are deleted 30 days after they're sent.</li><li>Your settings, saved on your own phone. We also count visits each day (a number only, not who visited).</li></ul><p>Coaches sign in with an email link. We keep their email address, when they signed in, and any change requests they send through the site.</p>`)}
   ${sec("Why we use it",`<p>To run the team and keep families up to date. The club relies on its legitimate interest in doing that, and on consent for profile pictures.</p>`)}
   ${sec("Who can see it",`<p>Anyone with the link can see results, the squad's first names, stats, match reports and profile pictures. The site is kept out of Google and parents get the link from the club.${noScores()?" This team hides scores and scorers from visitors"+(RUGBY?" for younger age groups.":", as the FA asks for younger age groups."):""} Nobody's information is sold or used for advertising.</p>`)}
@@ -1722,12 +1779,13 @@ function bookView(){
     ${chunk.map(m=>{const r=result(m);const tn=m.tournament_id?tournaments.find(x=>x.id===m.tournament_id):null;return `<tr><td>${nice(m.date)}</td><td>${esc(m.opp||"")}${m.stage&&m.stage!=="placeholder"?` <span class="hint">(${esc(m.stage)})</span>`:""}</td><td>${esc(tn?tn.name:m.comp||"")}</td><td class="n">${r?`${m.us}–${m.them}`:""}</td><td>${r?`<span class="wdl ${r}">${r}</span>`:""}</td><td class="hint">${esc(Object.entries(played(m)).filter(([,g])=>g>0).map(([n,g])=>n+(g>1?` ×${g}`:"")).join(", "))}</td></tr>`}).join("")||`<tr><td colspan="6">No results yet.</td></tr>`}</table>`)}
   // honours
   if(troph.length)out+=page("",`<h1 class="ttl">Honours</h1>${troph.map(x=>`<div class="hl" style="font-size:16pt">${trophyIcon(x.ach)} ${esc(x.title)}: ${esc(x.ach)} <span class="hint">${x.when||nice(x.date)}</span></div>`).join("")}
-    ${ts.filter(x=>x.potm).length?`<h3 style="margin-top:8mm">Players of the tournament</h3><table>${ts.filter(x=>x.potm).map(x=>`<tr><td>⭐ ${esc(x.potm)}</td><td>${esc(x.name)}</td></tr>`).join("")}</table>`:""}`);
+    ${ts.filter(x=>x.potm).length?`<h3 style="margin-top:8mm">Players of the tournament</h3><table>${ts.filter(x=>x.potm).map(x=>`<tr><td>⭐ ${esc(x.potm)}</td><td>${esc(x.name)}</td></tr>`).join("")}</table>`:""}
+    ${pomSeason(season).length?`<h3 style="margin-top:8mm">Players of the month</h3><table>${pomSeason(season).slice().reverse().map(x=>`<tr><td>${POM_IC} ${esc(x.player)}</td><td>${esc(pomLabel(x.month))}</td></tr>`).join("")}</table>`:""}`);
   // player pages
   roster.forEach((n,i)=>{const o=st(n);const best=sortMatches(list.filter(m=>(played(m)[n]||0)>0)).sort((a,b)=>played(b)[n]-played(a)[n])[0];
     out+=page("player",`<div class="top"><div class="slot">${BOOK_PH[n]&&BOOK_LAYOUT==="print"?`<img src="${BOOK_PH[n]}" alt="">`:(BOOK_LAYOUT==="stickers"?`<div class="sn">${i+2}</div><div class="sl">Stick ${esc(n)} here</div>`:BOOK_LAYOUT==="print"?`<div class="sl">Add ${esc(n)}'s photo</div>`:`<div class="sn">${esc(numOf(n))||"·"}</div><div class="sl">${esc(n)}</div>`)}</div>
       <div><div class="big">${esc(numOf(n))||"·"}</div><h1 class="pname">${esc(n)}</h1>
-      <div class="stats">${tracked?`<div><b>${o.apps}</b><span>Games</span></div>`:""}<div><b>${o.goals}</b><span>${SP.Goals}</span></div>${RUGBY?`<div><b>${o.pts}</b><span>Points</span></div>`:""}${at?`<div><b>${o.assists}</b><span>Assists</span></div>`:""}<div><b>${o.potm}</b><span>Player of the match</span></div>${pot(n)?`<div><b>${pot(n)}</b><span>Player of the tournament</span></div>`:""}</div>
+      <div class="stats">${tracked?`<div><b>${o.apps}</b><span>Games</span></div>`:""}<div><b>${o.goals}</b><span>${SP.Goals}</span></div>${RUGBY?`<div><b>${o.pts}</b><span>Points</span></div>`:""}${at?`<div><b>${o.assists}</b><span>Assists</span></div>`:""}<div><b>${o.potm}</b><span>Player of the match</span></div>${pot(n)?`<div><b>${pot(n)}</b><span>Player of the tournament</span></div>`:""}${(k=>k?`<div><b>${k}</b><span>Player of the month</span></div>`:"")(pomSeason(season).filter(x=>x.player===n).length)}</div>
       ${best?`<div class="hl">${SP.ball} Best game: ${played(best)[n]} ${played(best)[n]>1?SP.goals:SP.goal} v ${esc(best.opp)} (${nice(best.date)})</div>`:""}</div></div>
       <div class="lines"><h3>My favourite moment this season</h3><i></i><i></i><i></i></div>
       <div class="lines"><h3>My coach says…</h3><i></i><i></i><i></i></div>
@@ -1862,6 +1920,7 @@ function honoursView(){
     <div style="min-width:0"><div class="t">${esc(i.title)}</div><div class="meta"><b>${esc(i.ach||"")}</b>${i.when?` · ${esc(i.when)}`:i.date?` · ${(d=>`${d.getDate()} ${LONGM[d.getMonth()]} ${d.getFullYear()}`)(new Date(i.date+"T12:00:00"))}`:""}</div>${i.sub?`<div class="potm">⭐ ${esc(i.sub)}</div>`:""}${i.notes?`<div class="meta">${esc(i.notes)}</div>`:""}</div>
     <div class="edit-only">${i.h?`<button class="mini" data-hedit="${esc(i.h)}">Edit</button>`:`<button class="mini" data-tedit="${esc(i.t)}">Edit</button>`}</div></div>`).join("")}</div></section>`).join(""):`<div class="card empty">No trophies yet. They'll appear here as soon as one is won. 🏆</div>`}
   ${awards.length?`<section class="card"><h3>Players of the tournament</h3><table class="lb"><tbody>${awards.map(t=>`<tr class="click" data-player="${esc(t.potm)}"><td>⭐ ${esc(t.potm)}</td><td>${esc(t.name)}</td><td>${esc(tRange(t,true))}</td></tr>`).join("")}</tbody></table></section>`:""}
+  ${POMS.length?`<section class="card"><h3>Players of the month</h3><table class="lb"><tbody>${POMS.map(x=>`<tr class="click" data-player="${esc(x.player)}"><td>${POM_IC} ${esc(x.player)}</td><td>${esc(pomLabel(x.month))}</td></tr>`).join("")}</tbody></table></section>`:""}
   </div>`;
 }
 function tFormView(){
@@ -1934,23 +1993,24 @@ function playersView(){
   const base=career?sortMatches(matches.filter(m=>m.stage!=="placeholder")):seasonMatches();
   const list=byComp(base),ps=playerStats(list),tracked=appsTracked(list),at=SP.assists&&(career||assistsTracked(season));
   const ts=(!compFilter||compFilter==="Tournament")?(career?tournaments:seasonTournaments()):[];const showPott=ts.some(t=>t.potm);
-  const names=[...new Set([...players.filter(p=>p.current).map(p=>p.name),...Object.keys(ps).filter(n=>{const o=ps[n];return o.apps||o.goals||o.assists||o.potm}),...ts.map(t=>t.potm).filter(Boolean)])];
-  const rows=names.map(n=>({n,o:ps[n]||{apps:0,goals:0,assists:0,potm:0},pt:pottCount(n,ts)})).sort((a,b)=>(RUGBY?(b.o.pts||0)-(a.o.pts||0):0)||b.o.goals-a.o.goals||b.o.apps-a.o.apps||a.n.localeCompare(b.n));
+  const pms=compFilter?[]:career?POMS:pomSeason(season),showPom=pms.length>0;
+  const names=[...new Set([...players.filter(p=>p.current).map(p=>p.name),...Object.keys(ps).filter(n=>{const o=ps[n];return o.apps||o.goals||o.assists||o.potm}),...ts.map(t=>t.potm).filter(Boolean),...pms.map(x=>x.player)])];
+  const rows=names.map(n=>({n,o:ps[n]||{apps:0,goals:0,assists:0,potm:0},pt:pottCount(n,ts),pm:pms.filter(x=>x.player===n).length})).sort((a,b)=>(RUGBY?(b.o.pts||0)-(a.o.pts||0):0)||b.o.goals-a.o.goals||b.o.apps-a.o.apps||a.n.localeCompare(b.n));
   const what=(compFilter?compFilter.toLowerCase()+" ":"")+(career?"career stats, all seasons":`stats, ${season}`);
   const tot=rows.reduce((a,{o})=>({g:a.g+o.goals,a:a.a+o.assists,p:a.p+(o.pts||0)}),{g:0,a:0,p:0});const showCs=rows.some(r=>r.o.gk);
   if(noScores())return `<div class="btns" style="margin-bottom:8px"><div class="seg" role="group" aria-label="Season or career"><button data-pscope="season" aria-pressed="${!career}">${esc(season)}</button><button data-pscope="career" aria-pressed="${career}">Career (all seasons)</button></div></div>
   ${CKEY()}
   <section class="card"><h2>${what[0].toUpperCase()+what.slice(1)}</h2>
    <p class="hint" style="margin-bottom:10px">${(c=>`${c.length} game${c.length===1?"":"s"}`)(list.filter(counted))}. Scores and scorers aren't shown publicly for this age group.</p>
-   <div class="scroll"><table class="lb"><thead><tr><th>Player</th>${tracked?"<th>Apps</th>":""}${showCs?"<th>Games in goal</th>":""}<th>PotM</th>${showPott?"<th>Player of tournament</th>":""}</tr></thead><tbody>
-   ${rows.sort((a,b)=>b.o.apps-a.o.apps||a.n.localeCompare(b.n)).map(({n,o,pt})=>`<tr class="click" data-player="${esc(n)}"><td>${PHOTOS[n]?pface(n,"pthumb"):`<span class="num">${esc(numOf(n))||"·"}</span>`}${esc(n)}</td>${tracked?`<td>${o.apps}</td>`:""}${showCs?`<td>${o.gk||""}</td>`:""}<td>${o.potm}</td>${showPott?`<td>${pt||""}</td>`:""}</tr>`).join("")}
+   <div class="scroll"><table class="lb"><thead><tr><th>Player</th>${tracked?"<th>Apps</th>":""}${showCs?"<th>Games in goal</th>":""}<th>PotM</th>${showPott?"<th>Player of tournament</th>":""}${showPom?"<th>Player of month</th>":""}</tr></thead><tbody>
+   ${rows.sort((a,b)=>b.o.apps-a.o.apps||a.n.localeCompare(b.n)).map(({n,o,pt,pm})=>`<tr class="click" data-player="${esc(n)}"><td>${PHOTOS[n]?pface(n,"pthumb"):`<span class="num">${esc(numOf(n))||"·"}</span>`}${esc(n)}</td>${tracked?`<td>${o.apps}</td>`:""}${showCs?`<td>${o.gk||""}</td>`:""}<td>${o.potm}</td>${showPott?`<td>${pt||""}</td>`:""}${showPom?`<td>${pm||""}</td>`:""}</tr>`).join("")}
    </tbody></table></div><p class="hint" style="margin-top:10px">Tap a player to see ${PRN.p} record.</p></section>`;
   return `<div class="btns" style="margin-bottom:8px"><div class="seg" role="group" aria-label="Season or career"><button data-pscope="season" aria-pressed="${!career}">${esc(season)}</button><button data-pscope="career" aria-pressed="${career}">Career (all seasons)</button></div></div>
   ${CKEY()}
   <section class="card"><h2>${what[0].toUpperCase()+what.slice(1)}</h2>
    <p class="hint" style="margin-bottom:10px">${(c=>`${c.length} game${c.length===1?"":"s"}${career?" across "+new Set(c.map(m=>seasonOf(m.date))).size+" seasons":""}`)(list.filter(counted))} · ${tot.g} ${SP.goals}${RUGBY?` · ${tot.p} points`:""}${at?` · ${tot.a} assists`:""}.${tracked?((k=>k<list.filter(counted).length?` Full team sheets only exist for ${k} of these ${list.filter(counted).length} games (most of 2025-26 only recorded the scorers). In the others, the scorers and player of the match count as playing, so Apps are a minimum, and ${SP.goals} per game only uses the ${k} full team sheets.`:"")(list.filter(m=>counted(m)&&m.apps!==false).length)):` Appearances weren't recorded for these games, so only ${SP.goals} and awards show.`}${career&&at?" Assists are recorded from 2026-27.":""}</p>
-   <div class="scroll"><table class="lb"><thead><tr><th>Player</th>${tracked?"<th>Apps</th>":""}<th>${SP.Goals}</th>${RUGBY?"<th>Kicks</th><th>Points</th>":""}${at?"<th>Assists</th>":""}${showCs?"<th>Clean sheets <span class='hint'>/ in goal</span></th>":""}<th>PotM</th>${showPott?"<th>Player of tournament</th>":""}${tracked?`<th>${SP.Goals} per game</th>`:""}</tr></thead><tbody>
-   ${rows.map(({n,o,pt})=>`<tr class="click" data-player="${esc(n)}"><td>${PHOTOS[n]?pface(n,"pthumb"):`<span class="num">${esc(numOf(n))||"·"}</span>`}${esc(n)}</td>${tracked?`<td>${o.apps}</td>`:""}<td><b>${o.goals}</b></td>${RUGBY?`<td>${esc(kickText(o))||"–"}</td><td><b>${o.pts||0}</b></td>`:""}${at?`<td>${o.assists}</td>`:""}${showCs?`<td>${o.cs||(o.gk?0:"")}${o.gk?` <span class="hint">/${o.gk}</span>`:""}</td>`:""}<td>${o.potm}</td>${showPott?`<td>${pt||""}</td>`:""}${tracked?`<td>${o.ta?(o.tg/o.ta).toFixed(2):"–"}</td>`:""}</tr>`).join("")}
+   <div class="scroll"><table class="lb"><thead><tr><th>Player</th>${tracked?"<th>Apps</th>":""}<th>${SP.Goals}</th>${RUGBY?"<th>Kicks</th><th>Points</th>":""}${at?"<th>Assists</th>":""}${showCs?"<th>Clean sheets <span class='hint'>/ in goal</span></th>":""}<th>PotM</th>${showPott?"<th>Player of tournament</th>":""}${showPom?"<th>Player of month</th>":""}${tracked?`<th>${SP.Goals} per game</th>`:""}</tr></thead><tbody>
+   ${rows.map(({n,o,pt,pm})=>`<tr class="click" data-player="${esc(n)}"><td>${PHOTOS[n]?pface(n,"pthumb"):`<span class="num">${esc(numOf(n))||"·"}</span>`}${esc(n)}</td>${tracked?`<td>${o.apps}</td>`:""}<td><b>${o.goals}</b></td>${RUGBY?`<td>${esc(kickText(o))||"–"}</td><td><b>${o.pts||0}</b></td>`:""}${at?`<td>${o.assists}</td>`:""}${showCs?`<td>${o.cs||(o.gk?0:"")}${o.gk?` <span class="hint">/${o.gk}</span>`:""}</td>`:""}<td>${o.potm}</td>${showPott?`<td>${pt||""}</td>`:""}${showPom?`<td>${pm||""}</td>`:""}${tracked?`<td>${o.ta?(o.tg/o.ta).toFixed(2):"–"}</td>`:""}</tr>`).join("")}
    </tbody></table></div><p class="hint" style="margin-top:10px">Tap a player to see ${PRN.p} record split by season and competition.</p></section>`;
 }
 function compSplit(n,list,ts){if(noScores())return compSplitNs(n,list,ts);
@@ -2000,10 +2060,11 @@ function playerDetail(n){
   const games=sortMatches(matches.filter(m=>counted(m)&&n in played(m)||m.potm===n||n in assistsOf(m)||n in kicksOf(m))).reverse();
   const tot=playerStats(matches)[n]||{apps:0,goals:0,potm:0};
   return `<div class="stack"><button class="btn ghost" data-back style="align-self:flex-start">← All players</button>
-  <section class="card"><div class="pcard">${PHOTOS[n]?`<div class="pphoto">${pface(n,"")}<span>${esc(numOf(n))||""}</span></div>`:`<div class="big">${esc(numOf(n))||"·"}</div>`}<div><h2 style="margin:0">${esc(n)}</h2><p class="hint">${noScores()?`${tot.apps||0} appearances · `:RUGBY?`${tot.goals} career tries · ${tot.pts||0} points · `:`${tot.goals} career goals · ${tot.assists||0} assists · `}${tot.potm} ${esc(TEAM.potm&&TEAM.potm.sponsor||"player of the match")} awards${(k=>k?` · ${k} player of the tournament`:"")(tournaments.filter(t=>t.potm===n).length)}</p>${canWrite?`<label class="bup btn ghost">${PHOTOS[n]?"Change photo":"Add photo"}<input type="file" accept="image/*" data-photo="${esc(n)}"></label> <span class="hint">Everyone can see player photos.</span>`:""}</div></div></section>
+  <section class="card"><div class="pcard">${PHOTOS[n]?`<div class="pphoto">${pface(n,"")}<span>${esc(numOf(n))||""}</span></div>`:`<div class="big">${esc(numOf(n))||"·"}</div>`}<div><h2 style="margin:0">${esc(n)}</h2><p class="hint">${noScores()?`${tot.apps||0} appearances · `:RUGBY?`${tot.goals} career tries · ${tot.pts||0} points · `:`${tot.goals} career goals · ${tot.assists||0} assists · `}${tot.potm} ${esc(TEAM.potm&&TEAM.potm.sponsor||"player of the match")} awards${(k=>k?` · ${k} player of the tournament`:"")(tournaments.filter(t=>t.potm===n).length)}${(k=>k?` · ${k} player of the month`:"")(pomOf(n).length)}</p>${canWrite?`<label class="bup btn ghost">${PHOTOS[n]?"Change photo":"Add photo"}<input type="file" accept="image/*" data-photo="${esc(n)}"></label> <span class="hint">Everyone can see player photos.</span>`:""}</div></div></section>
   <button class="btn gold" data-story="${esc(n)}" style="align-self:flex-start">✨ ${esc(n)}'s ${esc(season)} season story</button>
+  ${(L=>L.length?`<section class="card"><h3>Player of the month</h3>${L.map(x=>`<div class="potm">${POM_IC} ${esc(pomLabel(x.month))}${x.note?` <span class="meta">· ${esc(x.note)}</span>`:""}</div>`).join("")}${canWrite?`<div class="mg edit-only" style="margin-top:8px">${L.map(x=>`<button class="mini" data-pomgfx="${esc(x.month)}">${esc(pomMonthName(x.month))} poster</button>`).join("")}</div>`:""}</section>`:"")(pomOf(n))}
   ${(ms=>ms.length?`<section class="card"><h3>Milestones</h3>${ms.map(msRow).join("")}</section>`:"")(milestones().filter(x=>x.n===n))}
-  ${rtPlayerCard(n)}${kitPlayerCard(n)}<div class="csgrid"><section class="card"><h3>${esc(season)} by competition</h3>${compSplit(n,seasonMatches(),seasonTournaments())}</section>
+  ${rtPlayerCard(n)}${bdPlayerCard(n)}<div class="csgrid"><section class="card"><h3>${esc(season)} by competition</h3>${compSplit(n,seasonMatches(),seasonTournaments())}</section>
   <section class="card"><h3>Career by competition</h3>${compSplit(n,matches.filter(m=>m.stage!=="placeholder"),tournaments)}</section></div>
   ${noScores()?"":`<section class="card"><h3>By season</h3><table class="lb"><thead><tr><th>Season</th><th>Apps</th><th>${SP.Goals}</th>${RUGBY?"<th>Kicks</th><th>Points</th>":"<th>Assists</th><th>Clean sheets</th>"}<th>PotM</th></tr></thead><tbody>
   ${rows.map(r=>`<tr><td>${r.s}</td><td>${r.tracked?r.o.apps+(r.partial?"*":""):"–"}</td><td>${r.o.goals}</td>${RUGBY?`<td>${esc(kickText(r.o))||"–"}</td><td>${r.o.pts||0}</td>`:`<td>${assistsTracked(r.s)?r.o.assists:"–"}</td><td>${r.o.gk?r.o.cs:"–"}</td>`}<td>${r.o.potm}</td></tr>`).join("")}</tbody></table>${rows.some(r=>r.partial)?`<p class="hint">* Some of these games only recorded the scorers, so this counts the scorers and player of the match and may be missing other games she played.</p>`:""}</section>`}
@@ -2084,79 +2145,63 @@ document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)r
   if(b.id==="rtSave"){rtSave();return}
 },true);
 
-// ---------- kit sizes: shirt, shorts and socks for each player, so ordering kit is easy ----------
-// public.player_kit (supabase/19_kit_sizes.sql). Only signed-in coaches can read or write it: the database refuses
-// everyone else, parents signed in with a family code included, so sizes never reach a parent's phone.
-let KIT=null,kitDraft=null,kitBusy=false;
-const KIT_F=[["shirt","Shirt"],["shorts","Shorts"],["socks","Socks"]];
-const KIT_SIZES={shirt:["3-4","5-6","7-8","9-10","11-12","13","XS","S","M","L","XL","XXL"],shorts:["3-4","5-6","7-8","9-10","11-12","13","XS","S","M","L","XL","XXL"],
-  socks:["Infant 9-12","Junior 12-2","Junior 13-3","Youth 3-6","Adult 7-11","Adult 12+"]};
-// smallest to biggest for the order list: known sizes in the order above, anything else typed after them
-const kitRank=(f,v)=>{const i=KIT_SIZES[f].findIndex(x=>x.toLowerCase()===String(v).toLowerCase());return i<0?99:i};
-async function loadKit(){KIT=null;if(!sb||!(canWrite||myKids().length))return;try{const {data,error}=await sb.from("player_kit").select("player,shirt,shorts,socks,notes");if(!error){KIT={};(data||[]).forEach(r=>KIT[r.player]=r)}}catch(e){}}
-const kitNames=()=>players.filter(p=>p.current).sort((a,b)=>(+a.num||99)-(+b.num||99)||a.name.localeCompare(b.name)).map(p=>p.name);
-const kitClean=v=>String(v||"").trim().replace(/\s+/g," ");
-const kitHas=r=>r&&(r.shirt||r.shorts||r.socks||r.notes);
-function kitOrder(src){const names=kitNames(),out={};KIT_F.forEach(([f])=>{const c={};names.forEach(n=>{const v=src[n]&&kitClean(src[n][f]);if(v)c[v]=(c[v]||0)+1});
-  out[f]=Object.entries(c).sort((a,b)=>kitRank(f,a[0])-kitRank(f,b[0])||a[0].localeCompare(b[0],undefined,{numeric:true}))});
-  out.missing=names.filter(n=>!KIT_F.every(([f])=>src[n]&&kitClean(src[n][f])));return out}
-function kitText(){const names=kitNames(),o=kitOrder(KIT||{}),k=KIT||{};
-  const lines=[`Kit sizes: ${TEAM.name||""} ${TEAM.ageShort||""}`.trim()+` (${names.length} ${PL})`,""];
-  KIT_F.forEach(([f,l])=>lines.push(`${l}: ${o[f].length?o[f].map(([v,c])=>`${v} x${c}`).join(", "):"none yet"}`));
-  if(o.missing.length)lines.push("",`Still to add sizes for: ${o.missing.join(", ")}`);
-  lines.push("","Player by player:");
-  names.forEach(n=>{const r=k[n]||{},num=numOf(n);lines.push(`${num?num+" ":""}${n}: ${KIT_F.map(([f,l])=>`${l.toLowerCase()} ${kitClean(r[f])||"?"}`).join(", ")}${kitClean(r.notes)?` (${kitClean(r.notes)})`:""}`)});
-  return lines.join("\n")}
-const KIT_LOCK=`<p class="hint rt-lock">🔒 Only the coaches, and each family for their own ${esc(PRN.kid)}, can see kit sizes. Other families and visitors never see them.</p>`;
-function kitInit(names){kitDraft=kitDraft||{};names.forEach(n=>{if(kitDraft[n])return;const r=(KIT||{})[n]||{};kitDraft[n]={shirt:r.shirt||"",shorts:r.shorts||"",socks:r.socks||"",notes:r.notes||""}})}
-const kitDirtyText=()=>{const c=kitChanged().length;return c?`Changes for ${c} ${c===1?PL.replace(/s$/,""):PL} not saved yet`:"All saved"};
-const kitRow=(n,tag)=>{const d=kitDraft[n]||{};return `<div class="kit-p"><div class="rt-n"><span class="num">${esc(numOf(n))||"·"}</span><b>${esc(n)}</b>${tag&&!kitHas(KIT[n])?` <span class="pill rt-no kit-new">To add</span>`:""}</div>
-    <div class="kit-in">${KIT_F.map(([f,l])=>`<label class="f">${l}<input type="text" list="kit-${f}" maxlength="20" autocomplete="off" data-kitn="${esc(n)}" data-kitf="${f}" value="${esc(d[f])}" placeholder="Size"></label>`).join("")}</div>
-    <label class="f kit-note">Notes (optional)<input type="text" maxlength="120" data-kitn="${esc(n)}" data-kitf="notes" value="${esc(d.notes)}" placeholder="e.g. goalkeeper top, gloves size 6, name on shirt"></label></div>`};
-const kitDatalists=()=>KIT_F.map(([f])=>`<datalist id="kit-${f}">${KIT_SIZES[f].map(v=>`<option value="${esc(v)}">`).join("")}</datalist>`).join("");
-function kitView(){
-  if(!canWrite)return `<div class="stack"><section class="card empty">Kit sizes are for coaches only. Sign in as a coach to see them.</section></div>`;
-  if(KIT===null)return `<div class="stack"><section class="card"><h2 style="margin-top:0">Kit sizes</h2><p class="hint">Kit sizes aren't switched on for this team's database yet. Ask ${esc(TEAM.supportName||"Touchline Tales")} via Help and changes to turn them on.</p></section></div>`;
-  const names=kitNames();kitInit(names);
-  const o=kitOrder(KIT),done=names.length-o.missing.length;
-  const sum=`<div class="kit-sum">${KIT_F.map(([f,l])=>`<div><b>${l}</b>${o[f].length?o[f].map(([v,c])=>`<span class="kit-pill">${esc(v)} <i>×${c}</i></span>`).join(""):`<span class="hint">None yet</span>`}</div>`).join("")}</div>`;
+// ---------- birthdays: day and month only (never the year, so no ages), for coaches' reminders ----------
+// public.player_birthdays (supabase/19_player_birthdays.sql). Only signed-in coaches can read or write it: the database
+// refuses everyone else, parents signed in with a family code included. Nothing about birthdays is ever shown publicly.
+let BD=null,bdDraft=null,bdBusy=false;
+const BD_MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const BD_DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+async function loadBirthdays(){BD=null;bdDraft=null;if(!sb||!canWrite)return;try{const {data,error}=await sb.from("player_birthdays").select("player,bday");if(!error){BD={};(data||[]).forEach(r=>BD[r.player]=r.bday)}}catch(e){}}
+const bdText=md=>{const [m,d]=md.split("-").map(Number);return `${d} ${BD_MONTHS[m-1]}`};
+// the next time this birthday comes round (29 February counts as 28 February outside leap years)
+function bdNext(md){const [m,d]=md.split("-").map(Number),t=new Date(todayLocal()+"T12:00:00");
+  const on=y=>new Date(y,m-1,m===2&&d===29&&!((y%4===0&&y%100!==0)||y%400===0)?28:d,12);
+  let x=on(t.getFullYear());if(x<t)x=on(t.getFullYear()+1);return {date:x,days:Math.round((x-t)/864e5)}}
+const bdWhen=o=>o.days===0?"today":o.days===1?"tomorrow":o.days<7?`on ${BD_DAYS[o.date.getDay()]}`:`in ${o.days} days`;
+function bdList(){const cur=new Set(players.filter(p=>p.current).map(p=>p.name));
+  return Object.entries(BD||{}).filter(([n])=>cur.has(n)).map(([n,md])=>Object.assign({n,md},bdNext(md))).sort((a,b)=>a.days-b.days||a.n.localeCompare(b.n))}
+const bdMsg=n=>`Happy birthday ${n}! 🎂 Have a brilliant day from everyone at ${TEAM.name}${TEAM.ageShort?" "+TEAM.ageShort:""} ${RUGBY?"🏉":"⚽"}`;
+const BD_LOCK=`<p class="hint rt-lock">🔒 Only coaches signed in to this site can see birthdays. We keep the day and month only, never the year.</p>`;
+const bdRow=o=>`<div class="bd-row"><span class="bd-cake">🎂</span><span class="bd-who"><b>${esc(o.n)}</b><small>${esc(bdText(o.md))} · ${o.days===0?"<b>today!</b>":bdWhen(o)}</small></span><button class="mini" data-bdcopy="${esc(o.n)}">Copy message</button></div>`;
+// top of the home page, coaches only, when someone's birthday is in the next 7 days
+function bdHomeCard(){if(!canWrite||!BD)return "";const up=bdList().filter(o=>o.days<=7);if(!up.length)return "";
+  return `<section class="card bd-home edit-only"><h3>${up.some(o=>o.days===0)?"🎉 Birthday today":"Birthdays this week"}</h3>${up.map(bdRow).join("")}<p class="hint" style="margin-top:6px">Copy a message to post in the team chat. Only coaches see this card.</p></section>`}
+function bdPlayerCard(n){if(!canWrite||!BD)return "";const md=BD[n],o=md&&bdNext(md);
+  return `<section class="card edit-only"><h3>Birthday</h3>${md?`<p>🎂 <b>${esc(bdText(md))}</b> · ${o.days===0?"today!":bdWhen(o)}</p>`:`<p class="hint">No birthday added yet. Add it and the site reminds the coaches the week before.</p>`}
+    <div class="btns" style="margin-top:8px"><button class="mini" data-view="birthdays">${md?"Change birthdays":"Add birthday"}</button>${md?`<button class="mini" data-bdcopy="${esc(n)}">Copy birthday message</button>`:""}</div>${BD_LOCK}</section>`}
+function birthdaysView(){
+  if(!canWrite)return `<div class="stack"><section class="card empty">Birthdays are for coaches only. Sign in as a coach to see them.</section></div>`;
+  if(BD===null)return `<div class="stack"><section class="card"><h2 style="margin-top:0">Birthdays</h2><p class="hint">Birthdays aren't switched on for this team's database yet. Ask Touchline Tales to turn them on.</p></section></div>`;
+  if(!bdDraft){bdDraft={};Object.entries(BD).forEach(([n,md])=>{const [m,d]=md.split("-").map(Number);bdDraft[n]={m,d}})}
+  const names=players.filter(p=>p.current).map(p=>p.name).sort((a,b)=>(+numOf(a)||99)-(+numOf(b)||99)||a.localeCompare(b)),up=bdList().slice(0,4);
+  const row=n=>{const v=bdDraft[n]||{};return `<div class="bd-edit"><span class="bd-n"><span class="num">${esc(numOf(n))||"·"}</span><b>${esc(n)}</b></span>
+    <select data-bdd="${esc(n)}" aria-label="${esc(n)}'s birthday: day"><option value="">Day</option>${Array.from({length:31},(_,i)=>`<option${v.d===i+1?" selected":""}>${i+1}</option>`).join("")}</select>
+    <select data-bdm="${esc(n)}" aria-label="${esc(n)}'s birthday: month"><option value="">Month</option>${BD_MONTHS.map((x,i)=>`<option value="${i+1}"${v.m===i+1?" selected":""}>${x}</option>`).join("")}</select></div>`};
   return `<div class="stack">
-  <section class="card"><h2 style="margin-top:0">Kit sizes</h2>
-    <p>Keep each ${esc(PL.replace(/s$/,""))}'s shirt, shorts and socks size here, so ordering kit is one message to the supplier. Families signed in with their family code can fill in their own ${esc(PRN.kid)}'s sizes too, so you can ask them to do it. Shirt numbers are on the <button class="mini" data-view="squad">Squad</button> page.</p>${KIT_LOCK}</section>
-  <section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px"><h3 style="margin:0">Order list</h3><span class="hint">${done} of ${names.length} ${esc(PL)} done</span></div>
-    ${sum}${o.missing.length&&done?`<p class="hint" style="margin-top:8px">Still to add: ${o.missing.map(esc).join(", ")}</p>`:""}
-    <div class="btns" style="margin-top:10px"><button class="btn ghost" id="kitCopy"${done?"":" disabled"}>📋 Copy order list</button></div></section>
-  <section class="card stack" style="gap:16px">${names.map(n=>kitRow(n,1)).join("")||`<p class="hint">No ${esc(PL)} on the squad yet. Add them on the Squad page first.</p>`}</section>
-  ${kitDatalists()}
-  <div class="btns rt-save"><button class="btn gold" id="kitSave"${kitBusy?" disabled":""}>Save sizes</button><span class="hint" id="kitDirty">${kitDirtyText()}</span></div></div>`;
+  <section class="card"><h2 style="margin-top:0">🎂 Birthdays</h2><p>Add each ${esc(PL.replace(/s$/,""))}'s birthday and the site reminds the coaches the week before, with a message ready to post in the team chat.</p>${BD_LOCK}</section>
+  ${up.length?`<section class="card"><h3>Coming up</h3>${up.map(bdRow).join("")}</section>`:""}
+  <section class="card"><h3>Squad</h3><p class="hint" style="margin-bottom:8px">Day and month only. Leave both blank to remove a birthday.</p><div class="bd-list">${names.map(row).join("")||`<p class="hint">No ${esc(PL)} on the squad yet.</p>`}</div></section>
+  <div class="btns rt-save"><button class="btn gold" id="bdSave"${bdBusy?" disabled":""}>Save birthdays</button></div></div>`;
 }
-// players whose sizes in the form differ from what's saved
-function kitChanged(){if(!kitDraft||!KIT)return [];return Object.keys(kitDraft).filter(n=>{const d=kitDraft[n],r=KIT[n]||{};return ["shirt","shorts","socks","notes"].some(f=>kitClean(d[f])!==kitClean(r[f]))})}
-async function kitSave(){if(!kitDraft||!(canWrite||myKids().length)||kitBusy)return;const ch=kitChanged();if(!ch.length){toast("Nothing to save.");return}kitBusy=true;render();
-  try{const row=n=>{const d=kitDraft[n],o={player:n,updated:new Date().toISOString()};["shirt","shorts","socks","notes"].forEach(f=>o[f]=kitClean(d[f])||null);return o};
-    const up=ch.map(row).filter(kitHas),gone=ch.filter(n=>!kitHas(row(n))&&KIT[n]);
-    if(up.length){const {error}=await sb.from("player_kit").upsert(up,{onConflict:"player"});if(error)throw error}
-    if(gone.length){const {error}=await sb.from("player_kit").delete().in("player",gone);if(error)throw error}
-    await loadKit();kitDraft=null;toast(canWrite?"Kit sizes saved. Only coaches and each family can see them.":"Kit sizes saved. Only you and the coaches can see them.")}
-  catch(e){toast("Couldn't save the sizes. Check your connection and try again.")}
-  kitBusy=false;render()}
-// on a player's page, for coaches only
-function kitPlayerCard(n){const fam=!canWrite&&myKids().includes(n);if(!KIT||!(canWrite||fam))return "";const r=KIT[n];
-  return `<section class="card"><h3>Kit sizes</h3>${kitHas(r)?`<p>${KIT_F.map(([f,l])=>`${l} <b>${esc(r[f]||"–")}</b>`).join(" · ")}</p>${r.notes?`<p class="hint">${esc(r.notes)}</p>`:""}`:`<p class="hint">No sizes yet.</p>`}
-    <div class="btns"><button class="mini" data-view="${fam?"parents":"kit"}">${kitHas(r)?"Change sizes":"Add sizes"}</button></div>${KIT_LOCK}</section>`}
-// on the Parents page: a signed-in family fills in their own child's sizes
-function kitFamCard(){const kids=myKids();if(!kids.length)return "";
-  if(!KIT)return "";kitInit(kids);
-  return `<section class="card stack" style="gap:14px"><h2 style="margin:0">📏 Kit sizes</h2><p class="hint" style="margin:0">Add ${kids.length>1?"each":"your"} ${esc(PRN.kid)}'s sizes so the coaches can order the right kit. Change them any time they grow.</p>
-    ${kids.map(n=>kitRow(n,0)).join("")}${kitDatalists()}
-    <div class="btns"><button class="btn gold" id="kitSave"${kitBusy?" disabled":""}>Save sizes</button><span class="hint" id="kitDirty">${kitDirtyText()}</span></div>${KIT_LOCK}</section>`}
-document.addEventListener("input",e=>{const t=e.target;if((view!=="kit"&&view!=="parents")||!t.dataset||!t.dataset.kitn||!kitDraft)return;
-  (kitDraft[t.dataset.kitn]||(kitDraft[t.dataset.kitn]={}))[t.dataset.kitf]=t.value;const d=$("#kitDirty");if(d)d.textContent=kitDirtyText()});
+async function bdSave(){if(!canWrite||bdBusy||!bdDraft)return;const up=[],gone=[];
+  for(const [n,v] of Object.entries(bdDraft)){if(!v.d&&!v.m){if(BD[n])gone.push(n);continue}
+    if(!v.d||!v.m){toast(`Pick both a day and a month for ${n}.`);return}
+    if(v.d>[31,29,31,30,31,30,31,31,30,31,30,31][v.m-1]){toast(`${BD_MONTHS[v.m-1]} doesn't have ${v.d} days. Check ${n}'s birthday.`);return}
+    const md=String(v.m).padStart(2,"0")+"-"+String(v.d).padStart(2,"0");if(BD[n]!==md)up.push({player:n,bday:md})}
+  if(!up.length&&!gone.length){toast("Nothing has changed.");return}
+  bdBusy=true;render();
+  try{if(up.length){const {error}=await sb.from("player_birthdays").upsert(up,{onConflict:"player"});if(error)throw error}
+    if(gone.length){const {error}=await sb.from("player_birthdays").delete().in("player",gone);if(error)throw error}
+    await loadBirthdays();toast("Birthdays saved. Only coaches can see them.")}
+  catch(e){toast("Couldn't save the birthdays. Check your connection and try again.")}
+  bdBusy=false;render()}
+document.addEventListener("change",e=>{const s=e.target;if(!bdDraft||!s.dataset||!(s.dataset.bdd||s.dataset.bdm))return;
+  const n=s.dataset.bdd||s.dataset.bdm,v=bdDraft[n]||(bdDraft[n]={});v[s.dataset.bdd?"d":"m"]=s.value?+s.value:null});
 document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
-  if(b.id==="kitSave"&&(view==="kit"||view==="parents")){kitSave();return}
-  if(view!=="kit"||!canWrite)return;
-  if(b.id==="kitCopy"){if(kitChanged().length)toast("Save your changes first, then copy.");else copyOut(kitText(),"Order list copied. Paste it into an email or WhatsApp.");return}
-});
+  if(b.dataset.view==="birthdays")bdDraft=null;
+  if(b.dataset.bdcopy){e.stopPropagation();copyOut(bdMsg(b.dataset.bdcopy),"Copied. Paste it into the team chat.");return}
+  if(b.id==="bdSave"){bdSave();return}
+},true);
 
 // ---------- season story ("Wrapped"): a few swipeable slides for one player, from the stats already on the site ----------
 let STORY=null;
@@ -2169,6 +2214,7 @@ function storySlides(n,s){const list=sortMatches(matches.filter(m=>!m.practice&&
     out.push(`<div class="k">${SP.Goals}</div><div class="n">${o.goals}</div><p>${RUGBY&&o.pts?`${o.pts} points in all${kickText(o)?`, with ${kickText(o)}`:""}. `:""}${o.assists&&assistsTracked(s)?`Plus ${o.assists} assist${o.assists>1?"s":""}. `:""}${best&&best[1]>1?`Best game: ${best[1]} v ${esc(best[0].opp)}.`:best&&best[1]?`Scored v ${esc(best[0].opp)}.`:""}</p>`)}
   if(o.gk)out.push(`<div class="k">In goal</div><div class="n">🧤 ${o.gk}</div><p>${o.cs?`${o.cs} clean sheet${o.cs>1?"s":""}.`:"Brave in goal every time."}</p>`);
   if(potms.length)out.push(`<div class="k">${esc(POTM)}</div><div class="n">${POTM_IC} ${potms.length}</div><p>${potms.slice(0,3).map(m=>`v ${esc(m.opp)}`).join(", ")}${potms.length>3?" and more":""}.</p>`);
+  {const pm=pomSeason(s).filter(x=>x.player===n).reverse();if(pm.length)out.push(`<div class="k">Player of the month</div><div class="n">${POM_IC} ${pm.length}</div><p>${pm.map(x=>esc(pomMonthName(x.month))).join(", ")}.</p>`)}
   if(ms.length)out.push(`<div class="k">Milestones</div><h2>🎉</h2><p>${ms.slice(0,4).map(x=>esc(x.label)).join("<br>")}</p>`);
   if(!hide){const w=mine.filter(m=>result(m)==="W"),big=w.slice().sort((a,b)=>(b.us-b.them)-(a.us-a.them))[0];
     if(mine.filter(result).length)out.push(`<div class="k">With ${esc(n)} on the pitch</div><div class="n">${w.length}</div><p>win${w.length===1?"":"s"}${big?`, the biggest ${big.us}–${big.them} v ${esc(big.opp)}`:""}.</p>`)}
@@ -2432,7 +2478,7 @@ document.addEventListener("click",e=>{const th=e.target.closest("table.lb thead 
   rows.sort((a,b)=>{const x=cv(a),y=cv(b);if(x===y)return 0;if(x===null)return 1;if(y===null)return -1;const c=typeof x==="number"&&typeof y==="number"?x-y:String(x).localeCompare(String(y));return dir==="asc"?c:-c}).forEach(r=>tb.appendChild(r))});
 // ---------- events ----------
 document.addEventListener("click",async e=>{
-  const t=e.target.closest("button,tr.click,[data-edit],.match");if(!t)return;
+  const t=e.target.closest("button,tr.click,[data-edit],.match,.pom-row[data-player]");if(!t)return;
   if(t.closest("#gfxView"))return;
   if(t.dataset.lb){lbAction(t.dataset.lb);return}
   if(t.dataset.photo){lbOpen(t.dataset.photo);return}
@@ -2579,12 +2625,12 @@ const gfxReady=()=>window.GFX?Promise.resolve(window.GFX):new Promise(ok=>{loadG
 async function checkCoach(){
   canWrite=false;matches=pubMatches();
   if(me&&!isParent()){const {data}=await sb.from("coaches").select("email").eq("email",(me.email||"").toLowerCase()).maybeSingle();canWrite=!!data;if(!canWrite){await sb.auth.signOut();me=null;toast("That email isn't on the club's coach list.")}}
-  if(!canWrite&&["new","edit","gfx","live","msg","pick","tnew","tedit","hnew","hedit","book","help","setup","ftimport","ratings","kit"].includes(view))view="home";
+  if(!canWrite&&["new","edit","gfx","live","msg","pick","tnew","tedit","hnew","hedit","book","help","setup","ftimport","ratings","birthdays"].includes(view))view="home";
   if(canWrite&&TEAM.publicScores===false){matches=RAW.slice();if(PRACTICE)matches.push(PRACTICE)}
   if(canWrite)loadGfx();
   FAM=null;await loadParent();
   await loadTav();alSync();
-  await loadAvail();await loadPhotos();await loadViews();await loadHelp();await loadAttendance();await loadPolls();await loadPosts();await loadRatings();await loadKit();
+  await loadAvail();await loadPhotos();await loadViews();await loadHelp();await loadAttendance();await loadPolls();await loadPosts();await loadRatings();await loadBirthdays();
   authBox();render();
 }
 document.addEventListener("click",async e=>{
@@ -2618,12 +2664,12 @@ document.addEventListener("submit",async e=>{
   db.collection("honours").onSnapshot(s=>{honours=s.docs.map(d=>Object.assign({id:d.id},d.data()));if(!formOpen())render()},()=>{});
   if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
   await loadBadges();
-  await Promise.all([loadGallery(),loadTraining(),loadPolls(),loadParentSettings(),loadCheerSettings(),loadSponsors()]);
+  await Promise.all([loadGallery(),loadTraining(),loadPolls(),loadParentSettings(),loadCheerSettings(),loadSponsors(),loadPom()]);
   if(!window.SETUP_WAIT)suRefresh().catch(()=>{});
   await checkCoach();
   logView();
   if(new URLSearchParams(location.search).has("alerts")){view="alerts";render()}
-  for(const v of ["fixtures","gallery","calendar","training","help","setup","votes","matchday","privacy","parents","sponsors"])if(new URLSearchParams(location.search).has(v))setView(v);
+  for(const v of ["fixtures","gallery","calendar","training","help","setup","votes","matchday","privacy","parents","sponsors","pom"])if(new URLSearchParams(location.search).has(v))setView(v);
   const qm=new URLSearchParams(location.search).get("match");if(qm){mdMatch=qm;mdFrom="results";view="md";render()}
   if(new URLSearchParams(location.search).has("app")){view="app";render()}
   const ql=new URLSearchParams(location.search).get("live");if(ql){tlMatch=ql;view="tl";render()}
