@@ -14,7 +14,8 @@ analytics.init({
 });
 
 // stats.js's ttCount() passes sign-ups and demo clicks through here as business events
-window.ttHeyCatch = (name) => { try { analytics.trackEvent(name.replace(/-/g, "_")); } catch (e) {} };
+// e.g. "signup-completed" arrives in HeyCatch as signup_completed, with its properties (sport, age group, role, format, ref)
+window.ttHeyCatch = (name, props) => { try { analytics.trackEvent(name.replace(/-/g, "_"), props || undefined); } catch (e) {} };
 
 // the privacy page's "turn off" link; HeyCatch remembers the choice in this browser
 window.ttHeyCatchOff = () => { try { analytics.optOutCapturing(); return true; } catch (e) { return false; } };

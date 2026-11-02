@@ -16,6 +16,7 @@ Made by Murph Hartley, a grassroots coach. Contact: hello@touchlinetales.club
 
 - [Home page](https://touchlinetales.club/): what a team site does, the sports covered, safety, price and sign-up
 - [Demo site](https://touchlinetales.club/demo/): a clickable team site for the made-up Sample Town Under 12s, with a live game
+- [Pricing](https://touchlinetales.club/pricing/): the team plan, setup fee, founding-team offer and club discount, with worked examples
 - [About](https://touchlinetales.club/about/): who makes Touchline Tales and how children's information is looked after
 - [Privacy notice](https://touchlinetales.club/privacy/)
 - [Data processing agreement](https://touchlinetales.club/dpa/): the agreement a club accepts; the club is the data controller and Touchline Tales the processor

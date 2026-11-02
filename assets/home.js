@@ -13,7 +13,7 @@ const form = document.getElementById("signup-form");
 const msg = form.querySelector(".form-msg");
 
 const LABELS = {
-  name: "Name", email: "Email", phone: "Mobile", club: "Club or team",
+  name: "Name", email: "Email", phone: "Mobile", club: "Club or team", sport: "Sport",
   role: "Role", age_group: "Age group", format: "Format", heard: "Heard about us",
   ref: "Link used", message: "Message"
 };
@@ -23,7 +23,23 @@ const ref = new URLSearchParams(location.search).get("ref");
 if (ref) form.querySelector("[name=ref]").value = ref.slice(0, 40);
 
 // Visitor stats (assets/stats.js): sign-ups and demo visits are counted as events, nothing about the person.
-const count = (name, title) => window.ttCount && window.ttCount(name, title);
+const count = (name, title, props) => window.ttCount && window.ttCount(name, title, props);
+
+// What a sign-up event carries: only the dropdown choices marked data-track (sport, age group, role, format,
+// how they heard) and the ?ref= tag. Never the name, email, club or anything typed, as the privacy page promises.
+function trackedChoices() {
+  const out = { page: location.pathname };
+  form.querySelectorAll("[data-track]").forEach(el => { const v = (el.value || "").trim(); if (v) out[el.dataset.track] = v.slice(0, 40); });
+  return out;
+}
+
+// The funnel: someone starts filling in the form (once per visit), then sends it.
+let started = false;
+form.addEventListener("focusin", () => {
+  if (started) return;
+  started = true;
+  count("signup-started", "Sign-up form started", { page: location.pathname });
+});
 
 function say(text, kind) {
   msg.textContent = text;
@@ -67,7 +83,8 @@ form.addEventListener("submit", async e => {
     const out = await res.json().catch(() => ({}));
     if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
     form.classList.add("sent");
-    count("signup-sent", "Sign-up form sent");
+    // The success event: fires only once FormSubmit has accepted the sign-up, so a failed send never counts.
+    count("signup-completed", "Sign-up completed", trackedChoices());
     try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
     say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
   } catch {
@@ -83,12 +100,22 @@ document.querySelectorAll("[data-demo]").forEach(a => a.addEventListener("click"
   if (ref) a.href = (a.getAttribute("href") || "demo/").split("?")[0] + "?ref=" + encodeURIComponent(ref.slice(0, 40));
 }));
 
-// Founding places: the count and the dots come from data-taken / data-total in the hero, so there's one number to change.
+// Founding places: the count and the five slots come from data-teams in the hero ("Name|INITIALS|#colour;…"),
+// so there's one list to change. Taken places show the team's name on a crest in its colours; open ones link to the form.
 const founding = document.querySelector(".founding");
 if (founding) {
-  const total = +founding.dataset.total || 5, taken = Math.min(+founding.dataset.taken || 0, total), left = total - taken;
+  const esc = t => t.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const teams = (founding.dataset.teams || "").split(";").map(t => t.split("|").map(x => x.trim())).filter(t => t[0]);
+  const total = +founding.dataset.total || 5, taken = Math.min(teams.length, total), left = total - taken;
   founding.querySelector(".founding-count").innerHTML = left
     ? `<b class="founding-left">${left} of ${total}</b> founding-team places left for the 2026-27 season`
     : `All ${total} founding-team places are taken for the 2026-27 season`;
-  founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => `<li${i < taken ? ' class="taken"' : ""}></li>`).join("");
+  founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => {
+    if (i < taken) {
+      const [name, initials, colour] = teams[i];
+      const kit = /^#[0-9a-f]{3,6}$/i.test(colour || "") ? ` style="--kit:${colour}"` : "";
+      return `<li class="taken"${kit}><span class="crest" aria-hidden="true">${esc((initials || name.slice(0, 2)).slice(0, 3))}</span><span class="slot-name">${esc(name)}</span></li>`;
+    }
+    return `<li class="open"><a href="#signup"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your team?</span></a></li>`;
+  }).join("");
 }
