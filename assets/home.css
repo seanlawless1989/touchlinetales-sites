@@ -235,9 +235,20 @@ details p{padding:0 22px 18px;margin:0}
 .founding{margin-top:4px;max-width:30em}
 .founding-count{margin:0 0 8px;color:var(--chalk);font-weight:500}
 .founding-left{display:inline-block;background:var(--gold);color:var(--night);font:700 15px/1 var(--body);padding:6px 10px;border-radius:999px;margin-right:4px}
-.founding-slots{list-style:none;display:flex;gap:8px;margin:0 0 10px;padding:0}
-.founding-slots li{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--gold)}
-.founding-slots li.taken{background:var(--gold)}
+/* Founding places: five slots, taken ones as a crest in the team's colours with its name, open ones dashed */
+.founding-slots{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 12px;padding:0;max-width:30em}
+.founding-slots li{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:10px 4px 8px;border-radius:12px;background:rgba(246,243,234,.06);box-shadow:inset 0 0 0 1.5px rgba(242,194,48,.45)}
+.founding-slots li.taken{background:rgba(246,243,234,.1);box-shadow:inset 0 3px 0 var(--kit,var(--gold))}
+.founding-slots .crest{display:grid;place-items:center;width:34px;height:38px;border-radius:6px 6px 17px 17px;background:var(--kit,var(--gold));color:#fff;font:700 13px/1 var(--head);letter-spacing:.04em;box-shadow:0 0 0 2px var(--chalk)}
+.founding-slots .slot-name{font-size:11.5px;line-height:1.25;color:var(--chalk);font-weight:500}
+.founding-slots li.open{background:none;box-shadow:none;border:1.5px dashed var(--gold);padding:8.5px 2.5px 6.5px}
+.founding-slots li.open a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;width:100%}
+.founding-slots li.open .crest{background:none;color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.founding-slots li.open .slot-name{color:var(--gold)}
+.founding-slots li.open a:hover .crest{background:var(--gold);color:var(--night)}
+@media (max-width:440px){.founding-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* The two things no group chat does, under the hero buttons */
+.hero-diff{margin:0 0 22px;padding-left:12px;border-left:3px solid var(--gold);color:var(--chalk);font-weight:500;font-size:17px;max-width:34em}
 .founding .small{margin:0}
 
 /* Screens strip */
@@ -318,3 +329,25 @@ details p{padding:0 22px 18px;margin:0}
 img.founder-pic{display:block;background:none;object-fit:cover}
 .quotes-one{grid-template-columns:minmax(0,46em)}
 .quote blockquote p{margin:0}
+/* Named coach quotes (filled in from the template in the stories band) */
+.quote-named{display:flex;flex-direction:column}
+.quote-detail{margin:0 0 16px;font-size:14px;color:var(--turf);padding:8px 12px;background:var(--chalk);border-radius:8px}
+.quote-named figcaption{display:flex;gap:12px;align-items:center;margin-top:auto;color:var(--turf);font-weight:400;font-size:14px;line-height:1.35}
+.quote-named figcaption b{color:var(--night);font-weight:700}
+.quote-pic{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px var(--gold)}
+/* Pricing page */
+.price-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 0 var(--line);margin:8px 0 1.2em;font-size:16px}
+.price-table th,.price-table td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line)}
+.price-table th{background:var(--night);color:var(--chalk);font-weight:500}
+.price-table td:last-child,.price-table th:last-child{text-align:right;white-space:nowrap}
+.price-table tr:last-child td{border-bottom:0;font-weight:700;color:var(--night)}
+.pricing-cards{grid-template-columns:repeat(2,1fr);margin:24px 0 32px}
+@media (max-width:720px){.pricing-cards{grid-template-columns:1fr}}
+/* Customers page */
+.story{margin:0 0 40px}
+.story-head{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.story-head .crest{display:grid;place-items:center;width:52px;height:58px;border-radius:8px 8px 26px 26px;background:var(--kit,var(--green));color:#fff;font:700 18px/1 var(--head);flex:none}
+.story-head h2{margin:0}
+.story dl{display:grid;gap:14px;margin:0}
+.story dt{font:700 15px/1.2 var(--head);text-transform:uppercase;color:var(--green);letter-spacing:.04em}
+.story dd{margin:4px 0 0}
