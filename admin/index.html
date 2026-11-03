@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noimageindex,noarchive,nosnippet">
+<meta name="theme-color" content="#0E2A1D">
+<title>Touchline Tales owner</title>
+<link rel="icon" href="../assets/mark.svg">
+<style>
+:root{--night:#0E2A1D;--green:#13804A;--gold:#F2C230;--chalk:#F6F3EA;--text:#14201A;--muted:#5B6A62;--line:#dcd8cc;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--chalk);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--night);color:var(--chalk);padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header img{width:44px;height:44px}header h1{font:800 clamp(19px,4.5vw,26px)/1.2 system-ui,sans-serif;margin:0;text-transform:uppercase;letter-spacing:.02em}
+#who{font-size:13px;display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;opacity:.92}#who span{display:flex;gap:6px;align-items:center}
+main{max-width:900px;margin:16px auto 40px;padding:0 16px;display:grid;gap:12px}
+.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgb(0 0 0 / .08);min-width:0}
+.stack{display:flex;flex-direction:column;gap:10px}h2{margin:0;font-size:20px}h3{margin:0;font-size:17px}.hint{color:var(--muted);font-size:13px}p{margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.btn{min-height:42px;padding:0 16px;border-radius:10px;border:0;background:var(--green);color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
+.mini{display:inline-flex;align-items:center;min-height:32px;padding:0 10px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--text);font:700 13px system-ui,sans-serif;cursor:pointer;text-decoration:none}
+input{min-height:42px;padding:0 10px;border:1.5px solid var(--line);border-radius:9px;font:16px system-ui,sans-serif;width:100%;max-width:360px}
+.sitehead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pill{border-radius:999px;padding:3px 10px;font:700 12px system-ui,sans-serif;white-space:nowrap}.pill.ok{background:var(--green);color:#fff}.pill.wait{background:var(--gold);color:#111}
+.note{background:#FFF8DB;border-radius:10px;padding:10px 12px;font-size:14px;margin:4px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:6px 0 12px}
+.stat{background:var(--chalk);border-radius:10px;padding:10px;display:flex;flex-direction:column;min-width:0}
+.stat b{font:800 24px/1.1 system-ui,sans-serif;color:var(--night)}.stat span{font-size:13px;font-weight:700}.stat small{font-size:12px;color:var(--muted)}
+.stats.top .stat b{font-size:28px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:48px;margin-top:4px}.bars i{flex:1;background:var(--green);border-radius:3px 3px 0 0;min-height:2px}
+details summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--green);margin-top:10px}
+.rows{display:flex;flex-direction:column;margin-top:6px}.row{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--night);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;z-index:9}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 32px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<header><img src="../assets/mark.svg" alt=""><div><h1>Touchline Tales owner</h1><div id="who"></div></div></header>
+<main id="main"><div class="card">Loading…</div></main>
+<div id="toast" hidden role="status"></div>
+<footer>Private page. Only the Touchline Tales owner can sign in here.</footer>
+<script src="admin.js?v=1"></script>
+</body>
+</html>
