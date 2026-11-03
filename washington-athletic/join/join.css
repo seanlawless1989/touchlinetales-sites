@@ -20,3 +20,7 @@
 .form .btn-line{width:100%}
 .top-gap{margin-top:22px}
 .form.sent .form-h,.form.sent .hint,.form.sent #teams,.form.sent #add-team{display:none}
+.see-it{display:grid;grid-template-columns:1fr 300px;gap:40px;align-items:center}
+.see-video{width:100%;border-radius:var(--r);background:#000;box-shadow:0 8px 24px rgba(14,42,29,.18)}
+.see-it .btn{margin-top:6px}
+@media (max-width:760px){.see-it{grid-template-columns:1fr;gap:24px}.see-video{max-width:320px;margin:0 auto}}
