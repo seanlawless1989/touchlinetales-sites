@@ -38,15 +38,20 @@ details summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--club)}
 .drpic{width:100%;max-width:360px;align-self:center;border-radius:12px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#14201A;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;z-index:9}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 32px}footer a{color:var(--muted)}
+header h1 a{color:inherit;text-decoration:none}
+#clubnav{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--deep);scrollbar-width:none}
+#clubnav a{flex:none;color:var(--ink);text-decoration:none;font:700 13px system-ui,sans-serif;padding:7px 12px;border-radius:999px;background:rgb(255 255 255 / .14);white-space:nowrap}
+#clubnav a:hover,#clubnav a:focus-visible{background:var(--second);color:#111}
 </style>
 <script>window.CLUB={"id": "newton-aycliffe", "name": "Newton Aycliffe Youth Football Club", "short": "Newton Aycliffe", "supabaseUrl": "https://elqwksyqwezhkekdqivn.supabase.co", "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscXdrc3lxd2V6aGtla2RxaXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NDA4MzAsImV4cCI6MjEwNzMxNjgzMH0.7HFhSDvpQS5WHDgu4x5ABat-8hl5ZIpmeFlp2pV9wts"};</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-<header><a href="../"><img src="../crest.png" alt=""></a><div><h1>Newton Aycliffe club admin</h1><div id="who"></div></div></header>
+<header><a href="../" title="Back to the club page"><img src="../crest.png" alt="Newton Aycliffe club page"></a><div><h1><a href="../">Newton Aycliffe</a> club admin</h1><div id="who"></div></div></header>
+<nav id="clubnav" aria-label="Club and team sites"><a href="../">🏠 Club home</a></nav>
 <main id="main"><div class="card">Loading…</div></main>
 <div id="toast" hidden role="status"></div>
 <footer>Only the club lead, club admins and the club's coaches can sign in here. <a href="https://touchlinetales.club/?ref=powered-club-admin" target="_blank" rel="noopener">Touchline Tales</a></footer>
-<script src="admin.js?v=1"></script>
+<script src="admin.js?v=2"></script>
 </body>
 </html>
