@@ -1,6 +1,6 @@
 // Sends a website sign-up (home page form, club join pages) two ways at once, so one failing service
 // can't lose a lead:
-//   1. saved to the Touchline Tales Supabase database (table tt_signups, via the tt_submit_signup function;
+//   1. saved to the Touchline Tales Supabase database (table tt_leads, via the tt_save_lead function;
 //      the website can add a row but never read one back), and
 //   2. emailed through FormSubmit (formsubmit.co), best effort.
 // It counts as sent if either one works. Each has a time limit, so the form never sits on "Sending…".
@@ -55,10 +55,10 @@
   window.ttSendSignup = function (form, payload) {
     var data = {};
     Object.keys(payload).forEach(function (k) { if (k.charAt(0) !== "_") data[k] = payload[k]; });
-    var save = rpc("tt_submit_signup", { p_form: form, p_page: location.pathname, p_data: data }, 10000);
+    var save = rpc("tt_save_lead", { p_form: form, p_page: location.pathname, p_data: data }, 10000);
     var mail = email(payload, 12000);
     // Once the database has it, the visitor can be thanked straight away; the email carries on in the background.
-    save.then(function (id) { mail.then(function () { rpc("tt_signup_emailed", { p_id: id }, 5000).catch(function () {}); }, function () {}); }, function () {});
+    save.then(function (id) { mail.then(function () { rpc("tt_lead_emailed", { p_id: id }, 5000).catch(function () {}); }, function () {}); }, function () {});
     var both = Promise.allSettled([save, mail]).then(function (r) {
       var saved = r[0].status === "fulfilled", emailed = r[1].status === "fulfilled";
       var reasons = [];
