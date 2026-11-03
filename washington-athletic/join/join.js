@@ -1,8 +1,6 @@
 // Washington Athletic club sign-up: one form for all of a club's teams.
-// Sent by email through the same FormSubmit form as the home page (see assets/home.js),
+// Saved to our database and emailed at the same time, like the home page (see assets/signup-send.js),
 // with every team flattened into "Team 1: ..." rows plus a CSV block we can paste into a sheet.
-const FORM_ID = "5f26f2b94f7b8df49f80d9aced927305";
-const FORM_ENDPOINT = `https://formsubmit.co/ajax/${FORM_ID}`;
 const CLUB = "Washington Athletic Youth";
 const MAX_TEAMS = 30;
 
@@ -90,26 +88,16 @@ form.addEventListener("submit", async e => {
   const button = form.querySelector("button[type=submit]");
   button.disabled = true;
   say("Sending…");
-  let reason = "";
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const out = await res.json().catch(() => ({}));
-      if (!res.ok || String(out.success) !== "true") throw new Error(`${res.status} ${out.message || ""}`.trim());
-      form.classList.add("sent");
-      count("club-signup-completed", "Club sign-up completed", { page: location.pathname, teams: String(teams.length) });
-      say(`Thanks, ${payload.Name.split(" ")[0]}! We've got your ${teams.length} team${teams.length === 1 ? "" : "s"}. We'll email each coach their link as their site goes live.`, "ok");
-      window.scrollTo({ top: form.getBoundingClientRect().top + scrollY - 90, behavior: "smooth" });
-      return;
-    } catch (err) {
-      reason = String((err && err.message) || "network").slice(0, 120);
-      if (attempt === 1) await new Promise(r => setTimeout(r, 1500));
-    }
+  const sent = await window.ttSendSignup("club-join", payload);
+  if (sent.ok) {
+    form.classList.add("sent");
+    count("club-signup-completed", "Club sign-up completed", { page: location.pathname, teams: String(teams.length) });
+    if (sent.reason) count("club-signup-partial", "Club sign-up sent by one route only", { page: location.pathname, reason: sent.reason });
+    say(`Thanks, ${payload.Name.split(" ")[0]}! We've got your ${teams.length} team${teams.length === 1 ? "" : "s"}. We'll email each coach their link as their site goes live.`, "ok");
+    window.scrollTo({ top: form.getBoundingClientRect().top + scrollY - 90, behavior: "smooth" });
+    return;
   }
+  const reason = sent.reason;
   count("club-signup-failed", "Club sign-up failed to send", { page: location.pathname, reason });
   button.disabled = false;
   const body = Object.entries(payload).filter(([k]) => !k.startsWith("_")).map(([k, v]) => `${k}: ${v}`).join("\n");
