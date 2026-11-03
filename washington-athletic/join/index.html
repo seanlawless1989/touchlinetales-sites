@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Washington Athletic teams | Touchline Tales</title>
+<meta name="description" content="Get every Washington Athletic Youth team on Touchline Tales, free for the 2026-27 season. One form for all your teams.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0E2A1D">
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/home.css?v=13">
+<link rel="stylesheet" href="join.css?v=1">
+<script src="/assets/stats.js" async></script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="../../" aria-label="Touchline Tales home">
+      <img src="../../assets/mark.svg" alt="" width="40" height="40">
+      <span class="word">Touchline <b>Tales</b></span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="../">Club home</a>
+      <a href="../../demo/?ref=washington-join">Demo</a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="guide-hero dark stripes">
+  <div class="wrap narrow club-hero">
+    <img class="club-crest" src="../crest.png" alt="Washington Athletic crest" width="88" height="88">
+    <div>
+      <p class="eyebrow">Washington Athletic Youth</p>
+      <h1>Every team on Touchline Tales, free</h1>
+      <p class="lede">Your U11 Wolves are already live. Add the rest of the club's teams on one form and we'll do the setup. There's nothing to pay for the 2026-27 season, setup included.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band alt">
+  <div class="wrap narrow">
+    <ol class="steps-3">
+      <li><b>Fill in this form</b><span>One person can do the whole club. It takes about two minutes a team.</span></li>
+      <li><b>We build the sites</b><span>Crest, colours and fixtures loaded from Full-Time. Usually within a few days.</span></li>
+      <li><b>Coaches get a link</b><span>Each coach is emailed their sign-in link and a short guide. They add their squad's first names when they're ready.</span></li>
+    </ol>
+    <p class="note">Want to see one first? Have a look at the <a href="../../washington-wolves-u11s/">Washington Wolves U11s site</a>.</p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <form id="club-form" class="card form" novalidate>
+      <h2 class="form-h">About you</h2>
+      <div class="row2">
+        <div class="field"><label for="c-name">Your name</label><input id="c-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="c-email">Your email</label><input id="c-email" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="c-phone">Mobile <span class="opt">(optional)</span></label><input id="c-phone" name="phone" type="tel" autocomplete="tel"></div>
+        <div class="field">
+          <label for="c-role">Your role at the club</label>
+          <select id="c-role" name="role" required>
+            <option value="">Choose…</option>
+            <option>Club secretary</option><option>Chair</option><option>Welfare officer</option>
+            <option>Coach or manager</option><option>Something else</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="c-welfare">Club welfare officer's name <span class="opt">(optional)</span></label><input id="c-welfare" name="welfare_name"></div>
+        <div class="field"><label for="c-welfare-email">Welfare officer's email <span class="opt">(optional)</span></label><input id="c-welfare-email" name="welfare_email" type="email"></div>
+      </div>
+      <p class="hint">We'll send the welfare officer our short safeguarding checklist so they can sign the sites off. Nothing about the children is public until a coach chooses to add it.</p>
+
+      <h2 class="form-h">Your teams</h2>
+      <p class="hint">Add one box per team. You don't need to include the Wolves U11s, they're already set up.</p>
+      <div id="teams"></div>
+      <button type="button" id="add-team" class="btn btn-line">+ Add another team</button>
+
+      <div class="field top-gap">
+        <label for="c-msg">Anything else? <span class="opt">(optional)</span></label>
+        <textarea id="c-msg" name="message" rows="3" placeholder="Kit colours if a team's are different, teams starting later, questions…"></textarea>
+      </div>
+      <label class="tick"><input type="checkbox" name="agree" required> I'm happy for Touchline Tales to set up these teams and email each coach their sign-in link.</label>
+      <!-- Spam trap: real people never see or fill this -->
+      <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn" type="submit">Send our teams</button>
+      <p class="form-small small">Please don't put any children's names here. We only use these details to set up the sites and contact the coaches (<a href="../../privacy/">privacy</a>).</p>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<template id="team-tpl">
+  <fieldset class="team-box">
+    <legend>Team <span class="n">1</span></legend>
+    <button type="button" class="remove" aria-label="Remove this team">Remove</button>
+    <div class="field"><label>Team name</label><input data-k="team" placeholder="e.g. Washington Athletic Youth U10 Lions" required></div>
+    <div class="row3">
+      <div class="field"><label>Age group</label>
+        <select data-k="age" required>
+          <option value="">Choose…</option>
+          <option>Under 6</option><option>Under 7</option><option>Under 8</option><option>Under 9</option>
+          <option>Under 10</option><option>Under 11</option><option>Under 12</option><option>Under 13</option>
+          <option>Under 14</option><option>Under 15</option><option>Under 16</option><option>Under 17</option>
+          <option>Under 18</option><option>Open age</option>
+        </select>
+      </div>
+      <div class="field"><label>Boys, girls or mixed</label>
+        <select data-k="squad" required><option value="">Choose…</option><option>Girls</option><option>Boys</option><option>Mixed</option></select>
+      </div>
+      <div class="field"><label>Format</label>
+        <select data-k="format" required><option value="">Choose…</option><option>5v5</option><option>7v7</option><option>9v9</option><option>11v11</option></select>
+      </div>
+    </div>
+    <div class="field"><label>League and division <span class="opt">(optional)</span></label><input data-k="league" placeholder="e.g. Russell Foster U10 Division 2"></div>
+    <div class="field"><label>Full-Time link for the team <span class="opt">(optional, helps us load fixtures)</span></label><input data-k="fulltime" type="url" inputmode="url" placeholder="https://fulltime.thefa.com/…"></div>
+    <div class="row2">
+      <div class="field"><label>Coach's name</label><input data-k="coach" required></div>
+      <div class="field"><label>Coach's email</label><input data-k="coach_email" type="email" required></div>
+    </div>
+    <div class="field"><label>Other coaches' emails <span class="opt">(optional, comma between them)</span></label><input data-k="more_coaches"></div>
+  </fieldset>
+</template>
+</main>
+
+<footer class="foot dark">
+  <div class="wrap foot-in">
+    <a class="brand" href="../../" aria-label="Touchline Tales home">
+      <img src="../../assets/mark.svg" alt="" width="36" height="36">
+      <span class="word">Touchline <b>Tales</b></span>
+    </a>
+    <p>Every match. Every milestone.</p>
+    <p class="small">Questions? Email <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a>. <a href="../../privacy/">Privacy</a> · <a href="../../dpa/">Data processing agreement</a></p>
+    <p class="small">&copy; 2026 Touchline Tales. Team websites for grassroots football and rugby.</p>
+  </div>
+</footer>
+<script src="join.js?v=1" defer></script>
+</body>
+</html>
