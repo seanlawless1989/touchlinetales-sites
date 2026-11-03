@@ -117,3 +117,8 @@ form.addEventListener("submit", async e => {
   msg.className = "form-msg err";
   msg.innerHTML = `Sorry, that didn't send. <a href="${mail}">Tap here to email it to us instead</a> (everything's already filled in), or email <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a>.`;
 });
+
+// Brochure downloads and video plays are counted as events (no personal data).
+document.querySelectorAll("[data-pdf]").forEach(a => a.addEventListener("click", () => count("club-brochure", "Club brochure downloaded", { page: location.pathname })));
+const vid = document.querySelector(".see-video");
+if (vid) vid.addEventListener("play", () => count("club-video", "Club page video played", { page: location.pathname }), { once: true });
