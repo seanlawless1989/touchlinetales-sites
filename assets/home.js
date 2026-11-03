@@ -74,23 +74,37 @@ form.addEventListener("submit", async e => {
   const button = form.querySelector("button");
   button.disabled = true;
   say("Sending…");
-  try {
-    const res = await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const out = await res.json().catch(() => ({}));
-    if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
-    form.classList.add("sent");
-    // The success event: fires only once FormSubmit has accepted the sign-up, so a failed send never counts.
-    count("signup-completed", "Sign-up completed", trackedChoices());
-    try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
-    say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
-  } catch {
-    button.disabled = false;
-    say("Sorry, that didn't send. Please try again in a minute.", "err");
+  // One automatic retry: FormSubmit sometimes fails a request and then takes the next one.
+  let reason = "";
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || String(out.success) !== "true") throw new Error(`${res.status} ${out.message || ""}`.trim());
+      form.classList.add("sent");
+      // The success event: fires only once FormSubmit has accepted the sign-up, so a failed send never counts.
+      count("signup-completed", "Sign-up completed", trackedChoices());
+      try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
+      say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
+      return;
+    } catch (err) {
+      // A blocked or offline request has no status; FormSubmit's own refusals carry its message.
+      reason = String((err && err.message) || "network").slice(0, 120);
+      if (attempt === 1) await new Promise(r => setTimeout(r, 1500));
+    }
   }
+  // Both tries failed: record why (FormSubmit's reply only, nothing the visitor typed) and give them a
+  // ready-filled email instead, so the sign-up isn't lost.
+  count("signup-failed", "Sign-up failed to send", { page: location.pathname, reason });
+  button.disabled = false;
+  const body = fields.map(([k, v]) => `${k}: ${v}`).join("\n");
+  const mail = `mailto:hello@touchlinetales.club?subject=${encodeURIComponent(payload._subject)}&body=${encodeURIComponent(body)}`;
+  msg.className = "form-msg err";
+  msg.innerHTML = `Sorry, that didn't send. <a href="${mail}">Tap here to email it to us instead</a> (your details are already filled in), or email <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a>.`;
 });
 
 // Demo links open the demo straight away, keeping any ?ref= tag. The demo itself asks, gently and later on,
