@@ -1,11 +1,6 @@
 // Touchline Tales home page: sign-up form.
 //
-// Sign-ups are emailed to the team inbox by FormSubmit (formsubmit.co), a free form-to-email
-// service, so the site needs no server of its own. FORM_ID is FormSubmit's code for
-// the activated form; it stands in for the email address so the address isn't
-// visible in the page source.
-const FORM_ID = "5f26f2b94f7b8df49f80d9aced927305";
-const FORM_ENDPOINT = `https://formsubmit.co/ajax/${FORM_ID}`;
+// Sign-ups are saved to our database and emailed by FormSubmit at the same time: see assets/signup-send.js.
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -74,30 +69,19 @@ form.addEventListener("submit", async e => {
   const button = form.querySelector("button");
   button.disabled = true;
   say("Sending…");
-  // One automatic retry: FormSubmit sometimes fails a request and then takes the next one.
-  let reason = "";
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const out = await res.json().catch(() => ({}));
-      if (!res.ok || String(out.success) !== "true") throw new Error(`${res.status} ${out.message || ""}`.trim());
-      form.classList.add("sent");
-      // The success event: fires only once FormSubmit has accepted the sign-up, so a failed send never counts.
-      count("signup-completed", "Sign-up completed", trackedChoices());
-      try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
-      say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
-      return;
-    } catch (err) {
-      // A blocked or offline request has no status; FormSubmit's own refusals carry its message.
-      reason = String((err && err.message) || "network").slice(0, 120);
-      if (attempt === 1) await new Promise(r => setTimeout(r, 1500));
-    }
+  // Saved to our database and emailed at the same time (assets/signup-send.js); either one is enough.
+  const sent = await window.ttSendSignup("home", payload);
+  if (sent.ok) {
+    form.classList.add("sent");
+    // The success event: fires only once the sign-up is safely saved or emailed, so a failed send never counts.
+    count("signup-completed", "Sign-up completed", trackedChoices());
+    if (sent.reason) count("signup-partial", "Sign-up sent by one route only", { page: location.pathname, reason: sent.reason });
+    try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
+    say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
+    return;
   }
-  // Both tries failed: record why (FormSubmit's reply only, nothing the visitor typed) and give them a
+  const reason = sent.reason;
+  // Both routes failed: record why (FormSubmit's reply only, nothing the visitor typed) and give them a
   // ready-filled email instead, so the sign-up isn't lost.
   count("signup-failed", "Sign-up failed to send", { page: location.pathname, reason });
   button.disabled = false;
