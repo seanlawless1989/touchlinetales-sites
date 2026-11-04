@@ -41,7 +41,7 @@ const latest=(...ds)=>ds.filter(Boolean).map(d=>String(d).length===10?d+"T12:00:
 function bars(days){if(!days||!days.length)return "";const m=Math.max(1,...days.map(d=>d.views));
   return `<div class="bars" aria-label="Visits, last 14 days">${days.map(d=>`<i style="height:${Math.max(2,Math.round(d.views/m*100))}%" title="${esc(day(d.day))}: ${d.views} views, ${d.visitors} devices"></i>`).join("")}</div>`}
 function flags(s){const f=[];
-  if(!s.ready)f.push("Setup not finished: visitors see 'being set up'");
+  if(s.ready===false)f.push("Setup not finished: visitors see 'being set up'");
   if(!s.coaches_in)f.push("No coach has signed in yet");
   else if(!s.coaches7)f.push("No coach signed in this week");
   if(s.games_past>0&&!s.games_logged)f.push("No games logged yet");
@@ -54,7 +54,7 @@ function siteCard(site,s){
   const f=flags(s);
   return `<article class="card site">
     <div class="sitehead"><div><h2>${esc(site.name)}</h2><div class="hint">${esc(s.schema)} · last activity ${esc(ago(last))}</div></div>
-      <span class="pill ${s.ready?"ok":"wait"}">${s.ready?"Live":"Being set up"}</span></div>
+      <span class="pill ${s.ready!==false?"ok":"wait"}">${s.ready!==false?"Live":"Being set up"}</span></div>
     <div class="btns"><a class="mini" href="${esc(site.url)}" target="_blank" rel="noopener">Open site</a><a class="mini" href="${esc(site.url)}?coach" target="_blank" rel="noopener">Coach sign-in</a></div>
     ${f.length?`<div class="note">${f.map(esc).join("<br>")}</div>`:""}
     <div class="stats">
