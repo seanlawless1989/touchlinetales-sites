@@ -1,7 +1,7 @@
 // Touchline Tales owner page: touchlinetales.club/admin/
 // One page for the owner to see how every team site is being used. Each Supabase project is signed in to separately
 // (the shared Newton Aycliffe project, and Darlington's own project), then public.tt_overview() returns counts and
-// dates for every team in that project (supabase/27_platform_admin.sql in nayfcu9). Only emails in public.tt_admins
+// dates for every team in that project (supabase/28_platform_admin.sql in nayfcu9). Only emails in public.tt_admins
 // get anything back, and it never includes children's names or anything else about a player.
 (function(){
 "use strict";
@@ -127,7 +127,7 @@ function visitsCard(list){if(!list.length)return "";
 async function load(k){const st=ST[k];st.data=null;
   if(!st.user){render();return}
   const {data,error}=await st.sb.rpc("tt_overview");
-  if(error){st.err=error.code==="PGRST202"?"This database isn't set up for the owner page yet (run 27_platform_admin.sql).":"Couldn't load the numbers. Try again.";render();return}
+  if(error){st.err=error.code==="PGRST202"?"This database isn't set up for the owner page yet (run 28_platform_admin.sql).":"Couldn't load the numbers. Try again.";render();return}
   if(data==null){st.err=`${st.user.email} isn't on the owner list for this database.`;await st.sb.auth.signOut();return}
   st.err="";st.data=data;render()}
 
