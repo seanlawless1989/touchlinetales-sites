@@ -50,8 +50,8 @@
       "description": "A website for one grassroots football, rugby union or rugby league team: live match mode with phone alerts for parents, stats and fair playing time, results and match reports, matchday graphics and an end-of-season sticker book.",
       "brand": { "@id": "https://touchlinetales.club/#org" },
       "offers": [
-        { "@type": "Offer", "name": "Team plan, per team per season (July to June)", "price": "60.00", "priceCurrency": "GBP" },
-        { "@type": "Offer", "name": "Setup, once", "price": "35.00", "priceCurrency": "GBP" }
+        { "@type": "Offer", "name": "Team plan, per team per month, month to month", "price": "5.00", "priceCurrency": "GBP" },
+        { "@type": "Offer", "name": "Setup", "price": "0.00", "priceCurrency": "GBP" }
       ]
     },
     {
@@ -67,8 +67,10 @@
           "acceptedAnswer": { "@type": "Answer", "text": "No, it sits alongside it. Touchline Tales is one site per team, wearing your club's crest, colours and sponsors." } },
         { "@type": "Question", "name": "What happens at the end of the season?",
           "acceptedAnswer": { "@type": "Answer", "text": "Your season stays on the site, the sticker book is ready to print, and the next season picks up where you left off." } },
-        { "@type": "Question", "name": "What happens after the founding-team year?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Before the free season ends in June 2027, we'll agree next season's terms with each founding team. Nothing is charged automatically. If you decide not to carry on, your season record is yours: under our data processing agreement you can ask for a copy, and we delete the site and its data within 30 days." } }
+        { "@type": "Question", "name": "Is there a contract?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. It's £5 a month per team, month to month, and setup is free. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our data processing agreement you can ask for a copy, and we delete the site and its data within 30 days." } },
+        { "@type": "Question", "name": "Can we ask for changes?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tell us what would make it better for your team and we'll build it, at no extra cost. Improvements go on every team's site, so everyone gets better together." } }
       ]
     }
   ]
@@ -119,16 +121,16 @@
       <!-- Founding places: one entry per taken place in data-teams ("Team name|INITIALS|#colour"), names only with the club's say-so.
            home.js draws the count and the five slots from it. No links: team sites are private to their families. -->
       <div class="founding" data-total="5"
-        data-teams="Darlington United U14s|DU|#ED1B24;Newton Aycliffe U9s|NA|#2235E8;Newton Aycliffe U11s Wildcats|NA|#2235E8;Newton Aycliffe U11s Pumas|NA|#2235E8;Washington Wolves U11s|WW|#27207A">
-        <p class="founding-count">All 5 founding-team places are taken for the 2026-27 season</p>
+        data-teams="Darlington United U14s|DU|#ED1B24;Newton Aycliffe U9s|NA|#2235E8;Newton Aycliffe U11s Wildcats|NA|#2235E8;Newton Aycliffe U11s Pumas|NA|#2235E8;Washington Athletic|WA|#27207A">
+        <p class="founding-count">All 5 founding-team places are taken. Thank you!</p>
         <ol class="founding-slots" aria-label="Founding-team places">
           <li class="taken" style="--kit:#ED1B24"><span class="crest" aria-hidden="true">DU</span><span class="slot-name">Darlington United U14s</span></li>
           <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U9s</span></li>
           <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U11s Wildcats</span></li>
           <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U11s Pumas</span></li>
-          <li class="taken" style="--kit:#27207A"><span class="crest" aria-hidden="true">WW</span><span class="slot-name">Washington Wolves U11s</span></li>
+          <li class="taken" style="--kit:#27207A"><span class="crest" aria-hidden="true">WA</span><span class="slot-name">Washington Athletic</span></li>
         </ol>
-        <p class="small">Founding teams pay nothing until June 2027, in return for honest feedback.</p>
+        <p class="small">Now open to every team: <b>£5 a month</b>, free setup, cancel anytime.</p>
       </div>
     </div>
 
@@ -502,27 +504,28 @@
 <section id="price" class="band alt">
   <div class="wrap">
     <p class="eyebrow">Price</p>
-    <h2>Simple, honest pricing</h2>
+    <h2>£5 a month. That's it.</h2>
     <div class="grid prices">
-      <div class="card price-card">
+      <div class="card price-card feature">
         <h3>Team plan</h3>
-        <p class="amount">£60 <small>per team, per season</small></p>
-        <p>July to June, about £5 a month. Everything on this page included.</p>
+        <p class="amount">£5 <small>a month, per team</small></p>
+        <p>Everything on this page included. No adverts, no tiers, no extras to unlock.</p>
       </div>
       <div class="card price-card">
         <h3>Setup</h3>
-        <p class="amount">£35 <small>once</small></p>
+        <p class="amount">Free</p>
         <p>We load your crest, colours, squad, fixtures and last season's results.</p>
       </div>
-      <div class="card price-card feature">
-        <h3>Founding teams</h3>
-        <p class="amount">Free <small>until June 2027</small></p>
-        <p>Our first five teams pay nothing for the 2026-27 season, in return for honest feedback.</p>
+      <div class="card price-card">
+        <h3>No contract</h3>
+        <p class="amount">Monthly <small>cancel anytime</small></p>
+        <p>If it isn't working for you, cancel. No notice period, no obligation.</p>
       </div>
     </div>
-    <p class="note club-note">Running three or more teams? Ask about a club price, and hand your welfare officer our <a href="guides/welfare-officer-checklist/">checklist</a> and <a href="dpa/">data processing agreement</a>. Every team from your third gets 10% off.</p>
-    <p class="note">Not included: subs or payments, club membership, or custom features for one team.</p>
-    <p class="note"><a href="pricing/">Full pricing, with worked examples for a club</a></p>
+    <p class="note"><b>Free improvements.</b> Tell us what would make it better for your team and we'll build it, at no extra cost.</p>
+    <p class="note club-note">Running a few teams? Each team is £5 a month. Hand your welfare officer our <a href="guides/welfare-officer-checklist/">checklist</a> and <a href="dpa/">data processing agreement</a>.</p>
+    <p class="note">Not included: subs or payments, or club membership.</p>
+    <p class="note"><a href="pricing/">Full pricing and questions about paying</a></p>
   </div>
 </section>
 
@@ -532,7 +535,7 @@
     <div class="signup-copy">
       <p class="eyebrow">Sign up</p>
       <h2>Get your team on Touchline Tales</h2>
-      <p>Just your name, email and club. We'll be in touch to book a 15-minute demo, and ask anything else then. There's no commitment, and nothing to pay as a founding team.</p>
+      <p>Just your name, email and club. We'll be in touch to book a 15-minute demo, and ask anything else then. There's no commitment: it's £5 a month once your site is live, setup is free, and you can cancel anytime.</p>
       <p>Please don't send any children's details here. We'll ask for first names later, once your welfare officer has signed off.</p>
     </div>
 
@@ -649,8 +652,12 @@
       <p>Your season stays on the site, the sticker book is ready to print, and the next season picks up where you left off.</p>
     </details>
     <details>
-      <summary>What happens after the founding-team year?</summary>
-      <p>Before the free season ends in June 2027, we'll agree next season's terms with each founding team. Nothing is charged automatically. If you decide not to carry on, your season record is yours: under our <a href="dpa/">data processing agreement</a> you can ask for a copy, and we delete the site and its data within 30 days.</p>
+      <summary>Is there a contract?</summary>
+      <p>No. It's £5 a month per team, month to month, and setup is free. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our <a href="dpa/">data processing agreement</a> you can ask for a copy, and we delete the site and its data within 30 days.</p>
+    </details>
+    <details>
+      <summary>Can we ask for changes?</summary>
+      <p>Yes. Tell us what would make it better for your team and we'll build it, at no extra cost. Improvements go on every team's site, so everyone gets better together.</p>
     </details>
   </div>
 </section>
@@ -682,6 +689,6 @@
 </footer>
 
 <script src="assets/signup-send.js?v=3" defer></script>
-<script src="assets/home.js?v=14" defer></script>
+<script src="assets/home.js?v=15" defer></script>
 </body>
 </html>
