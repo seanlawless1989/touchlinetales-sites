@@ -1,6 +1,6 @@
 // Touchline Tales owner page: touchlinetales.club/admin/
 // One page for the owner to see how every team site is being used. Each Supabase project is signed in to separately
-// (the shared Newton Aycliffe project, and Darlington's own project), then public.tt_overview() returns counts and
+// (every team now shares one project; Darlington moved in on 4 Nov 2026), then public.tt_overview() returns counts and
 // dates for every team in that project (supabase/28_platform_admin.sql in nayfcu9). Only emails in public.tt_admins
 // get anything back, and it never includes children's names or anything else about a player.
 (function(){
@@ -10,12 +10,9 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 
 // Supabase projects (the anon keys are public, like on every team site)
 const PROJECTS={
-  nayfc:{label:"Shared project (Newton Aycliffe, Washington)",url:"https://elqwksyqwezhkekdqivn.supabase.co",
+  nayfc:{label:"Shared project (every team)",url:"https://elqwksyqwezhkekdqivn.supabase.co",
     key:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscXdrc3lxd2V6aGtla2RxaXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NDA4MzAsImV4cCI6MjEwNzMxNjgzMH0.7HFhSDvpQS5WHDgu4x5ABat-8hl5ZIpmeFlp2pV9wts",
-    code:true},
-  darlington:{label:"Darlington project",url:"https://edfunxqjepmfwtwqqjut.supabase.co",
-    key:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkZnVueHFqZXBtZnd0d3FxanV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MTMxMzUsImV4cCI6MjEwNzk4OTEzNX0.yOdjO4zovUmTjUAmQcnrFLPTvEiUoHhNrXrW5u5NDC0",
-    code:false}   // its sign-in email only has a link, no code
+    code:true}
 };
 // Team sites. Add a line here for each new team (project + the schema its data lives in).
 const SITES=[
@@ -23,7 +20,7 @@ const SITES=[
   {name:"Newton Aycliffe U11s Wildcats",short:"NA Wildcats",project:"nayfc",schema:"na_u11_wildcats",url:"https://touchlinetales.club/newton-aycliffe-u11s-wildcats/",club:"newton-aycliffe"},
   {name:"Newton Aycliffe U11s Pumas",short:"NA Pumas",project:"nayfc",schema:"na_u11_pumas",url:"https://touchlinetales.club/newton-aycliffe-u11s-pumas/",club:"newton-aycliffe"},
   {name:"Washington Wolves U11s",short:"Wolves U11s",project:"nayfc",schema:"washington_wolves_u11s",url:"https://touchlinetales.club/washington-wolves-u11s/"},
-  {name:"Darlington United U14s",short:"Darlington U14s",project:"darlington",schema:"public",url:"https://touchlinetales.club/darlington-united-u14s/"}
+  {name:"Darlington United U14s",short:"Darlington U14s",project:"nayfc",schema:"darlington_u14s",url:"https://touchlinetales.club/darlington-united-u14s/"}
 ];
 const CLUBS=[{name:"Newton Aycliffe club admin",url:"https://touchlinetales.club/newton-aycliffe/admin/"}];
 
