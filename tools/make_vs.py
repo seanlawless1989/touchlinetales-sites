@@ -61,7 +61,7 @@ PAGES = {
   faq=[
    ("Is Touchline Tales a club management system like Teamzum?", "No. Touchline Tales doesn't do registrations, membership, subs or a club shop. It's one website per team, for matchday and the season record."),
    ("Does it replace our club website?", "No, it sits alongside it. Each Touchline Tales site is for one team, in your club's crest, colours and sponsors."),
-   ("How much does Touchline Tales cost?", "£60 per team per season, July to June, plus £35 once for setup. Our first five founding teams pay nothing until June 2027."),
+   ("How much does Touchline Tales cost?", "£5 a month per team, with free setup. There's no contract: it's month to month and you can cancel anytime."),
   ]),
  "pitchero": dict(
   name="Pitchero",
@@ -172,8 +172,8 @@ def page(slug, p):
     <section class="guide-cta card" aria-labelledby="see-it">
       <p class="eyebrow">See it for yourself</p>
       <h2 id="see-it">Click around a team site</h2>
-      <p>Our demo is a made-up team, Sample Town Under 12s, with a live game on. Nothing you change is saved. It's £60 per team per season, plus £35 once for setup, and our first five founding teams pay nothing until June 2027.</p>
-      <p><a class="btn" href="../../demo/?ref=vs-{slug}">Open the demo site</a> <a class="btn btn-ghost" href="../../?ref=vs-{slug}#signup">Join as a founding team</a></p>
+      <p>Our demo is a made-up team, Sample Town Under 12s, with a live game on. Nothing you change is saved. It's £5 a month per team, with free setup, no contract and nothing to cancel but the next month.</p>
+      <p><a class="btn" href="../../demo/?ref=vs-{slug}">Open the demo site</a> <a class="btn btn-ghost" href="../../?ref=vs-{slug}#signup">Get your team set up</a></p>
     </section>
 
     <p class="small">We checked what {e(p['name'])} offers against its own website on {DATE}. Features and prices change, so check with {e(p['name'])} too. If anything here is out of date, tell us at <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a> and we'll fix it. {e(p['name'])} is a trademark of its owner, and Touchline Tales isn't connected with it.</p>

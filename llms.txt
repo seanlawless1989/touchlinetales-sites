@@ -6,17 +6,18 @@ Made by Murph Hartley, a grassroots coach. Contact: hello@touchlinetales.club
 
 ## Price
 
-- Team plan: £60 per team, per season (July to June). Everything is included.
-- Setup: £35, once. We load the crest, colours, squad, fixtures and last season's results.
-- Founding teams: the first five teams pay nothing for the 2026-27 season, until June 2027, in return for honest feedback.
-- Clubs running three or more teams get 10% off every team from the third.
-- Not included: subs or payments, club membership, or custom features for one team.
+- Team plan: £5 a month per team. Everything is included.
+- Setup: free. We load the crest, colours, squad, fixtures and last season's results.
+- No contract: month to month, cancel anytime with no notice period.
+- Free improvements: teams can ask for changes and we build them at no extra cost; improvements go on every team's site.
+- All five founding-team places are taken.
+- Not included: subs or payments, or club membership.
 
 ## Pages
 
 - [Home page](https://touchlinetales.club/): what a team site does, the sports covered, safety, price and sign-up
 - [Demo site](https://touchlinetales.club/demo/): a clickable team site for the made-up Sample Town Under 12s, with a live game
-- [Pricing](https://touchlinetales.club/pricing/): the team plan, setup fee, founding-team offer and club discount, with worked examples
+- [Pricing](https://touchlinetales.club/pricing/): £5 a month per team, free setup, no contract, with worked examples
 - [About](https://touchlinetales.club/about/): who makes Touchline Tales and how children's information is looked after
 - [Privacy notice](https://touchlinetales.club/privacy/)
 - [Data processing agreement](https://touchlinetales.club/dpa/): the agreement a club accepts; the club is the data controller and Touchline Tales the processor

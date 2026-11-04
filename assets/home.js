@@ -107,7 +107,7 @@ if (founding) {
   const total = +founding.dataset.total || 5, taken = Math.min(teams.length, total), left = total - taken;
   founding.querySelector(".founding-count").innerHTML = left
     ? `<b class="founding-left">${left} of ${total}</b> founding-team places left for the 2026-27 season`
-    : `All ${total} founding-team places are taken for the 2026-27 season`;
+    : `All ${total} founding-team places are taken. Thank you!`;
   founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => {
     if (i < taken) {
       const [name, initials, colour] = teams[i];
