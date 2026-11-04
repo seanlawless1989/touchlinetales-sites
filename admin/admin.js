@@ -19,11 +19,11 @@ const PROJECTS={
 };
 // Team sites. Add a line here for each new team (project + the schema its data lives in).
 const SITES=[
-  {name:"Newton Aycliffe U9s",project:"nayfc",schema:"public",url:"https://touchlinetales.club/newton-aycliffe-u9s/",club:"newton-aycliffe"},
-  {name:"Newton Aycliffe U11s Wildcats",project:"nayfc",schema:"na_u11_wildcats",url:"https://touchlinetales.club/newton-aycliffe-u11s-wildcats/",club:"newton-aycliffe"},
-  {name:"Newton Aycliffe U11s Pumas",project:"nayfc",schema:"na_u11_pumas",url:"https://touchlinetales.club/newton-aycliffe-u11s-pumas/",club:"newton-aycliffe"},
-  {name:"Washington Wolves U11s",project:"nayfc",schema:"washington_wolves_u11s",url:"https://touchlinetales.club/washington-wolves-u11s/"},
-  {name:"Darlington United U14s",project:"darlington",schema:"public",url:"https://touchlinetales.club/darlington-united-u14s/"}
+  {name:"Newton Aycliffe U9s",short:"NA U9s",project:"nayfc",schema:"public",url:"https://touchlinetales.club/newton-aycliffe-u9s/",club:"newton-aycliffe"},
+  {name:"Newton Aycliffe U11s Wildcats",short:"NA Wildcats",project:"nayfc",schema:"na_u11_wildcats",url:"https://touchlinetales.club/newton-aycliffe-u11s-wildcats/",club:"newton-aycliffe"},
+  {name:"Newton Aycliffe U11s Pumas",short:"NA Pumas",project:"nayfc",schema:"na_u11_pumas",url:"https://touchlinetales.club/newton-aycliffe-u11s-pumas/",club:"newton-aycliffe"},
+  {name:"Washington Wolves U11s",short:"Wolves U11s",project:"nayfc",schema:"washington_wolves_u11s",url:"https://touchlinetales.club/washington-wolves-u11s/"},
+  {name:"Darlington United U14s",short:"Darlington U14s",project:"darlington",schema:"public",url:"https://touchlinetales.club/darlington-united-u14s/"}
 ];
 const CLUBS=[{name:"Newton Aycliffe club admin",url:"https://touchlinetales.club/newton-aycliffe/admin/"}];
 
@@ -66,7 +66,7 @@ function siteCard(site,s){
       ${stat(n(s.alert_phones),"alert phones",`${n(s.alert_ok30)} reached in 30 days`)}
       ${stat(n(s.reports),"match reports",`${n(s.cheers)} cheers · ${n(s.photos)} photos`)}
     </div>
-    ${bars(s.days)}<div class="hint">Visits, last 14 days (coaches' phones aren't counted)</div>
+    ${bars((s.days||[]).slice(-14))}<div class="hint">Visits, last 14 days (coaches' phones aren't counted)</div>
     <details><summary>Coaches (${n(s.coaches)})</summary><div class="rows">${(s.coach_list||[]).map(c=>`<div class="row"><span>${esc(c.email)}</span><span class="hint">${c.last?"signed in "+esc(ago(c.last)):"never signed in"}</span></div>`).join("")||'<div class="hint">None on the list.</div>'}</div></details>
   </article>`}
 
@@ -82,27 +82,46 @@ function loginCard(k){const p=PROJECTS[k],st=ST[k];
 function render(){
   const main=$("#main"),rows=[];let any=false;
   const tot={sites:0,coaches7:0,parents:0,views7:0,games:0,alerts:0};
-  const extra=[];
+  const extra=[],vis=[];
   for(const k of Object.keys(PROJECTS)){const st=ST[k];
     if(!st.data){rows.push(loginCard(k));continue}
     any=true;const by={};(st.data.sites||[]).forEach(s=>by[s.schema]=s);
     SITES.filter(x=>x.project===k).forEach(site=>{const s=by[site.schema];delete by[site.schema];
       if(!s){rows.push(`<article class="card"><h2>${esc(site.name)}</h2><p class="hint">No data area called ${esc(site.schema)} in the ${esc(PROJECTS[k].label)}.</p></article>`);return}
       tot.sites++;tot.coaches7+=s.coaches7||0;tot.parents+=s.parent_phones||0;tot.views7+=s.views7||0;tot.games+=s.games_logged||0;tot.alerts+=s.alert_phones||0;
-      rows.push(siteCard(site,s))});
+      vis.push({site,s});rows.push(siteCard(site,s))});
     Object.values(by).forEach(s=>extra.push({k,s}));
   }
   const who=Object.keys(PROJECTS).filter(k=>ST[k].user).map(k=>`<span>${esc(PROJECTS[k].label.split(" (")[0])}: ${esc(ST[k].user.email)} <button class="mini" data-out="${k}">Sign out</button></span>`).join("");
   $("#who").innerHTML=who;
   main.innerHTML=(any?`<section class="card"><div class="stats top">
       ${stat(n(tot.sites),"team sites")}${stat(n(tot.coaches7),"coaches in this week")}${stat(n(tot.parents),"parent phones")}
-      ${stat(n(tot.views7),"visits this week")}${stat(n(tot.games),"games logged")}${stat(n(tot.alerts),"alert phones")}</div>
+      ${stat(n(tot.views7),"views this week")}${stat(n(tot.games),"games logged")}${stat(n(tot.alerts),"alert phones")}</div>
       <div class="btns">${CLUBS.map(c=>`<a class="mini" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>`).join("")}<button class="mini" id="refresh">Refresh</button></div>
       <p class="hint">Counts only, never children's names. Updated ${esc(new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}.</p></section>`:
       `<section class="card"><h2>Owner sign-in</h2><p class="hint">This page shows how every team site is being used. Only the Touchline Tales owner can see anything here. Each database is signed in to once on this device.</p></section>`)
-    +rows.join("")
+    +visitsCard(vis)+rows.join("")
     +(extra.length?`<details class="card"><summary>Other data areas with no site listed (${extra.length})</summary><div class="rows">${extra.map(({k,s})=>`<div class="row"><span>${esc(s.schema)} <span class="hint">(${esc(PROJECTS[k].label)})</span></span><span class="hint">${n(s.coaches)} coaches · ${n(s.games)} games · ${n(s.views)} visits</span></div>`).join("")}</div></details>`:"");
 }
+
+// every team site's visits added together, plus a table and a stacked chart of the last 30 days
+const COLS=["#13804A","#2235E8","#D2232A","#F2C230","#7A3FB0","#0E8C8C","#E07B00"];
+function visitsCard(list){if(!list.length)return "";
+  const sum=k=>list.reduce((t,x)=>t+(x.s[k]||0),0);
+  const days={};list.forEach((x,i)=>(x.s.days||[]).forEach(d=>{(days[d.day]=days[d.day]||[])[i]=d.views}));
+  const keys=Object.keys(days).sort(),mx=Math.max(1,...keys.map(k=>days[k].reduce((t,v)=>t+(v||0),0)));
+  const chart=`<div class="sbars" aria-label="Visits to all team sites, last 30 days">${keys.map(k=>{const tot=days[k].reduce((t,v)=>t+(v||0),0);
+    return `<span title="${esc(day(k))}: ${tot} views">${list.map((x,i)=>days[k][i]?`<i style="height:${days[k][i]/mx*100}%;background:${COLS[i%COLS.length]}"></i>`:"").join("")}</span>`}).join("")}</div>
+    <div class="legend">${list.map((x,i)=>`<span><i style="background:${COLS[i%COLS.length]}"></i>${esc(x.site.short||x.site.name)}</span>`).join("")}</div>`;
+  const rows=list.slice().sort((a,b)=>(b.s.views7||0)-(a.s.views7||0)||(b.s.views||0)-(a.s.views||0));
+  return `<section class="card"><h2>Website visits, all team sites</h2>
+    <div class="stats top">${stat(n(sum("views_today")),"views today",`${n(sum("visitors_today"))} devices`)}${stat(n(sum("views7")),"last 7 days",`${n(sum("visitors7"))} device-days`)}
+      ${stat(n(sum("views30")),"last 30 days",`${n(sum("visitors30"))} device-days`)}${stat(n(sum("views")),"all time",`${n(sum("visitors"))} device-days`)}</div>
+    ${chart}
+    <div class="tbl"><table><thead><tr><th>Site</th><th>Today</th><th>7 days</th><th>30 days</th><th>All time</th><th>Last visit</th></tr></thead><tbody>
+    ${rows.map(x=>`<tr><td>${esc(x.site.short||x.site.name)}</td><td>${n(x.s.views_today)}</td><td>${n(x.s.views7)}</td><td>${n(x.s.views30)}</td><td>${n(x.s.views)}</td><td>${esc(ago(x.s.last_view))}</td></tr>`).join("")}
+    <tr class="sum"><td>All sites</td><td>${n(sum("views_today"))}</td><td>${n(sum("views7"))}</td><td>${n(sum("views30"))}</td><td>${n(sum("views"))}</td><td></td></tr></tbody></table></div>
+    <p class="hint">A view is each time someone opens a team site; a device is counted once per day. Coaches' phones aren't counted. Each site started counting on a different day.</p></section>`}
 
 // ---------- data ----------
 async function load(k){const st=ST[k];st.data=null;

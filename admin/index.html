@@ -31,6 +31,10 @@ input{min-height:42px;padding:0 10px;border:1.5px solid var(--line);border-radiu
 details summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--green);margin-top:10px}
 .rows{display:flex;flex-direction:column;margin-top:6px}.row{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--night);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;z-index:9}
+h2+.stats{margin-top:10px}
+.sbars{display:flex;align-items:flex-end;gap:2px;height:90px;margin:4px 0}.sbars span{flex:1;height:100%;display:flex;flex-direction:column-reverse}.sbars i{display:block;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-bottom:10px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:6px 8px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left;white-space:normal}th{font-size:12px;color:var(--muted);border-top:0}tr.sum td{font-weight:800}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 32px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -40,6 +44,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 32px}
 <main id="main"><div class="card">Loading…</div></main>
 <div id="toast" hidden role="status"></div>
 <footer>Private page. Only the Touchline Tales owner can sign in here.</footer>
-<script src="admin.js?v=1"></script>
+<script src="admin.js?v=2"></script>
 </body>
 </html>
