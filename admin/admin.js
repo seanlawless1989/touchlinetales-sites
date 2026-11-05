@@ -19,6 +19,7 @@ const SITES=[
   {name:"Newton Aycliffe U9s",short:"NA U9s",project:"nayfc",schema:"public",url:"https://touchlinetales.club/newton-aycliffe-u9s/",club:"newton-aycliffe"},
   {name:"Newton Aycliffe U11s Wildcats",short:"NA Wildcats",project:"nayfc",schema:"na_u11_wildcats",url:"https://touchlinetales.club/newton-aycliffe-u11s-wildcats/",club:"newton-aycliffe"},
   {name:"Newton Aycliffe U11s Pumas",short:"NA Pumas",project:"nayfc",schema:"na_u11_pumas",url:"https://touchlinetales.club/newton-aycliffe-u11s-pumas/",club:"newton-aycliffe"},
+  {name:"Newton Aycliffe U8s Wildcats",short:"NA U8s",project:"nayfc",schema:"na_u8_wildcats",url:"https://touchlinetales.club/newton-aycliffe-u8s-wildcats/",club:"newton-aycliffe"},
   {name:"Washington Wolves U11s",short:"Wolves U11s",project:"nayfc",schema:"washington_wolves_u11s",url:"https://touchlinetales.club/washington-wolves-u11s/"},
   {name:"Washington Samba U13s",short:"Samba U13s",project:"nayfc",schema:"washington_samba_u13s",url:"https://touchlinetales.club/washington-samba-u13s/"},
   {name:"Darlington United U14s",short:"Darlington U14s",project:"nayfc",schema:"darlington_u14s",url:"https://touchlinetales.club/darlington-united-u14s/"}
