@@ -3,12 +3,16 @@
 # Team sites (in their own folders) carry a "noindex" tag so search engines
 # drop them; they stay crawlable so that tag can be read. Pictures on team
 # sites are blocked so they never show up in image search.
+# /admin/, /customers/, /features/, the demos and club pages also carry
+# "noindex". They are deliberately NOT disallowed here, because a blocked
+# page's noindex tag can't be read and Google may still list its address.
 User-agent: *
 Allow: /$
 Allow: /index.html
 Allow: /assets/
 Allow: /guides/
 Allow: /vs/
+Allow: /pricing/
 Allow: /privacy/
 Allow: /dpa/
 Allow: /about/
@@ -36,6 +40,7 @@ Allow: /index.html
 Allow: /assets/
 Allow: /guides/
 Allow: /vs/
+Allow: /pricing/
 Allow: /privacy/
 Allow: /dpa/
 Allow: /about/
