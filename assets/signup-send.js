@@ -51,7 +51,8 @@
   }
 
   // form: a short name ("home", "club-join"); payload: the labelled fields plus FormSubmit's _subject etc.
-  // Resolves to { ok, saved, emailed, reason }. reason holds only the services' replies, nothing typed.
+  // Resolves to { ok, saved, emailed, reason, id }. reason holds only the services' replies, nothing typed;
+  // id is the saved row's number (null if only the email got through), used to match a payment to the sign-up.
   window.ttSendSignup = function (form, payload) {
     var data = {};
     Object.keys(payload).forEach(function (k) { if (k.charAt(0) !== "_") data[k] = payload[k]; });
@@ -64,9 +65,9 @@
       var reasons = [];
       if (!saved) reasons.push(why(r[0].reason));
       if (!emailed) reasons.push(why(r[1].reason));
-      return { ok: saved || emailed, saved: saved, emailed: emailed, reason: reasons.join("; ") };
+      return { ok: saved || emailed, saved: saved, emailed: emailed, reason: reasons.join("; "), id: saved ? r[0].value : null };
     });
-    var savedFirst = save.then(function () { return { ok: true, saved: true, emailed: null, reason: "" }; });
+    var savedFirst = save.then(function (id) { return { ok: true, saved: true, emailed: null, reason: "", id: id }; });
     return Promise.any([savedFirst, both]);
   };
 })();

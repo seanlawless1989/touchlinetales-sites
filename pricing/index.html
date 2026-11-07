@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/home.css?v=13">
+<link rel="stylesheet" href="../assets/home.css?v=14">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -128,7 +128,8 @@
     <h2>Questions about paying</h2>
     <details>
       <summary>When do we start paying?</summary>
-      <p>Not until your site is live. Setup is free, and we'll send you a simple way to pay monthly once your team is up and running.</p>
+      <p data-nopay-copy>Not until your site is live. Setup is free, and we'll send you a simple way to pay monthly once your team is up and running.</p>
+      <p data-pay-copy hidden>When you sign up. You pay £5 a month by card or Direct Debit on Stripe's secure page, and we set up your site within a few days. Setup is free, and you can cancel any time.</p>
     </details>
     <details>
       <summary>Is there a contract or a minimum term?</summary>
@@ -176,5 +177,6 @@
   </div>
 </footer>
 
+<script src="../assets/pay.js?v=1" defer></script>
 </body>
 </html>
