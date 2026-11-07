@@ -351,3 +351,10 @@ img.founder-pic{display:block;background:none;object-fit:cover}
 .story dl{display:grid;gap:14px;margin:0}
 .story dt{font:700 15px/1.2 var(--head);text-transform:uppercase;color:var(--green);letter-spacing:.04em}
 .story dd{margin:4px 0 0}
+[hidden]{display:none!important}
+.form.sent .form-msg.pay-step{font-size:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.form-msg.pay-step strong{font-size:19px}
+.form-msg.pay-step .pay-btn{margin-top:4px}
+.form-msg.pay-step .pay-small{opacity:.8}
+.form.sent .form-msg .pay-btn{display:inline-block}
+.form-msg.pay-step .pay-line,.form-msg.pay-step .pay-small{color:var(--night);font-weight:400}

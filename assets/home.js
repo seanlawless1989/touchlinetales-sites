@@ -77,7 +77,14 @@ form.addEventListener("submit", async e => {
     count("signup-completed", "Sign-up completed", trackedChoices());
     if (sent.reason) count("signup-partial", "Sign-up sent by one route only", { page: location.pathname, reason: sent.reason });
     try { localStorage.setItem("tt-lead", "sent"); } catch {} // the demo then won't ask them again
-    say(`Thanks, ${data.get("name").split(" ")[0]}! We'll be in touch soon to book your demo.`, "ok");
+    const first = data.get("name").split(" ")[0];
+    const pay = window.ttPay;
+    if (pay && pay.isFree(data.get("club"))) {
+      say(`Thanks, ${first}! Newton Aycliffe and Washington Athletic teams are free, so there's nothing to pay. We'll be in touch soon to set up your site.`, "ok");
+      return;
+    }
+    if (pay && pay.on) { showPay(first, pay.url(sent.id, data.get("email"))); return; }
+    say(`Thanks, ${first}! We'll be in touch soon to book your demo.`, "ok");
     return;
   }
   const reason = sent.reason;
@@ -90,6 +97,34 @@ form.addEventListener("submit", async e => {
   msg.className = "form-msg err";
   msg.innerHTML = `Sorry, that didn't send. <a href="${mail}">Tap here to email it to us instead</a> (your details are already filled in), or email <a href="mailto:hello@touchlinetales.club">hello@touchlinetales.club</a>.`;
 });
+
+// Last step after a sign-up is saved: pay the £5 a month on Stripe's own page (assets/pay.js).
+// Built from DOM nodes, never innerHTML, because the first name is what the visitor typed.
+function showPay(first, url) {
+  msg.className = "form-msg ok pay-step";
+  msg.textContent = "";
+  const h = document.createElement("strong");
+  h.textContent = `Thanks, ${first}! Last step: start your team plan.`;
+  const p = document.createElement("span");
+  p.className = "pay-line";
+  p.textContent = "£5 a month per team, by card or Direct Debit. Setup is free and you can cancel any time. We'll have your site ready within a few days.";
+  const a = document.createElement("a");
+  a.className = "btn pay-btn";
+  a.href = url;
+  a.textContent = "Pay £5 a month securely";
+  a.addEventListener("click", () => count("pay-click", "Pay button tapped", { page: location.pathname }));
+  const s = document.createElement("span");
+  s.className = "pay-small small";
+  s.textContent = "Payments are handled by Stripe. Rather chat first? Skip this and we'll be in touch to book a quick demo.";
+  msg.append(h, p, a, s);
+  if (window.ttPay.test) {
+    const t = document.createElement("span");
+    t.className = "pay-small small";
+    t.textContent = "Test mode: use card 4242 4242 4242 4242, any future date, any CVC.";
+    msg.append(t);
+  }
+  count("pay-shown", "Pay step shown", { page: location.pathname });
+}
 
 // Demo links open the demo straight away, keeping any ?ref= tag. The demo itself asks, gently and later on,
 // whether they'd like a chat (see demo.js in nayfcu9), so nobody has to fill in a form to see it.
