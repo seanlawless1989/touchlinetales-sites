@@ -167,8 +167,8 @@ details p{padding:0 22px 18px;margin:0}
 @media (max-width:600px){.feature-list{grid-template-columns:1fr;gap:28px}}
 
 /* Footer links (guides) */
-.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
-.foot-links a{color:var(--mist);text-decoration:underline;text-underline-offset:3px}
+.foot-links{display:flex;flex-wrap:wrap;gap:0 18px}
+.foot-links a{color:var(--mist);text-decoration:underline;text-underline-offset:3px;display:inline-block;padding:11px 0}
 .foot-links a:hover{color:var(--chalk)}
 
 /* Guides */
@@ -226,7 +226,7 @@ details p{padding:0 22px 18px;margin:0}
 .ticks{list-style:none;margin:0 0 18px;padding:0}
 .ticks li{position:relative;padding:0 0 10px 30px;font-size:16px;line-height:1.5}
 .ticks li::before{content:"";position:absolute;left:0;top:3px;width:20px;height:20px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23F6F3EA' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
-.sport-link{font-weight:700;text-underline-offset:3px}
+.sport-link{font-weight:700;text-underline-offset:3px;display:inline-block;padding:12px 0}
 .sport-link::after{content:" →"}
 .sport-note{margin-top:24px;max-width:46em}
 @media (max-width:760px){.sport,.sport:nth-child(even){grid-template-columns:1fr;gap:22px;padding:22px 20px}.sport:nth-child(even) .sport-shot{order:0}.sport-shot{max-width:260px;margin:0 auto;width:100%}}
@@ -358,3 +358,5 @@ img.founder-pic{display:block;background:none;object-fit:cover}
 .form-msg.pay-step .pay-small{opacity:.8}
 .form.sent .form-msg .pay-btn{display:inline-block}
 .form-msg.pay-step .pay-line,.form-msg.pay-step .pay-small{color:var(--night);font-weight:400}
+/* 375px pass (9 Nov): a call to action in the first screen of guide-style pages */
+.hero-cta{margin:22px 0 0}
