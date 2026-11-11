@@ -525,6 +525,8 @@ def toggle_links(show):
 
 def main():
     key = os.environ.get("HEYCATCH_API_KEY", "").strip()
+    # Forgive a secret pasted as HEYCATCH_API_KEY=... or wrapped in quotes.
+    key = re.sub(r"^HEYCATCH_API_KEY\s*=\s*", "", key).strip().strip("'\"").strip()
     if not key:
         print("HEYCATCH_API_KEY is not set, so the blog was left as it is. "
               "Add it under Settings > Secrets and variables > Actions.")
@@ -532,7 +534,9 @@ def main():
     try:
         articles = fetch_articles(key)
     except ApiError as e:
-        print(f"Blog not updated: {e}")  # never touch the live pages on an error
+        print(f"Blog not updated: {e}")
+        if not key.startswith("hck_lv_"):
+            print("The secret doesn't start with hck_lv_, so it may not be the HeyCatch blog key.")  # never touch the live pages on an error
         return 1
 
     keep = {a["slug"] for a in articles}
