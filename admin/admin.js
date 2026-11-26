@@ -28,6 +28,9 @@ const SITES=[
 const CLUBS=[{name:"Newton Aycliffe club admin",url:"https://touchlinetales.club/newton-aycliffe/admin/"}];
 
 const ST={};   // per project: {sb, user, data, err, sent}
+// main website (touchlinetales.club home, demo, guides, blog...) visits, logged by assets/stats.js into the shared
+// project's public.tt_web_hits and read with public.tt_web_stats() (owners only; nayfcu9 supabase/47_website_visits.sql)
+let WEB=null;
 const q=new URLSearchParams(location.search);
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,4000)}
 const n=v=>v==null?"–":Number(v).toLocaleString("en-GB");
@@ -100,7 +103,7 @@ function render(){
       <div class="btns">${CLUBS.map(c=>`<a class="mini" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>`).join("")}<button class="mini" id="refresh">Refresh</button></div>
       <p class="hint">Counts only, never children's names. Updated ${esc(new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}.</p></section>`:
       `<section class="card"><h2>Owner sign-in</h2><p class="hint">This page shows how every team site is being used. Only the Touchline Tales owner can see anything here. Each database is signed in to once on this device.</p></section>`)
-    +visitsCard(vis)+rows.join("")
+    +(any?webCard():"")+visitsCard(vis)+rows.join("")
     +(extra.length?`<details class="card"><summary>Other data areas with no site listed (${extra.length})</summary><div class="rows">${extra.map(({k,s})=>`<div class="row"><span>${esc(s.schema)} <span class="hint">(${esc(PROJECTS[k].label)})</span></span><span class="hint">${n(s.coaches)} coaches · ${n(s.games)} games · ${n(s.views)} visits</span></div>`).join("")}</div></details>`:"");
 }
 
@@ -123,13 +126,34 @@ function visitsCard(list){if(!list.length)return "";
     <tr class="sum"><td>All sites</td><td>${n(sum("views_today"))}</td><td>${n(sum("views7"))}</td><td>${n(sum("views30"))}</td><td>${n(sum("views"))}</td><td></td></tr></tbody></table></div>
     <p class="hint">A view is each time someone opens a team site; a device is counted once per day. Coaches' phones aren't counted. Each site started counting on a different day.</p></section>`}
 
+// the marketing website: views and visitors from our own database
+const refName=r=>/^ref: /.test(r)?`${esc(r.slice(5))} <span class="hint">(our link tag)</span>`:esc(r);
+function webCard(){const w=WEB;
+  const head=`<h2>Main website visits</h2><p class="hint">touchlinetales.club home page, demo, blog, guides, pricing and the other public pages. Team and club sites are counted in the next card.</p>`;
+  if(!w)return `<section class="card">${head}<p class="hint">Loading…</p></section>`;
+  if(w.error)return `<section class="card">${head}<div class="note">${w.error==="setup"?"The database isn't set up for website visits yet (run 47_website_visits.sql).":"Couldn't load the website numbers. Try Refresh."}</div></section>`;
+  const days=w.days||[],mx=Math.max(1,...days.map(d=>d.views));
+  const chart=`<div class="bars" style="height:70px" aria-label="Website views, last 30 days">${days.map(d=>`<i style="height:${Math.max(2,Math.round(d.views/mx*100))}%" title="${esc(day(d.day))}: ${d.views} views, ${d.visitors} visitors"></i>`).join("")}</div><div class="hint">Page views per day, last 30 days</div>`;
+  const tbl=(title,cols,list,open)=>list&&list.length?`<details${open?" open":""}><summary>${title}</summary><div class="tbl"><table><thead><tr><th></th>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${list.join("")}</tbody></table></div></details>`:"";
+  return `<section class="card">${head}
+    <div class="stats top">${stat(n(w.views_today),"views today",`${n(w.visitors_today)} visitors`)}${stat(n(w.views7),"last 7 days",`${n(w.visitors7)} visitors`)}
+      ${stat(n(w.views30),"last 30 days",`${n(w.visitors30)} visitors`)}${stat(n(w.views),"all time",w.since?`since ${esc(day(w.since))}`:"")}</div>
+    ${chart}
+    ${tbl("Where visitors came from (30 days)",["Visitors","Views"],(w.sources||[]).map(r=>`<tr><td>${refName(r.name)}</td><td>${n(r.visitors)}</td><td>${n(r.views)}</td></tr>`),true)}
+    ${tbl("Top pages (30 days)",["Views","Visitors"],(w.pages||[]).map(p=>`<tr><td>${esc(p.path)}</td><td>${n(p.views)}</td><td>${n(p.visitors)}</td></tr>`))}
+    ${tbl("Sign-ups and demo clicks (30 days)",["Times"],(w.events||[]).map(e=>`<tr><td>${esc(e.name)}</td><td>${n(e.count)}</td></tr>`))}
+    <p class="hint">A view is each page opened. A visitor is one person on one day (worked out without cookies or keeping IP addresses). "Our link tag" sources are the ?ref= tags on our posts. Last view ${esc(ago(w.last_view))}.</p></section>`}
+async function loadWeb(){const st=ST.nayfc;if(!st||!st.user||!st.data){WEB=null;return}
+  const {data,error}=await st.sb.rpc("tt_web_stats");
+  WEB=error?{error:error.code==="PGRST202"?"setup":"load"}:(data||{error:"load"});render()}
+
 // ---------- data ----------
 async function load(k){const st=ST[k];st.data=null;
   if(!st.user){render();return}
   const {data,error}=await st.sb.rpc("tt_overview");
   if(error){st.err=error.code==="PGRST202"?"This database isn't set up for the owner page yet (run 28_platform_admin.sql).":"Couldn't load the numbers. Try again.";render();return}
   if(data==null){st.err=`${st.user.email} isn't on the owner list for this database.`;await st.sb.auth.signOut();return}
-  st.err="";st.data=data;render()}
+  st.err="";st.data=data;render();if(k==="nayfc")loadWeb()}
 
 document.addEventListener("submit",async e=>{e.preventDefault();const f=e.target;
   if(f.dataset.login){const k=f.dataset.login,st=ST[k],email=f.email.value.trim().toLowerCase();if(!email)return;

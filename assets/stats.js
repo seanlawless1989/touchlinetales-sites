@@ -15,6 +15,11 @@
     // a tag counts as the source on the page people land on, not again as they click through our own pages
     referrer: function () { return ref && !fromUs ? "ref: " + ref : document.referrer; }
   };
+  // The same visit is also logged in our own database (Supabase), which the owner page (touchlinetales.club/admin/) reads.
+  // Like GoatCounter, this stores nothing on the visitor's device and keeps no IP address (supabase/47_website_visits.sql in nayfcu9).
+  var srcHost = "";
+  try { if (document.referrer && !fromUs) srcHost = new URL(document.referrer).host.replace(/^www\./, ""); } catch (e) {}
+  ttLog({ p_path: location.pathname, p_ref: ref && !fromUs ? ref : null, p_source: srcHost || null });
   var s = document.createElement("script");
   s.async = true;
   s.src = "https://gc.zgo.at/count.js";
@@ -25,7 +30,18 @@
 // Counts a moment worth knowing about (a sign-up sent, the demo opened) as an event in GoatCounter, and in HeyCatch where it's loaded.
 // Safe to call before the counter has loaded or when it's blocked: then it does nothing.
 // props (optional) go to HeyCatch only, e.g. the sport and age group picked on a sign-up; GoatCounter just counts.
+function ttLog(body) {
+  try {
+    var KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscXdrc3lxd2V6aGtla2RxaXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NDA4MzAsImV4cCI6MjEwNzMxNjgzMH0.7HFhSDvpQS5WHDgu4x5ABat-8hl5ZIpmeFlp2pV9wts"; // public anon key, as on every team site
+    fetch("https://elqwksyqwezhkekdqivn.supabase.co/rest/v1/rpc/tt_log_web", {
+      method: "POST", keepalive: true, body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json", apikey: KEY, Authorization: "Bearer " + KEY }
+    }).catch(function () {});
+  } catch (e) {}
+}
+
 window.ttCount = function (name, title, props) {
+  try { ttLog({ p_path: location.pathname, p_event: name }); } catch (e) {}
   try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: name, title: title || name, event: true }); } catch (e) {}
   try { if (window.ttHeyCatch) window.ttHeyCatch(name, props); } catch (e) {} // heycatch.js: the same moment as a HeyCatch event
 };
