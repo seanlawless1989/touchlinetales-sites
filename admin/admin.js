@@ -28,8 +28,8 @@ const SITES=[
 const CLUBS=[{name:"Newton Aycliffe club admin",url:"https://touchlinetales.club/newton-aycliffe/admin/"}];
 
 const ST={};   // per project: {sb, user, data, err, sent}
-// main website (touchlinetales.club home, demo, guides...) visitor numbers from GoatCounter, via the tt-webstats
-// edge function in the shared project, which holds the GoatCounter key so it never reaches this page
+// main website (touchlinetales.club home, demo, guides, blog...) visits, logged by assets/stats.js into the shared
+// project's public.tt_web_hits and read with public.tt_web_stats() (owners only; nayfcu9 supabase/47_website_visits.sql)
 let WEB=null;
 const q=new URLSearchParams(location.search);
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,4000)}
@@ -126,27 +126,26 @@ function visitsCard(list){if(!list.length)return "";
     <tr class="sum"><td>All sites</td><td>${n(sum("views_today"))}</td><td>${n(sum("views7"))}</td><td>${n(sum("views30"))}</td><td>${n(sum("views"))}</td><td></td></tr></tbody></table></div>
     <p class="hint">A view is each time someone opens a team site; a device is counted once per day. Coaches' phones aren't counted. Each site started counting on a different day.</p></section>`}
 
-// the marketing website: visitors from GoatCounter (cookieless, counts unique visitors per page per day)
+// the marketing website: views and visitors from our own database
 const refName=r=>/^ref: /.test(r)?`${esc(r.slice(5))} <span class="hint">(our link tag)</span>`:esc(r);
 function webCard(){const w=WEB;
-  const head=`<h2>Main website visits</h2><p class="hint">touchlinetales.club home page, demo, guides, pricing and the other public pages. Team and club sites are counted in the next card.</p>`;
+  const head=`<h2>Main website visits</h2><p class="hint">touchlinetales.club home page, demo, blog, guides, pricing and the other public pages. Team and club sites are counted in the next card.</p>`;
   if(!w)return `<section class="card">${head}<p class="hint">Loading…</p></section>`;
-  if(w.error==="no_token")return `<section class="card">${head}<div class="note">Not connected to GoatCounter yet. Make a key in GoatCounter (Settings, API, New API key, tick "Read statistics"), then add it in Supabase as the Edge Function secret GOATCOUNTER_TOKEN. <a href="https://${esc(w.site||"touchlinetales")}.goatcounter.com" target="_blank" rel="noopener">Open GoatCounter</a></div></section>`;
-  if(w.error)return `<section class="card">${head}<div class="note">Couldn't get the numbers from GoatCounter just now${w.error==="goatcounter"?" (check the API key is still valid)":""}. <a href="https://touchlinetales.goatcounter.com" target="_blank" rel="noopener">Open GoatCounter</a></div></section>`;
-  const days=w.days||[],mx=Math.max(1,...days.map(d=>d.visitors));
-  const chart=`<div class="bars" style="height:70px" aria-label="Website visitors, last 30 days">${days.map(d=>`<i style="height:${Math.max(2,Math.round(d.visitors/mx*100))}%" title="${esc(day(d.day))}: ${d.visitors} visitors"></i>`).join("")}</div><div class="hint">Visitors per day, last 30 days</div>`;
-  const tbl=(title,list,col)=>list&&list.length?`<details${title==="Where visitors came from"?" open":""}><summary>${title}</summary><div class="tbl"><table><thead><tr><th></th><th>${col}</th></tr></thead><tbody>${list.join("")}</tbody></table></div></details>`:"";
+  if(w.error)return `<section class="card">${head}<div class="note">${w.error==="setup"?"The database isn't set up for website visits yet (run 47_website_visits.sql).":"Couldn't load the website numbers. Try Refresh."}</div></section>`;
+  const days=w.days||[],mx=Math.max(1,...days.map(d=>d.views));
+  const chart=`<div class="bars" style="height:70px" aria-label="Website views, last 30 days">${days.map(d=>`<i style="height:${Math.max(2,Math.round(d.views/mx*100))}%" title="${esc(day(d.day))}: ${d.views} views, ${d.visitors} visitors"></i>`).join("")}</div><div class="hint">Page views per day, last 30 days</div>`;
+  const tbl=(title,cols,list,open)=>list&&list.length?`<details${open?" open":""}><summary>${title}</summary><div class="tbl"><table><thead><tr><th></th>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${list.join("")}</tbody></table></div></details>`:"";
   return `<section class="card">${head}
-    <div class="stats top">${stat(n(w.today),"visitors today")}${stat(n(w.week),"last 7 days")}${stat(n(w.month),"last 30 days")}${stat(n(w.all),"all time",`since ${esc(day(w.since))}`)}</div>
+    <div class="stats top">${stat(n(w.views_today),"views today",`${n(w.visitors_today)} visitors`)}${stat(n(w.views7),"last 7 days",`${n(w.visitors7)} visitors`)}
+      ${stat(n(w.views30),"last 30 days",`${n(w.visitors30)} visitors`)}${stat(n(w.views),"all time",w.since?`since ${esc(day(w.since))}`:"")}</div>
     ${chart}
-    ${tbl("Where visitors came from",(w.sources||[]).map(r=>`<tr><td>${refName(r.name)}</td><td>${n(r.visitors)}</td></tr>`),"30 days")}
-    ${tbl("Top pages",(w.pages||[]).map(p=>`<tr><td>${esc(p.path)}</td><td>${n(p.visitors)}</td></tr>`),"30 days")}
-    ${tbl("Sign-ups and demo clicks",(w.events||[]).map(e=>`<tr><td>${esc(e.title||e.name)}</td><td>${n(e.count)}</td></tr>`),"30 days")}
-    <div class="btns"><a class="mini" href="https://${esc(w.site)}.goatcounter.com" target="_blank" rel="noopener">Full stats in GoatCounter</a></div>
-    <p class="hint">A visitor is one person on one page in a day; no cookies. "Our link tag" sources are the ?ref= tags on our social posts.</p></section>`}
+    ${tbl("Where visitors came from (30 days)",["Visitors","Views"],(w.sources||[]).map(r=>`<tr><td>${refName(r.name)}</td><td>${n(r.visitors)}</td><td>${n(r.views)}</td></tr>`),true)}
+    ${tbl("Top pages (30 days)",["Views","Visitors"],(w.pages||[]).map(p=>`<tr><td>${esc(p.path)}</td><td>${n(p.views)}</td><td>${n(p.visitors)}</td></tr>`))}
+    ${tbl("Sign-ups and demo clicks (30 days)",["Times"],(w.events||[]).map(e=>`<tr><td>${esc(e.name)}</td><td>${n(e.count)}</td></tr>`))}
+    <p class="hint">A view is each page opened. A visitor is one person on one day (worked out without cookies or keeping IP addresses). "Our link tag" sources are the ?ref= tags on our posts. Last view ${esc(ago(w.last_view))}.</p></section>`}
 async function loadWeb(){const st=ST.nayfc;if(!st||!st.user||!st.data){WEB=null;return}
-  try{const {data,error}=await st.sb.functions.invoke("tt-webstats");WEB=error?{error:"fn"}:data}catch(e){WEB={error:"fn"}}
-  render()}
+  const {data,error}=await st.sb.rpc("tt_web_stats");
+  WEB=error?{error:error.code==="PGRST202"?"setup":"load"}:(data||{error:"load"});render()}
 
 // ---------- data ----------
 async function load(k){const st=ST[k];st.data=null;
