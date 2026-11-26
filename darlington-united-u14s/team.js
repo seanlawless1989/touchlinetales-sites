@@ -33,5 +33,6 @@ self.TEAM = {
   hashtags: "",
   shortHashtags: "",
   cheer: "⚽",
+  area: { name: "Darlington", lat: 54.524, lon: -1.553 },   // home town: match-day weather looks venues up near here
   storageKey: "dufc-u14s"
 };
