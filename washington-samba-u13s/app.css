@@ -971,3 +971,7 @@ input.need{outline:3px solid #E53935;outline-offset:1px}
 .crrow select{max-width:220px}
 .tl li.act .ic,.tl li.opp .ic{opacity:.9}
 .tl li.opp{color:var(--muted)}
+
+/* map links on fixtures and the home hero (26 Nov 2026) */
+a.maplink{color:var(--club);font-weight:700;text-decoration:none}a.maplink:hover{text-decoration:underline}
+.hero a.pill{color:inherit;text-decoration:none}
