@@ -2,7 +2,7 @@
 
 > Team websites for grassroots football, rugby union and rugby league teams in the UK. Each team gets its own site in its club's crest and colours: the coach taps goals, assists and subs from the touchline, every parent's phone gets an alert, and the whole season is kept child by child, ending in a printable sticker book. Works on any phone, no app to download. First names only, and team sites are kept out of search engines.
 
-Made by Murph Hartley, a grassroots coach. Contact: hello@touchlinetales.club
+Built by Sean L., a grassroots coach at Newton Aycliffe Youth. Contact: hello@touchlinetales.club
 
 ## Price
 
