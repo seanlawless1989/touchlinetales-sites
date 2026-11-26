@@ -10,6 +10,8 @@ Allow: /assets/
 Allow: /guides/
 Allow: /vs/
 Allow: /privacy/
+Allow: /support/
+Allow: /delete-account/
 Allow: /dpa/
 Allow: /about/
 Allow: /changelog/
