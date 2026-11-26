@@ -97,7 +97,7 @@ def page(slug, p):
     ld = {"@context": "https://schema.org", "@graph": [
       {"@type": "Article", "headline": p["title"], "description": p["desc"], "inLanguage": "en-GB",
        "datePublished": DATE_ISO, "dateModified": DATE_ISO, "mainEntityOfPage": url,
-       "author": {"@type": "Person", "name": "Murph Hartley", "url": "https://touchlinetales.club/about/"},
+       "author": {"@type": "Person", "name": "Sean L.", "url": "https://touchlinetales.club/about/"},
        "publisher": {"@type": "Organization", "name": "Touchline Tales", "url": "https://touchlinetales.club/"}},
       {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in p["faq"]]}]}
     faq = "\n".join(f"    <details>\n      <summary>{html.escape(q)}</summary>\n      <p>{html.escape(a)}</p>\n    </details>" for q, a in p["faq"])
@@ -159,7 +159,7 @@ def page(slug, p):
     <p class="eyebrow">Comparisons</p>
     <h1>{e(p['title'])}</h1>
     <p class="lede">{e(p['lede'])}</p>
-    <p class="byline">By Murph Hartley, Touchline Tales · {DATE} · 4 minute read</p>
+    <p class="byline">By Sean L., Touchline Tales · {DATE} · 4 minute read</p>
   </div>
 </section>
 
