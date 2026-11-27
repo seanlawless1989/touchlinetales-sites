@@ -152,3 +152,37 @@ if (founding) {
     return `<li class="open"><a href="#signup"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your team?</span></a></li>`;
   }).join("");
 }
+
+// Try it now: team name + email opens the instant trial (try/) straight away. The lead is saved first (form "trial",
+// assets/signup-send.js), so we hear about everyone who starts, even if they never come back. try/trial.js reads
+// what's kept here (localStorage "tt-trial") and opens the site in their team's name, with them as the coach.
+const tryForm = document.getElementById("try-form");
+if (tryForm) {
+  const tmsg = tryForm.querySelector(".form-msg");
+  tryForm.addEventListener("input", e => e.target.classList.remove("invalid"));
+  tryForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const d = new FormData(tryForm);
+    if (d.get("website")) return; // spam trap
+    const missing = [...tryForm.querySelectorAll("[required]")].filter(el => !el.value.trim() || !el.checkValidity());
+    missing.forEach(el => el.classList.add("invalid"));
+    if (missing.length) { tmsg.textContent = "Please fill in the highlighted boxes."; tmsg.className = "form-msg err"; missing[0].focus(); return; }
+    const team = d.get("team").toString().trim().slice(0, 60), email = d.get("email").toString().trim(), sport = d.get("sport").toString();
+    const button = tryForm.querySelector("button");
+    button.disabled = true;
+    tmsg.className = "form-msg";
+    tmsg.textContent = "Opening your site…";
+    const sportName = { "football": "Football", "rugby-union": "Rugby union", "rugby-league": "Rugby league" }[sport] || "Football";
+    const payload = { "Team": team, "Email": email, "Sport": sportName, "Where": "Home page", "Link used": (ref || "").slice(0, 40),
+      _subject: `Touchline Tales trial started: ${team}`, _replyto: email, _template: "table", _captcha: "false" };
+    if (!payload["Link used"]) delete payload["Link used"];
+    let id = null;
+    try { const sent = await window.ttSendSignup("trial", payload); id = sent && sent.id; } catch {}
+    try {
+      localStorage.setItem("tt-trial", JSON.stringify({ team, email, sport, at: new Date().toISOString(), lead: id, ref: (ref || "").slice(0, 40) }));
+      localStorage.setItem("tt-lead", "sent");
+    } catch {}
+    count("trial-started", "Trial site started", { page: location.pathname, where: "home", sport });
+    location.href = "try/" + (ref ? "?ref=" + encodeURIComponent(ref.slice(0, 40)) : "");
+  });
+}
