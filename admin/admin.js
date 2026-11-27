@@ -67,6 +67,7 @@ function siteCard(site,s){
       ${stat(`${n(s.games_logged)}/${n(s.games_past)}`,"games logged",`last ${esc(day(s.last_logged))} · next ${esc(day(s.next_game))}`)}
       ${stat(n(s.avail),"availability answers",`${n(s.avail7)} this week · training ${n(s.train_avail)}`)}
       ${stat(n(s.alert_phones),"alert phones",`${n(s.alert_ok30)} reached in 30 days`)}
+      ${CV&&!CV.error&&CV[s.schema]?stat(n(CV[s.schema].views7),"coach screen views this week",`${n(CV[s.schema].coaches7)} coaches · last ${esc(ago(CV[s.schema].last))}`):""}
       ${stat(n(s.reports),"match reports",`${n(s.cheers)} cheers · ${n(s.photos)} photos`)}
     </div>
     ${bars((s.days||[]).slice(-14))}<div class="hint">Visits, last 14 days (coaches' phones aren't counted)</div>
@@ -103,7 +104,7 @@ function render(){
       <div class="btns">${CLUBS.map(c=>`<a class="mini" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>`).join("")}<button class="mini" id="refresh">Refresh</button></div>
       <p class="hint">Counts only, never children's names. Updated ${esc(new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}.</p></section>`:
       `<section class="card"><h2>Owner sign-in</h2><p class="hint">This page shows how every team site is being used. Only the Touchline Tales owner can see anything here. Each database is signed in to once on this device.</p></section>`)
-    +(any?webCard():"")+visitsCard(vis)+rows.join("")
+    +(any?webCard():"")+visitsCard(vis)+(any?coachCard(vis):"")+rows.join("")
     +(extra.length?`<details class="card"><summary>Other data areas with no site listed (${extra.length})</summary><div class="rows">${extra.map(({k,s})=>`<div class="row"><span>${esc(s.schema)} <span class="hint">(${esc(PROJECTS[k].label)})</span></span><span class="hint">${n(s.coaches)} coaches · ${n(s.games)} games · ${n(s.views)} visits</span></div>`).join("")}</div></details>`:"");
 }
 
@@ -125,6 +126,48 @@ function visitsCard(list){if(!list.length)return "";
     ${rows.map(x=>`<tr><td>${esc(x.site.short||x.site.name)}</td><td>${n(x.s.views_today)}</td><td>${n(x.s.views7)}</td><td>${n(x.s.views30)}</td><td>${n(x.s.views)}</td><td>${esc(ago(x.s.last_view))}</td></tr>`).join("")}
     <tr class="sum"><td>All sites</td><td>${n(sum("views_today"))}</td><td>${n(sum("views7"))}</td><td>${n(sum("views30"))}</td><td>${n(sum("views"))}</td><td></td></tr></tbody></table></div>
     <p class="hint">A view is each time someone opens a team site; a device is counted once per day. Coaches' phones aren't counted. Each site started counting on a different day.</p></section>`}
+
+// coaches' own use of each site (nayfcu9 supabase/48_coach_views.sql): screen views per coach per day, read with
+// public.tt_coach_views() (owners only). CV = {schema: summary}, or {error} if the database isn't set up yet.
+let CV=null;
+const AREA={home:"Home",fixtures:"Fixtures",results:"Results",live:"Live match",tl:"Match timeline",md:"Match page",new:"Add a match",edit:"Edit a match",
+  review:"Match review",reports:"Reports",tr:"Tournament page",tnew:"Add a tournament",tedit:"Edit a tournament",pick:"Pick squad",
+  avail:"Availability",availall:"Availability (every game)",tavail:"Training availability",training:"Training",calendar:"Calendar",
+  msg:"Parents message",parents:"Parents",alerts:"Match alerts",app:"App",gallery:"Team photos",cphotos:"Coach photos",
+  tactics:"Tactics board",drills:"Drills",design:"Drill designer",formation:"Formations",splan:"Session plans",matchday:"Matchday checklist",
+  insights:"Data hub",players:"Players",squad:"Squad",opps:"Opposition",ratings:"Player ratings",pom:"Player of the month",
+  cards:"Player cards",certs:"Certificates",poster:"Season posters",book:"Sticker book",medals:"Medals",honours:"Honours",
+  gfx:"Graphics",sponsors:"Sponsors",fund:"Fundraiser",notices:"Noticeboard",event:"Events",evnew:"Add an event",
+  coaches:"Coaches",setup:"Team setup",kit:"Kit sizes",birthdays:"Birthdays",help:"Help and changes",votes:"Votes",
+  ftimport:"Full-Time import",ssimport:"Spreadsheet import",assist:"Coaching assistant",hnew:"Add an honour",hedit:"Edit an honour"};
+const areaName=a=>AREA[a]||a;
+async function loadCV(){const st=ST.nayfc;if(!st||!st.user||!st.data){CV=null;return}
+  const {data,error}=await st.sb.rpc("tt_coach_views");
+  if(error||!data){CV={error:error&&error.code==="PGRST202"?"setup":"load"}}else{CV={};(data.sites||[]).forEach(x=>CV[x.schema]=x)}
+  render()}
+function coachCard(list){if(!list.length)return "";
+  const head=`<h2>Coach use, all team sites</h2><p class="hint">What signed-in coaches open on their own team site. A screen view is each time a coach moves to a screen (Fixtures, Live match, Data hub, Tactics board...). Coaches aren't in the visit counts above.</p>`;
+  if(!CV)return `<section class="card">${head}<p class="hint">Loading…</p></section>`;
+  if(CV.error)return `<section class="card">${head}<div class="note">${CV.error==="setup"?"The database isn't set up for coach views yet (run coach_views_ALL_TEAMS.sql).":"Couldn't load the coach numbers. Try Refresh."}</div></section>`;
+  const rows=list.map(x=>({site:x.site,c:CV[x.s.schema]||{}}));
+  const sum=k=>rows.reduce((t,r)=>t+(r.c[k]||0),0);
+  const all={};rows.forEach(r=>(r.c.areas||[]).forEach(a=>{const o=all[a.area]=all[a.area]||{v:0,v7:0,sites:0};o.v+=a.views;o.v7+=a.views7||0;o.sites++}));
+  const top=Object.entries(all).sort((a,b)=>b[1].v-a[1].v),mx=Math.max(1,...top.map(t=>t[1].v));
+  const areaBars=(arr,max)=>`<div class="rows">${arr.map(([a,o,sub])=>`<div class="row"><span>${esc(areaName(a))}</span><span class="hint">${sub}</span></div><div style="height:6px;background:#13804A;border-radius:3px;margin:-4px 0 6px;width:${Math.max(2,Math.round(o/max*100))}%"></div>`).join("")}</div>`;
+  const per=rows.slice().sort((a,b)=>(b.c.views7||0)-(a.c.views7||0)||(b.c.views30||0)-(a.c.views30||0));
+  const detail=r=>{const c=r.c,ar=c.areas||[],m=Math.max(1,...ar.map(a=>a.views));
+    if(!c.views)return "";
+    return `<details><summary>${esc(r.site.short||r.site.name)}: ${n(c.views30)} screen views in 30 days</summary>
+      ${ar.length?`<h3 style="margin-top:10px">Screens used (30 days)</h3>${areaBars(ar.map(a=>[a.area,a.views,`${n(a.views)} views · ${n(a.coaches)} ${a.coaches===1?"coach":"coaches"}`]),m)}`:""}
+      <h3 style="margin-top:10px">Coaches</h3><div class="rows">${(c.coach_list||[]).map(p=>`<div class="row"><span>${esc(p.email||"(coach no longer signed up)")}<br><small class="hint">${(p.top||[]).map(areaName).map(esc).join(", ")||"nothing this month"}</small></span><span class="hint">${esc(ago(p.last))} · ${n(p.views7)} this week · ${n(p.views30)} in 30 days on ${n(p.days30)} ${p.days30===1?"day":"days"}</span></div>`).join("")}</div></details>`};
+  return `<section class="card">${head}
+    <div class="stats top">${stat(n(sum("views_today")),"screen views today")}${stat(n(sum("views7")),"last 7 days",`${n(sum("coaches7"))} coaches`)}
+      ${stat(n(sum("views30")),"last 30 days",`${n(sum("coaches30"))} coaches`)}${stat(n(sum("views")),"all time")}</div>
+    <div class="tbl"><table><thead><tr><th>Site</th><th>Today</th><th>7 days</th><th>30 days</th><th>Coaches (7 days)</th><th>Last coach use</th></tr></thead><tbody>
+    ${per.map(r=>`<tr><td>${esc(r.site.short||r.site.name)}</td><td>${n(r.c.views_today||0)}</td><td>${n(r.c.views7||0)}</td><td>${n(r.c.views30||0)}</td><td>${n(r.c.coaches7||0)}</td><td>${esc(r.c.last?ago(r.c.last):"none yet")}</td></tr>`).join("")}</tbody></table></div>
+    ${top.length?`<details open><summary>Most used screens, every site (30 days)</summary>${areaBars(top.slice(0,15).map(([a,o])=>[a,o.v,`${n(o.v)} views · ${o.sites} ${o.sites===1?"site":"sites"}`]),mx)}</details>`:`<p class="hint">No coach screen views yet. Counting starts once the update is live.</p>`}
+    ${per.map(detail).join("")}
+    <p class="hint">Counted from 27 Nov 2026. Each coach is counted by their sign-in, so the same coach on two phones is one coach.</p></section>`}
 
 // the marketing website: views and visitors from our own database
 const refName=r=>/^ref: /.test(r)?`${esc(r.slice(5))} <span class="hint">(our link tag)</span>`:esc(r);
@@ -153,7 +196,7 @@ async function load(k){const st=ST[k];st.data=null;
   const {data,error}=await st.sb.rpc("tt_overview");
   if(error){st.err=error.code==="PGRST202"?"This database isn't set up for the owner page yet (run 28_platform_admin.sql).":"Couldn't load the numbers. Try again.";render();return}
   if(data==null){st.err=`${st.user.email} isn't on the owner list for this database.`;await st.sb.auth.signOut();return}
-  st.err="";st.data=data;render();if(k==="nayfc")loadWeb()}
+  st.err="";st.data=data;render();if(k==="nayfc"){loadWeb();loadCV()}}
 
 document.addEventListener("submit",async e=>{e.preventDefault();const f=e.target;
   if(f.dataset.login){const k=f.dataset.login,st=ST[k],email=f.email.value.trim().toLowerCase();if(!email)return;
