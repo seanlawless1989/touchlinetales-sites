@@ -99,7 +99,7 @@
       <a href="#safety">Safety</a>
       <a href="#price">Price</a>
       <a href="/blog/" data-blog-link>Blog</a>
-      <a class="btn btn-sm" href="#signup">Sign up</a>
+      <a class="btn btn-sm" href="#try">Try it free</a>
     </nav>
   </div>
 </header>
@@ -114,7 +114,7 @@
       <h1>Every match.<br>Every milestone.</h1>
       <p class="lede">Your team's own website, in your crest and colours. Goals, line-ups and full time land on every parent's phone, and the whole season is kept, child by child, for everyone to look back on.</p>
       <div class="cta-row">
-        <a class="btn" href="#signup">Get your team set up</a>
+        <a class="btn" href="#try">Try it with your team</a>
         <a class="btn btn-ghost" href="demo/" data-demo>Try the demo site</a>
       </div>
       <p class="hero-diff">Fair playing time tracked, and a sticker book at the end of it.</p>
@@ -528,11 +528,44 @@
   </div>
 </section>
 
+<!-- Try it now: team name + email opens a working trial site straight away (try/, built by nayfcu9 tools/package_demo.py --trial).
+     home.js saves the lead first (assets/signup-send.js, form "trial"), then opens it. -->
+<section id="try" class="band dark try-band">
+  <div class="wrap signup">
+    <div class="signup-copy">
+      <p class="eyebrow">Try it now</p>
+      <h2>See your own team's site in a minute</h2>
+      <p>Type your team's name and your email, and your site opens straight away, in your team's name. Add your players and fixtures, record a live match, and make a matchday graphic.</p>
+      <p>No card and nothing to download. When you're happy, tap <b>Make it my real site</b> and we'll put it live for your parents.</p>
+    </div>
+    <form id="try-form" class="card form" novalidate>
+      <div class="field">
+        <label for="t-team">Team name</label>
+        <input id="t-team" name="team" autocomplete="organization" placeholder="e.g. Sample Town U10s Blues" maxlength="60" required>
+      </div>
+      <div class="field">
+        <label for="t-email">Your email</label>
+        <input id="t-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="t-sport">Sport</label>
+        <select id="t-sport" name="sport">
+          <option value="football">Football</option><option value="rugby-union">Rugby union</option><option value="rugby-league">Rugby league</option>
+        </select>
+      </div>
+      <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn" type="submit">Open my team's site</button>
+      <p class="form-small small">What you add stays on your phone. We'll only use your email about your trial (<a href="privacy/">privacy</a>). Rather talk first? <a href="#signup">Send us your details</a>.</p>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <!-- Sign up -->
 <section id="signup" class="band">
   <div class="wrap signup">
     <div class="signup-copy">
-      <p class="eyebrow">Sign up</p>
+      <p class="eyebrow">Rather talk first?</p>
       <h2>Get your team on Touchline Tales</h2>
       <p data-nopay-copy>Just your name, email and club. We'll be in touch to book a 15-minute demo, and ask anything else then. There's no commitment: it's £5 a month once your site is live, setup is free, and you can cancel anytime.</p>
       <p data-pay-copy hidden>Just your name, email and club, then start your £5 a month plan by card or Direct Debit. Setup is free, there's no contract and you can cancel anytime. We'll be in touch to set up your site and ask anything else then. Newton Aycliffe and Washington Athletic teams don't pay.</p>

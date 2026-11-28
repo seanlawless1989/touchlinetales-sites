@@ -360,3 +360,6 @@ img.founder-pic{display:block;background:none;object-fit:cover}
 .form-msg.pay-step .pay-line,.form-msg.pay-step .pay-small{color:var(--night);font-weight:400}
 /* 375px pass (9 Nov): a call to action in the first screen of guide-style pages */
 .hero-cta{margin:22px 0 0}
+/* Try it now (instant trial): a light form card on the dark band */
+.try-band .card a{color:var(--green)}
+.try-band .card{color:var(--night)}
