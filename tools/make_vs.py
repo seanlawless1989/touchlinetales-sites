@@ -61,7 +61,7 @@ PAGES = {
   faq=[
    ("Is Touchline Tales a club management system like Teamzum?", "No. Touchline Tales doesn't do registrations, membership, subs or a club shop. It's one website per team, for matchday and the season record."),
    ("Does it replace our club website?", "No, it sits alongside it. Each Touchline Tales site is for one team, in your club's crest, colours and sponsors."),
-   ("How much does Touchline Tales cost?", "£5 a month per team, with free setup. There's no contract: it's month to month and you can cancel anytime."),
+   ("How much does Touchline Tales cost?", "Your first month is free, then it's £5 a month per team, with free setup. The next five clubs to join are free for life. There's no contract: it's month to month and you can cancel anytime."),
   ]),
  "pitchero": dict(
   name="Pitchero",
@@ -172,7 +172,7 @@ def page(slug, p):
     <section class="guide-cta card" aria-labelledby="see-it">
       <p class="eyebrow">See it for yourself</p>
       <h2 id="see-it">Click around a team site</h2>
-      <p>Our demo is a made-up team, Sample Town Under 12s, with a live game on. Nothing you change is saved. It's £5 a month per team, with free setup, no contract and nothing to cancel but the next month.</p>
+      <p>Our demo is a made-up team, Sample Town Under 12s, with a live game on. Nothing you change is saved. It's first month free, then £5 a month per team, with free setup, no contract and nothing to cancel but the next month.</p>
       <p><a class="btn" href="../../demo/?ref=vs-{slug}">Open the demo site</a> <a class="btn btn-ghost" href="../../?ref=vs-{slug}#signup">Get your team set up</a></p>
     </section>
 

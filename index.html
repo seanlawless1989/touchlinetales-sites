@@ -68,7 +68,7 @@
         { "@type": "Question", "name": "What happens at the end of the season?",
           "acceptedAnswer": { "@type": "Answer", "text": "Your season stays on the site, the sticker book is ready to print, and the next season picks up where you left off." } },
         { "@type": "Question", "name": "Is there a contract?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. It's £5 a month per team, month to month, and setup is free. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our data processing agreement you can ask for a copy, and we delete the site and its data within 30 days." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Your first month is free, then it's £5 a month per team, month to month, and setup is free. The next five clubs to join are free for life. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our data processing agreement you can ask for a copy, and we delete the site and its data within 30 days." } },
         { "@type": "Question", "name": "Can we ask for changes?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tell us what would make it better for your team and we'll build it, at no extra cost. Improvements go on every team's site, so everyone gets better together." } }
       ]
@@ -118,19 +118,20 @@
         <a class="btn btn-ghost" href="demo/" data-demo>Try the demo site</a>
       </div>
       <p class="hero-diff">Fair playing time tracked, and a sticker book at the end of it.</p>
-      <!-- Founding places: one entry per taken place in data-teams ("Team name|INITIALS|#colour"), names only with the club's say-so.
-           home.js draws the count and the five slots from it. No links: team sites are private to their families. -->
-      <div class="founding" data-total="5"
-        data-teams="Darlington United U14s|DU|#ED1B24;Newton Aycliffe U9s|NA|#2235E8;Newton Aycliffe U11s Wildcats|NA|#2235E8;Newton Aycliffe U11s Pumas|NA|#2235E8;Washington Athletic|WA|#27207A">
-        <p class="founding-count">All 5 founding-team places are taken. Thank you!</p>
-        <ol class="founding-slots" aria-label="Founding-team places">
-          <li class="taken" style="--kit:#ED1B24"><span class="crest" aria-hidden="true">DU</span><span class="slot-name">Darlington United U14s</span></li>
-          <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U9s</span></li>
-          <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U11s Wildcats</span></li>
-          <li class="taken" style="--kit:#2235E8"><span class="crest" aria-hidden="true">NA</span><span class="slot-name">Newton Aycliffe U11s Pumas</span></li>
-          <li class="taken" style="--kit:#27207A"><span class="crest" aria-hidden="true">WA</span><span class="slot-name">Washington Athletic</span></li>
+      <!-- Free-for-life club places (Sean, 28 Nov 2026: "next five clubs are free for life"). One entry per taken place in
+           data-teams ("Club name|INITIALS|#colour"), names only with the club's say-so. home.js draws the count and the five
+           slots from it. The first five founding teams (Darlington, Newton Aycliffe x3, Washington Athletic) stay free too. -->
+      <div class="founding" data-total="5" data-label="free-for-life club places left" data-full="All 5 free-for-life club places are taken. Thank you!" data-open="Your club?"
+        data-teams="">
+        <p class="founding-count"><b class="founding-left">5 of 5</b> free-for-life club places left</p>
+        <ol class="founding-slots" aria-label="Free-for-life club places">
+          <li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your club?</span></a></li>
+          <li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your club?</span></a></li>
+          <li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your club?</span></a></li>
+          <li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your club?</span></a></li>
+          <li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your club?</span></a></li>
         </ol>
-        <p class="small">Now open to every team: <b>£5 a month</b>, free setup, cancel anytime.</p>
+        <p class="small">The next five clubs to join pay nothing, ever, for every team. Everyone else: <b>first month free</b>, then £5 a month per team, free setup, cancel anytime.</p>
       </div>
     </div>
 
@@ -503,12 +504,12 @@
 <section id="price" class="band alt">
   <div class="wrap">
     <p class="eyebrow">Price</p>
-    <h2>£5 a month. That's it.</h2>
+    <h2>First month free. Then £5 a month.</h2>
     <div class="grid prices">
       <div class="card price-card feature">
         <h3>Team plan</h3>
         <p class="amount">£5 <small>a month, per team</small></p>
-        <p>Everything on this page included. No adverts, no tiers, no extras to unlock.</p>
+        <p>Your first month is free. Everything on this page included. No adverts, no tiers, no extras to unlock.</p>
       </div>
       <div class="card price-card">
         <h3>Setup</h3>
@@ -521,6 +522,7 @@
         <p>If it isn't working for you, cancel. No notice period, no obligation.</p>
       </div>
     </div>
+    <p class="note"><b>Free for life for the next five clubs.</b> The next five clubs to join pay nothing, ever, for every one of their teams. <a href="#try">Start with your team</a> and tell us you're a club.</p>
     <p class="note"><b>Free improvements.</b> Tell us what would make it better for your team and we'll build it, at no extra cost.</p>
     <p class="note club-note">Running a few teams? Each team is £5 a month. Hand your welfare officer our <a href="guides/welfare-officer-checklist/">checklist</a> and <a href="dpa/">data processing agreement</a>.</p>
     <p class="note">Not included: subs or payments, or club membership.</p>
@@ -536,7 +538,7 @@
       <p class="eyebrow">Try it now</p>
       <h2>See your own team's site in a minute</h2>
       <p>Type your team's name and your email, and your site opens straight away, in your team's name. Add your players and fixtures, record a live match, and make a matchday graphic.</p>
-      <p>No card and nothing to download. When you're happy, tap <b>Make it my real site</b> and we'll put it live for your parents.</p>
+      <p>No card and nothing to download. When you're happy, tap <b>Make it my real site</b> and we'll put it live for your parents, with your first month free.</p>
     </div>
     <form id="try-form" class="card form" novalidate>
       <div class="field">
@@ -567,8 +569,8 @@
     <div class="signup-copy">
       <p class="eyebrow">Rather talk first?</p>
       <h2>Get your team on Touchline Tales</h2>
-      <p data-nopay-copy>Just your name, email and club. We'll be in touch to book a 15-minute demo, and ask anything else then. There's no commitment: it's £5 a month once your site is live, setup is free, and you can cancel anytime.</p>
-      <p data-pay-copy hidden>Just your name, email and club, then start your £5 a month plan by card or Direct Debit. Setup is free, there's no contract and you can cancel anytime. We'll be in touch to set up your site and ask anything else then. Newton Aycliffe and Washington Athletic teams don't pay.</p>
+      <p data-nopay-copy>Just your name, email and club. We'll be in touch to book a 15-minute demo, and ask anything else then. There's no commitment: your first month is free, then it's £5 a month, setup is free, and you can cancel anytime.</p>
+      <p data-pay-copy hidden>Just your name, email and club, then start your plan by card or Direct Debit: first month free, then £5 a month. Setup is free, there's no contract and you can cancel anytime. We'll be in touch to set up your site and ask anything else then. Newton Aycliffe and Washington Athletic teams don't pay.</p>
       <p>Please don't send any children's details here. We'll ask for first names later, once your welfare officer has signed off.</p>
     </div>
 
@@ -686,7 +688,7 @@
     </details>
     <details>
       <summary>Is there a contract?</summary>
-      <p>No. It's £5 a month per team, month to month, and setup is free. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our <a href="dpa/">data processing agreement</a> you can ask for a copy, and we delete the site and its data within 30 days.</p>
+      <p>No. Your first month is free, then it's £5 a month per team, month to month, and setup is free. The next five clubs to join are free for life. If it isn't working for you, cancel and you won't pay another month. Your season record is yours: under our <a href="dpa/">data processing agreement</a> you can ask for a copy, and we delete the site and its data within 30 days.</p>
     </details>
     <details>
       <summary>Can we ask for changes?</summary>

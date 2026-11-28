@@ -6,7 +6,8 @@ Built by Sean L., a grassroots coach at Newton Aycliffe Youth. Contact: hello@to
 
 ## Price
 
-- Team plan: £5 a month per team. Everything is included.
+- Team plan: first month free, then £5 a month per team. Everything is included.
+- Free for life: the next five clubs to join pay nothing, ever, for every team.
 - Setup: free. We load the crest, colours, squad, fixtures and last season's results.
 - No contract: month to month, cancel anytime with no notice period.
 - Free improvements: teams can ask for changes and we build them at no extra cost; improvements go on every team's site.
@@ -17,7 +18,7 @@ Built by Sean L., a grassroots coach at Newton Aycliffe Youth. Contact: hello@to
 
 - [Home page](https://touchlinetales.club/): what a team site does, the sports covered, safety, price and sign-up
 - [Demo site](https://touchlinetales.club/demo/): a clickable team site for the made-up Sample Town Under 12s, with a live game
-- [Pricing](https://touchlinetales.club/pricing/): £5 a month per team, free setup, no contract, with worked examples
+- [Pricing](https://touchlinetales.club/pricing/): first month free, then £5 a month per team, free setup, no contract, with worked examples
 - [About](https://touchlinetales.club/about/): who makes Touchline Tales and how children's information is looked after
 - [Privacy notice](https://touchlinetales.club/privacy/)
 - [Data processing agreement](https://touchlinetales.club/dpa/): the agreement a club accepts; the club is the data controller and Touchline Tales the processor
