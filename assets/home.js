@@ -107,11 +107,11 @@ function showPay(first, url) {
   h.textContent = `Thanks, ${first}! Last step: start your team plan.`;
   const p = document.createElement("span");
   p.className = "pay-line";
-  p.textContent = "£5 a month per team, by card or Direct Debit. Setup is free and you can cancel any time. We'll have your site ready within a few days.";
+  p.textContent = "First month free, then £5 a month per team, by card or Direct Debit. Setup is free and you can cancel any time. We'll have your site ready within a few days.";
   const a = document.createElement("a");
   a.className = "btn pay-btn";
   a.href = url;
-  a.textContent = "Pay £5 a month securely";
+  a.textContent = "Start my free month";
   a.addEventListener("click", () => count("pay-click", "Pay button tapped", { page: location.pathname }));
   const s = document.createElement("span");
   s.className = "pay-small small";
@@ -140,16 +140,15 @@ if (founding) {
   const esc = t => t.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const teams = (founding.dataset.teams || "").split(";").map(t => t.split("|").map(x => x.trim())).filter(t => t[0]);
   const total = +founding.dataset.total || 5, taken = Math.min(teams.length, total), left = total - taken;
-  founding.querySelector(".founding-count").innerHTML = left
-    ? `<b class="founding-left">${left} of ${total}</b> founding-team places left for the 2026-27 season`
-    : `All ${total} founding-team places are taken. Thank you!`;
+  const label = founding.dataset.label || "founding-team places left", full = founding.dataset.full || `All ${total} places are taken. Thank you!`;
+  founding.querySelector(".founding-count").innerHTML = left ? `<b class="founding-left">${left} of ${total}</b> ${esc(label)}` : esc(full);
   founding.querySelector(".founding-slots").innerHTML = Array.from({ length: total }, (_, i) => {
     if (i < taken) {
       const [name, initials, colour] = teams[i];
       const kit = /^#[0-9a-f]{3,6}$/i.test(colour || "") ? ` style="--kit:${colour}"` : "";
       return `<li class="taken"${kit}><span class="crest" aria-hidden="true">${esc((initials || name.slice(0, 2)).slice(0, 3))}</span><span class="slot-name">${esc(name)}</span></li>`;
     }
-    return `<li class="open"><a href="#signup"><span class="crest" aria-hidden="true">?</span><span class="slot-name">Your team?</span></a></li>`;
+    return `<li class="open"><a href="#try"><span class="crest" aria-hidden="true">?</span><span class="slot-name">${esc(founding.dataset.open || "Your team?")}</span></a></li>`;
   }).join("");
 }
 
